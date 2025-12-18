@@ -93,9 +93,24 @@ export const getSettings = api(
   }
 );
 
+export interface UpdatePlatformSettingsRequest {
+  cancellationWindows?: {
+    fullRefundHours?: number;
+    partialRefundHours?: number;
+    partialRefundPercent?: number;
+  };
+  acceptanceTimeoutHours?: number;
+  autoConfirmTimeoutHours?: number;
+  disputeWindowDays?: number;
+  commissionPercent?: number;
+  bookingFeePence?: number;
+  defaultPayoutSchedule?: "weekly" | "biweekly" | "per_transaction";
+  minimumPayoutPence?: number;
+}
+
 export const updateSettings = api(
   { method: "PUT", path: "/admin/settings/platform", expose: true, auth: true },
-  async (req: Partial<PlatformSettings>): Promise<{ success: boolean }> => {
+  async (req: UpdatePlatformSettingsRequest): Promise<{ success: boolean }> => {
     await requireAdminPermission("settings", "edit");
     const auth = getAuthData()!;
 

@@ -4,14 +4,7 @@ import db from "../db";
 import { sendNotification } from "../notifications/send";
 import { sendEmail } from "../notifications/email_service";
 
-// Cron job to send review reminders
-const reviewReminderCron = new CronJob("review-reminders", {
-  title: "Send Review Reminders",
-  schedule: "0 */2 * * *", // Every 2 hours
-  endpoint: sendReviewReminders,
-});
-
-export async function sendReviewReminders(): Promise<{ sent: number }> {
+async function sendReviewReminders(): Promise<{ sent: number }> {
   let sentCount = 0;
 
   // Find completed bookings without reviews
@@ -235,4 +228,11 @@ export const triggerReviewReminders = api(
     return sendReviewReminders();
   }
 );
+
+// Cron job to send review reminders
+const reviewReminderCron = new CronJob("review-reminders", {
+  title: "Send Review Reminders",
+  schedule: "0 */2 * * *", // Every 2 hours
+  endpoint: triggerReviewReminders,
+});
 

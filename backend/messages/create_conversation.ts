@@ -29,14 +29,24 @@ export const createConversation = api<CreateConversationRequest, CreateConversat
       throw APIError.notFound("Freelancer not found");
     }
 
-    // Check if conversation already exists
-    const existing = await db.queryRow<Conversation>`
-      SELECT id, booking_id, client_id, freelancer_id, last_message, last_message_at,
-             client_unread_count, freelancer_unread_count, created_at, updated_at
-      FROM conversations
-      WHERE client_id = ${userId} AND freelancer_id = ${req.freelancerId}
-      ${req.bookingId ? db.query`AND booking_id = ${req.bookingId}` : db.query`AND booking_id IS NULL`}
-    `;
+    let existing: Conversation | null;
+    if (req.bookingId) {
+      existing = await db.queryRow<Conversation>`
+        SELECT id, booking_id, client_id, freelancer_id, last_message, last_message_at,
+               client_unread_count, freelancer_unread_count, created_at, updated_at
+        FROM conversations
+        WHERE client_id = ${userId} AND freelancer_id = ${req.freelancerId}
+        AND booking_id = ${req.bookingId}
+      `;
+    } else {
+      existing = await db.queryRow<Conversation>`
+        SELECT id, booking_id, client_id, freelancer_id, last_message, last_message_at,
+               client_unread_count, freelancer_unread_count, created_at, updated_at
+        FROM conversations
+        WHERE client_id = ${userId} AND freelancer_id = ${req.freelancerId}
+        AND booking_id IS NULL
+      `;
+    }
 
     if (existing) {
       return { conversation: existing };

@@ -3,8 +3,8 @@
 -- Favorite freelancers table
 CREATE TABLE IF NOT EXISTS favorite_freelancers (
   id SERIAL PRIMARY KEY,
-  client_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  freelancer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  client_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  freelancer_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE (client_id, freelancer_id)
 );
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS favorite_freelancers (
 -- Favorite services table
 CREATE TABLE IF NOT EXISTS favorite_services (
   id SERIAL PRIMARY KEY,
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   service_id INTEGER NOT NULL REFERENCES services(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE (user_id, service_id)

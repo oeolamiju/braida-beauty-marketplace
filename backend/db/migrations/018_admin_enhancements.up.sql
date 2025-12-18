@@ -25,9 +25,7 @@ CREATE INDEX IF NOT EXISTS idx_admin_audit_created ON admin_audit_log(created_at
 ALTER TABLE users
 ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMP WITH TIME ZONE;
 
--- City index for multi-city support
-CREATE INDEX IF NOT EXISTS idx_freelancer_profiles_city ON freelancer_profiles(city);
-CREATE INDEX IF NOT EXISTS idx_freelancer_profiles_postcode ON freelancer_profiles(postcode);
+-- Postcode index already exists, skipping
 
 -- Add indexes for common search patterns
 CREATE INDEX IF NOT EXISTS idx_services_category ON services(category);

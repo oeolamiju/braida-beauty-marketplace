@@ -22,7 +22,7 @@ ON CONFLICT (name) DO NOTHING;
 -- User loyalty points
 CREATE TABLE IF NOT EXISTS user_loyalty (
   id SERIAL PRIMARY KEY,
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE UNIQUE,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE UNIQUE,
   total_points INTEGER NOT NULL DEFAULT 0,
   current_points INTEGER NOT NULL DEFAULT 0,
   tier_id INTEGER REFERENCES loyalty_tiers(id),
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS user_loyalty (
 -- Points transactions
 CREATE TABLE IF NOT EXISTS loyalty_transactions (
   id SERIAL PRIMARY KEY,
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   points INTEGER NOT NULL,
   type VARCHAR(30) NOT NULL CHECK (type IN ('earned_booking', 'earned_review', 'earned_referral', 'spent', 'expired', 'bonus', 'adjustment')),
   description TEXT,

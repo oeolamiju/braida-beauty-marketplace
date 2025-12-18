@@ -82,13 +82,20 @@ export const listPaginated = api(
       conditions += ` AND type = '${req.type}'`;
     }
 
-    // Get total count
-    const totalResult = await db.queryRow<{ count: number }>`
-      SELECT COUNT(*)::int as count
-      FROM notifications
-      WHERE user_id = ${userId}
-        ${req.unreadOnly ? db.rawQuery`AND read = false` : db.rawQuery``}
-    `;
+    let totalResult: { count: number } | null;
+    if (req.unreadOnly) {
+      totalResult = await db.queryRow<{ count: number }>`
+        SELECT COUNT(*)::int as count
+        FROM notifications
+        WHERE user_id = ${userId} AND read = false
+      `;
+    } else {
+      totalResult = await db.queryRow<{ count: number }>`
+        SELECT COUNT(*)::int as count
+        FROM notifications
+        WHERE user_id = ${userId}
+      `;
+    }
     const total = totalResult?.count || 0;
 
     // Get unread count (always)

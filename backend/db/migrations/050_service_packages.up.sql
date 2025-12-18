@@ -1,7 +1,7 @@
 -- Service packages/bundles for freelancers to offer bundled services at discounted prices
 CREATE TABLE service_packages (
     id SERIAL PRIMARY KEY,
-    freelancer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    freelancer_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     discount_percent DECIMAL(5,2) NOT NULL DEFAULT 0,

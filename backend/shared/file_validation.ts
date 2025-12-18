@@ -7,6 +7,16 @@ export const MAX_FILE_SIZES = {
   document: 25 * 1024 * 1024,   // 25MB (for KYC documents)
 };
 
+// Validation presets for common use cases
+export const PRESETS = {
+  IMAGE_5MB: { maxSize: 5 * 1024 * 1024, allowedTypes: ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"] },
+  IMAGE_10MB: { maxSize: 10 * 1024 * 1024, allowedTypes: ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"] },
+  VIDEO_100MB: { maxSize: 100 * 1024 * 1024, allowedTypes: ["video/mp4", "video/webm", "video/quicktime"] },
+  DOCUMENT_5MB: { maxSize: 5 * 1024 * 1024, allowedTypes: ["application/pdf", "image/jpeg", "image/jpg", "image/png"] },
+  DOCUMENT_10MB: { maxSize: 10 * 1024 * 1024, allowedTypes: ["application/pdf", "image/jpeg", "image/jpg", "image/png"] },
+  DOCUMENT_25MB: { maxSize: 25 * 1024 * 1024, allowedTypes: ["application/pdf", "image/jpeg", "image/jpg", "image/png"] },
+};
+
 // Allowed MIME types
 export const ALLOWED_MIME_TYPES = {
   image: [
@@ -191,4 +201,53 @@ export async function processUploadedFile(
     filename,
     mimeType: validation.mimeType,
   };
+}
+
+// Extract MIME type from data URL
+export function extractMimeTypeFromDataUrl(dataUrl: string): string {
+  const match = dataUrl.match(/^data:([^;]+);base64,/);
+  if (!match) {
+    throw APIError.invalidArgument("Invalid data URL format");
+  }
+  return match[1];
+}
+
+// Validate file upload with preset configuration
+export function validateFileUpload(
+  base64Data: string,
+  mimeType: string,
+  preset: { maxSize: number; allowedTypes: string[] }
+): Buffer {
+  // Extract actual base64 data
+  const base64Match = base64Data.match(/^data:([^;]+);base64,(.+)$/);
+  const actualBase64 = base64Match ? base64Match[2] : base64Data;
+  const extractedMimeType = base64Match ? base64Match[1] : mimeType;
+
+  let buffer: Buffer;
+  try {
+    buffer = Buffer.from(actualBase64, "base64");
+  } catch (error) {
+    throw APIError.invalidArgument("Invalid base64 encoding");
+  }
+
+  // Check size
+  if (buffer.length > preset.maxSize) {
+    throw APIError.invalidArgument(
+      `File too large. Maximum size is ${preset.maxSize / 1024 / 1024}MB`
+    );
+  }
+
+  // Check MIME type
+  if (!preset.allowedTypes.includes(extractedMimeType)) {
+    throw APIError.invalidArgument(
+      `File type not allowed. Allowed types: ${preset.allowedTypes.join(", ")}`
+    );
+  }
+
+  // Verify file signature matches declared type
+  if (!validateFileSignature(buffer, extractedMimeType)) {
+    throw APIError.invalidArgument("File content does not match declared type");
+  }
+
+  return buffer;
 }

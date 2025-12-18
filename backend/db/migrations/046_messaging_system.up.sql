@@ -4,8 +4,8 @@
 CREATE TABLE IF NOT EXISTS conversations (
   id SERIAL PRIMARY KEY,
   booking_id INTEGER REFERENCES bookings(id) ON DELETE SET NULL,
-  client_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  freelancer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  client_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  freelancer_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   last_message TEXT,
   last_message_at TIMESTAMPTZ,
   client_unread_count INTEGER NOT NULL DEFAULT 0,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS conversations (
 CREATE TABLE IF NOT EXISTS messages (
   id SERIAL PRIMARY KEY,
   conversation_id INTEGER NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
-  sender_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  sender_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   content TEXT NOT NULL,
   message_type VARCHAR(20) NOT NULL DEFAULT 'text' CHECK (message_type IN ('text', 'image', 'system')),
   read_at TIMESTAMPTZ,
