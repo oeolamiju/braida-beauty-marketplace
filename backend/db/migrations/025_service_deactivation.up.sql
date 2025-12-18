@@ -1,0 +1,3 @@
+ALTER TABLE services ADD COLUMN IF NOT EXISTS deactivation_reason TEXT;
+ALTER TABLE services ADD COLUMN IF NOT EXISTS deactivated_at TIMESTAMPTZ;
+ALTER TABLE services ADD COLUMN IF NOT EXISTS deactivated_by TEXT REFERENCES users(id);

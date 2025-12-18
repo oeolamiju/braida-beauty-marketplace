@@ -1,0 +1,4 @@
+ALTER TABLE notification_preferences 
+  ADD COLUMN IF NOT EXISTS dispute_raised BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS dispute_needs_review BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS dispute_resolved BOOLEAN NOT NULL DEFAULT true;

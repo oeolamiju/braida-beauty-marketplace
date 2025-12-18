@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 200" fill="none">
+  <!-- Braida Logo - Colorful Braid/Feather Design -->
+  
+  <!-- Main braid strands -->
+  <!-- Left strand - Teal/Cyan -->
+  <path d="M40 20 Q30 40 35 60 Q40 80 30 100 Q20 120 35 140 Q50 160 40 180 Q35 190 45 200" 
+        stroke="#1ABC9C" stroke-width="12" stroke-linecap="round" fill="none"/>
+  
+  <!-- Middle strand - Pink/Magenta -->
+  <path d="M55 10 Q70 30 50 55 Q30 80 55 105 Q80 130 50 155 Q20 180 55 195" 
+        stroke="#E91E63" stroke-width="14" stroke-linecap="round" fill="none"/>
+  
+  <!-- Right strand - Gold/Amber -->
+  <path d="M65 25 Q85 45 70 70 Q55 95 75 120 Q95 145 70 170 Q45 195 75 200" 
+        stroke="#F4B942" stroke-width="11" stroke-linecap="round" fill="none"/>
+  
+  <!-- Decorative leaf/feather accents -->
+  <!-- Top feather - Pink -->
+  <path d="M50 5 Q60 15 55 25 Q45 20 50 5" fill="#E91E63"/>
+  
+  <!-- Middle accent - Teal -->
+  <path d="M25 90 Q15 100 20 115 Q30 105 25 90" fill="#1ABC9C"/>
+  
+  <!-- Lower accent - Gold -->
+  <path d="M85 135 Q95 145 90 160 Q80 150 85 135" fill="#F4B942"/>
+  
+  <!-- Flowing tail/swirl at bottom -->
+  <path d="M55 195 Q70 190 85 195 Q100 200 110 190" 
+        stroke="#E91E63" stroke-width="6" stroke-linecap="round" fill="none"/>
+</svg>
+

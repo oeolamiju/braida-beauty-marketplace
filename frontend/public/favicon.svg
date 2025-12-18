@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Braida Favicon - Minimal Braid -->
+  <path d="M11 4 Q9 8 11 12 Q13 16 10 20 Q7 24 11 28" 
+        stroke="#1ABC9C" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M16 2 Q20 7 14 12 Q8 17 16 22 Q24 27 16 30" 
+        stroke="#E91E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M19 5 Q23 9 19 14 Q15 19 21 24 Q27 29 21 31" 
+        stroke="#F4B942" stroke-width="3" stroke-linecap="round" fill="none"/>
+</svg>
+

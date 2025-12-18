@@ -1,0 +1,308 @@
+/* Braida Beauty Marketplace - Accessibility Styles */
+/* WCAG 2.1 AA Compliance */
+
+/* ==============================
+   Focus States
+   ============================== */
+
+/* Visible focus indicators for all interactive elements */
+:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Remove default focus for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Enhanced focus for buttons */
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid #E91E63;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(233, 30, 99, 0.2);
+}
+
+/* Enhanced focus for links */
+a:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+  text-decoration: underline;
+}
+
+/* Enhanced focus for form inputs */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: -1px;
+  border-color: hsl(var(--primary));
+}
+
+/* ==============================
+   Screen Reader Only
+   ============================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Make sr-only visible on focus */
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ==============================
+   High Contrast Mode
+   ============================== */
+
+@media (prefers-contrast: more) {
+  /* Increase contrast for text */
+  body {
+    --foreground: #000000;
+    --background: #ffffff;
+  }
+
+  /* Stronger borders */
+  input,
+  select,
+  textarea,
+  button {
+    border-width: 2px !important;
+    border-color: currentColor !important;
+  }
+
+  /* Underline all links */
+  a {
+    text-decoration: underline !important;
+  }
+
+  /* Stronger focus indicators */
+  :focus-visible {
+    outline-width: 3px !important;
+    outline-color: #000000 !important;
+  }
+
+  /* Remove decorative backgrounds */
+  [class*="gradient"] {
+    background: var(--background) !important;
+    color: var(--foreground) !important;
+  }
+}
+
+/* ==============================
+   Reduced Motion
+   ============================== */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Disable animations */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Keep essential loading indicators visible */
+  .loading-spinner {
+    animation-duration: 1s !important;
+  }
+}
+
+/* ==============================
+   Typography - Minimum Sizes
+   ============================== */
+
+/* Ensure minimum readable font size on mobile */
+body {
+  font-size: clamp(16px, 1rem, 18px);
+  line-height: 1.5;
+}
+
+/* Ensure touch targets are at least 44x44px */
+button,
+[role="button"],
+a,
+input[type="checkbox"],
+input[type="radio"],
+select {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Exception for inline links */
+p a,
+span a {
+  min-height: auto;
+  min-width: auto;
+}
+
+/* ==============================
+   Color Contrast Helpers
+   ============================== */
+
+/* Ensure sufficient contrast for error states */
+.error-text {
+  color: #b91c1c; /* 4.5:1 contrast on white */
+}
+
+.success-text {
+  color: #15803d; /* 4.5:1 contrast on white */
+}
+
+.warning-text {
+  color: #b45309; /* 4.5:1 contrast on white */
+}
+
+/* Disabled state with sufficient contrast */
+.disabled,
+[disabled],
+[aria-disabled="true"] {
+  color: #6b7280; /* 4.5:1 contrast on white */
+  opacity: 1; /* Don't reduce opacity, use color instead */
+}
+
+/* ==============================
+   Form Accessibility
+   ============================== */
+
+/* Required field indicator */
+.required-field::after {
+  content: " *";
+  color: #b91c1c;
+}
+
+/* Error messages */
+.field-error {
+  color: #b91c1c;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Help text */
+.field-help {
+  color: #4b5563;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* ==============================
+   Image Accessibility
+   ============================== */
+
+/* Ensure images have alt text indicator in dev */
+img:not([alt]) {
+  outline: 3px solid #b91c1c;
+}
+
+/* Decorative images */
+img[alt=""] {
+  /* Screen readers will skip these */
+}
+
+/* ==============================
+   Skip Links
+   ============================== */
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: hsl(var(--primary));
+  color: white;
+  padding: 0.75rem 1rem;
+  z-index: 9999;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ==============================
+   Live Regions
+   ============================== */
+
+/* Announce changes to screen readers */
+[role="status"],
+[role="alert"],
+[aria-live="polite"],
+[aria-live="assertive"] {
+  /* Visually hidden but announced */
+}
+
+/* ==============================
+   Table Accessibility
+   ============================== */
+
+table {
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  font-weight: 600;
+  background-color: #f9fafb;
+}
+
+/* Ensure table is scrollable on small screens */
+.table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ==============================
+   Modal/Dialog Accessibility
+   ============================== */
+
+[role="dialog"],
+[role="alertdialog"] {
+  /* Focus trap should be managed via JavaScript */
+}
+
+/* Backdrop should not be interactive */
+.dialog-backdrop {
+  pointer-events: none;
+}
+
+/* ==============================
+   Landmark Roles
+   ============================== */
+
+header[role="banner"],
+nav[role="navigation"],
+main[role="main"],
+footer[role="contentinfo"],
+aside[role="complementary"],
+form[role="search"] {
+  /* Landmarks help screen reader users navigate */
+}
+

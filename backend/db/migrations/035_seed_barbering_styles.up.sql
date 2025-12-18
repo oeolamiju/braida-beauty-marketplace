@@ -1,0 +1,20 @@
+INSERT INTO styles (name, description, category, is_active) VALUES
+  ('Classic Fade', 'Professional fade haircut with clean lines and taper', 'barbering', true),
+  ('Skin Fade', 'Tight fade blended to skin with precision', 'barbering', true),
+  ('Beard Trim & Shape', 'Professional beard grooming and shaping', 'barbering', true),
+  ('Hot Towel Shave', 'Traditional straight razor shave with hot towel treatment', 'barbering', true),
+  ('Kids Haircut', 'Haircut for children with patience and care', 'barbering', true),
+  ('Hair Design', 'Creative line work and patterns in haircut', 'barbering', true),
+  ('Twist Out', 'Natural hair styling with defined twist pattern', 'hair', true),
+  ('Silk Press', 'Straightening natural hair with heat and silk serum', 'hair', true),
+  ('Feed-In Braids', 'Braiding technique for a natural, graduated look', 'hair', true),
+  ('Faux Locs', 'Temporary loc style using braiding techniques', 'hair', true),
+  ('Crochet Braids', 'Protective style using crochet technique for quick install', 'hair', true),
+  ('Editorial Makeup', 'High fashion makeup for photoshoots and events', 'makeup', true),
+  ('Party Glam', 'Bold, glamorous makeup for special occasions', 'makeup', true),
+  ('Airbrush Makeup', 'Professional airbrush application for flawless finish', 'makeup', true),
+  ('Aso Ebi Styling', 'Complete styling for Nigerian traditional outfit', 'gele', true),
+  ('Bespoke Tailoring', 'Custom-made clothing from measurement to finish', 'tailoring', true),
+  ('Suit Alterations', 'Professional tailoring for suits and formal wear', 'tailoring', true),
+  ('Dress Making', 'Custom dress creation for special occasions', 'tailoring', true)
+ON CONFLICT (name) DO NOTHING;

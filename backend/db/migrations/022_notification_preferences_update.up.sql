@@ -1,0 +1,14 @@
+ALTER TABLE notification_preferences
+  ADD COLUMN IF NOT EXISTS booking_paid BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS payment_confirmed BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS payment_failed BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS payment_released BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS booking_refunded BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS service_auto_confirmed BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS booking_reschedule_requested BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS booking_rescheduled BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS booking_reschedule_rejected BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS review_reminder BOOLEAN NOT NULL DEFAULT true;
+
+ALTER TABLE notification_preferences
+  ADD COLUMN IF NOT EXISTS email_enabled BOOLEAN NOT NULL DEFAULT true;

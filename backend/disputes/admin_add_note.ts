@@ -1,0 +1,47 @@
+import { api } from "encore.dev/api";
+import { getAuthData } from "~encore/auth";
+import db from "../db";
+import { APIError } from "encore.dev/api";
+
+export interface AdminAddNoteRequest {
+  dispute_id: string;
+  note: string;
+}
+
+export interface AdminAddNoteResponse {
+  note_id: string;
+}
+
+export const adminAddNote = api(
+  { method: "POST", path: "/admin/disputes/:dispute_id/notes", auth: true, expose: true },
+  async (req: AdminAddNoteRequest): Promise<AdminAddNoteResponse> => {
+    const auth = getAuthData()!;
+
+    const userRole = await db.rawQueryRow<{ role: string }>(
+      `SELECT role FROM users WHERE id = $1`,
+      auth.userID
+    );
+
+    if (userRole?.role !== "admin") {
+      throw APIError.permissionDenied("Admin access required");
+    }
+
+    const dispute = await db.rawQueryRow<{ id: string }>(
+      `SELECT id FROM disputes WHERE id = $1`,
+      req.dispute_id
+    );
+
+    if (!dispute) {
+      throw APIError.notFound("Dispute not found");
+    }
+
+    const result = await db.rawQueryRow<{ id: string }>(
+      `INSERT INTO dispute_notes (dispute_id, admin_id, note)
+       VALUES ($1, $2, $3)
+       RETURNING id`,
+      req.dispute_id, auth.userID, req.note
+    );
+
+    return { note_id: result!.id };
+  }
+);

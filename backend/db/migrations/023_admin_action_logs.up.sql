@@ -1,0 +1,3 @@
+-- This migration is a no-op because the admin_action_logs table
+-- was already created in migration 001_initial_schema.up.sql
+-- This file is kept to maintain migration version numbering consistency.
