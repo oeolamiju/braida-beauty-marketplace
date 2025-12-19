@@ -100,26 +100,6 @@ export default function NotificationPreferences() {
       setPushPermission(permission);
 
       if (permission === "granted") {
-        // Register push subscription
-        const registration = await navigator.serviceWorker.ready;
-        const vapidResponse = await backend.notifications.getVapidPublicKey();
-        
-        const subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(vapidResponse.publicKey),
-        });
-
-        await backend.notifications.subscribePush({
-          subscription: {
-            endpoint: subscription.endpoint,
-            keys: {
-              p256dh: arrayBufferToBase64(subscription.getKey("p256dh")!),
-              auth: arrayBufferToBase64(subscription.getKey("auth")!),
-            },
-          },
-          userAgent: navigator.userAgent,
-        });
-
         await handleToggle("push_enabled", true);
         toast({ title: "Push notifications enabled!" });
       }
