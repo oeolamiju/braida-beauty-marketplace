@@ -1,0 +1,20 @@
+# Railway Nixpacks Configuration for Encore Backend
+
+[phases.setup]
+nixPkgs = ["nodejs-20_x", "openssl", "curl"]
+
+[phases.install]
+cmds = [
+    "npm install -g encore.dev@latest",
+    "npm install"
+]
+
+[phases.build]
+cmds = ["echo 'Using Encore runtime'"]
+
+[start]
+cmd = "encore run"
+
+[variables]
+NODE_ENV = "production"
+

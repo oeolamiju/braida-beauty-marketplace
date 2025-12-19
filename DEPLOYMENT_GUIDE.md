@@ -1,12 +1,12 @@
-# Braida Beauty Marketplace - Deployment Guide
+# Braida Beauty Marketplace - Railway Deployment Guide
 
-This guide covers deploying Braida Beauty Marketplace using **Railway** (backend) and **Vercel** (frontend).
+Deploy both frontend and backend on Railway with PostgreSQL.
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
-2. [Backend Deployment (Railway)](#backend-deployment-railway)
-3. [Frontend Deployment (Vercel)](#frontend-deployment-vercel)
-4. [DNS Configuration (Cloudflare)](#dns-configuration-cloudflare)
+2. [Quick Start](#quick-start)
+3. [Detailed Setup](#detailed-setup)
+4. [DNS Configuration](#dns-configuration)
 5. [Environment Variables](#environment-variables)
 6. [Post-Deployment Checklist](#post-deployment-checklist)
 
@@ -14,258 +14,282 @@ This guide covers deploying Braida Beauty Marketplace using **Railway** (backend
 
 ## Prerequisites
 
-Before starting, ensure you have:
+- [Railway](https://railway.app) account (Hobby plan: $5/month)
 - [GitHub](https://github.com) account with the repository
-- [Railway](https://railway.app) account
-- [Vercel](https://vercel.com) account
-- [Cloudflare](https://cloudflare.com) account (for DNS management)
-- [Stripe](https://stripe.com) account (for payments)
-- [Resend](https://resend.com) account (for emails)
+- [Cloudflare](https://cloudflare.com) account (for DNS)
+- [Stripe](https://stripe.com) account
+- [Resend](https://resend.com) account
 
 ---
 
-## Backend Deployment (Railway)
+## Quick Start
 
-### Step 1: Create Railway Project
+### 1. Create Railway Project
+1. Go to [railway.app/new](https://railway.app/new)
+2. Click **"Deploy from GitHub repo"**
+3. Select `braida-beauty-marketplace`
 
-1. Go to [Railway Dashboard](https://railway.app/dashboard)
-2. Click **"New Project"**
-3. Select **"Deploy from GitHub repo"**
-4. Connect your GitHub account and select `braida-beauty-marketplace`
-5. Railway will auto-detect the monorepo structure
+### 2. Add PostgreSQL
+1. In the project, click **"+ New"** → **"Database"** → **"PostgreSQL"**
+2. Wait for it to provision
 
-### Step 2: Add PostgreSQL Database
+### 3. Add Backend Service
+1. Click **"+ New"** → **"GitHub Repo"** → Select your repo
+2. After adding, click on the service
+3. Go to **Settings**:
+   - **Root Directory**: `backend`
+   - **Watch Paths**: `/backend/**`
+4. Go to **Variables** and add backend environment variables (see below)
 
-1. In your Railway project, click **"+ New"**
-2. Select **"Database"** → **"PostgreSQL"**
-3. Railway will create a PostgreSQL instance
-4. Copy the `DATABASE_URL` from the database settings
+### 4. Add Frontend Service
+1. Click **"+ New"** → **"GitHub Repo"** → Select your repo again
+2. After adding, click on the service
+3. Go to **Settings**:
+   - **Root Directory**: `frontend`
+   - **Watch Paths**: `/frontend/**`
+4. Go to **Variables** and add frontend environment variables (see below)
 
-### Step 3: Configure Backend Service
+### 5. Generate Domains
+1. Click on each service → **Settings** → **Networking** → **Generate Domain**
+2. Note both URLs
 
-1. Click on the backend service in Railway
-2. Go to **"Settings"** tab
-3. Set the **Root Directory** to `backend`
-4. Set **Build Command**: `npm install`
-5. Set **Start Command**: `encore run`
+### 6. Update Variables
+- Update `VITE_API_URL` in frontend to point to backend domain
+- Update `APP_URL` in backend to point to frontend domain
 
-### Step 4: Add Environment Variables
+---
 
-In Railway, go to **"Variables"** tab and add:
+## Detailed Setup
 
-```
-DATABASE_URL=<from PostgreSQL service>
+### Backend Service Configuration
+
+**Settings Tab:**
+| Setting | Value |
+|---------|-------|
+| Root Directory | `backend` |
+| Watch Paths | `/backend/**` |
+| Build Command | `npm install` |
+| Start Command | `npm start` |
+
+**Variables Tab:**
+```env
+# Database (auto-linked from PostgreSQL service)
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+
+# Application
 APP_URL=https://braida.uk
-JWT_SECRET=<generate a secure 32+ character string>
-RESEND_API_KEY=<your Resend API key>
-FROM_EMAIL=noreply@braida.uk
-STRIPE_SECRET_KEY=<your Stripe secret key>
-STRIPE_WEBHOOK_SECRET=<your Stripe webhook secret>
-MAPBOX_ACCESS_TOKEN=<your Mapbox token>
-ONFIDO_API_KEY=<your Onfido API key>
-VERIFF_API_KEY=<your Veriff API key>
-VERIFF_API_SECRET=<your Veriff API secret>
-VAPID_PUBLIC_KEY=<your VAPID public key>
-VAPID_PRIVATE_KEY=<your VAPID private key>
 NODE_ENV=production
 PORT=4000
+
+# Authentication
+JWT_SECRET=YeshuaAmashiac321
+
+# Email (Resend)
+RESEND_API_KEY=<your-resend-api-key>
+FROM_EMAIL=noreply@braida.uk
+
+# Payments (Stripe)
+STRIPE_SECRET_KEY=<your-stripe-secret-key>
+STRIPE_WEBHOOK_SECRET=<your-stripe-webhook-secret>
+
+# Maps (Mapbox)
+MAPBOX_ACCESS_TOKEN=pk.eyJ1IjoibG9pYkdW...
+
+# KYC (Onfido)
+ONFIDO_API_KEY=<your-onfido-key>
+
+# KYC (Veriff)
+VERIFF_API_KEY=265b537f-4fb5-427a-a3ec-bd187b9565c3
+VERIFF_API_SECRET=e867698a-fb68-4131-9a72-9d260b51ff58
+
+# Push Notifications (VAPID)
+VAPID_PUBLIC_KEY=BIbn29wEWQt0gv0u1lmDvEaVLn6TG5Ljc-j0a0mtzugL_Y3IKQNAZkf2PTN0B_0U9mu
+VAPID_PRIVATE_KEY=kXrFpLXgjGe4tlSqAi9kFo9w4raWKg6mjyh_P6zLwn8
 ```
 
-### Step 5: Deploy
+### Frontend Service Configuration
 
-1. Railway will auto-deploy on push to main branch
-2. Or click **"Deploy"** to manually trigger deployment
-3. Wait for the build to complete
-4. Note your Railway domain (e.g., `braida-api.up.railway.app`)
+**Settings Tab:**
+| Setting | Value |
+|---------|-------|
+| Root Directory | `frontend` |
+| Watch Paths | `/frontend/**` |
+| Build Command | `npm install && npm run build` |
+| Start Command | `npx serve dist -s -l 3000` |
 
-### Step 6: Custom Domain (Optional)
+**Variables Tab:**
+```env
+# API Configuration
+VITE_API_URL=https://<backend-service>.up.railway.app
+VITE_CLIENT_TARGET=https://<backend-service>.up.railway.app
 
-1. Go to **"Settings"** → **"Domains"**
-2. Add custom domain: `api.braida.uk`
-3. Railway will provide CNAME record to add to Cloudflare
-
----
-
-## Frontend Deployment (Vercel)
-
-### Step 1: Import Project
-
-1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
-2. Click **"Add New..."** → **"Project"**
-3. Import from GitHub: `braida-beauty-marketplace`
-
-### Step 2: Configure Project
-
-1. Set **Framework Preset**: Vite
-2. Set **Root Directory**: `frontend`
-3. Set **Build Command**: `npm run build`
-4. Set **Output Directory**: `dist`
-
-### Step 3: Add Environment Variables
-
-Add these variables in Vercel:
-
-```
-VITE_API_URL=https://api.braida.uk
-VITE_CLIENT_TARGET=https://api.braida.uk
+# Application
 VITE_APP_URL=https://braida.uk
-VITE_STRIPE_PUBLISHABLE_KEY=pk_live_xxxxx
-VITE_MAPBOX_ACCESS_TOKEN=pk.xxxxx
+
+# Stripe (Publishable Key)
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_51SJWKzPWaiD9PFTK4WdKZCnEZpjR7eLRsmIBm6y2SrCRZPc7USecnBixQEa9UEjo5lR1IRf6aN4ZBpvM31f4btty00lMWmfykF
+
+# Mapbox
+VITE_MAPBOX_ACCESS_TOKEN=pk.eyJ1IjoibG9pYkdW...
+
+# Features
 VITE_ENABLE_PUSH_NOTIFICATIONS=true
 VITE_ENABLE_ANALYTICS=true
 ```
 
-### Step 4: Deploy
+### PostgreSQL Configuration
 
-1. Click **"Deploy"**
-2. Vercel will build and deploy automatically
-3. Note your Vercel domain (e.g., `braida-beauty-marketplace.vercel.app`)
+The PostgreSQL database is automatically provisioned. Railway provides:
+- `DATABASE_URL` - Full connection string
+- `PGHOST`, `PGPORT`, `PGUSER`, `PGPASSWORD`, `PGDATABASE` - Individual values
 
-### Step 5: Custom Domain
-
-1. Go to **"Settings"** → **"Domains"**
-2. Add: `braida.uk` and `www.braida.uk`
-3. Vercel will provide records to add to Cloudflare
+Use the reference syntax to link to backend:
+```
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+```
 
 ---
 
 ## DNS Configuration (Cloudflare)
 
-### For Frontend (braida.uk)
+### Option A: Use Custom Domains in Railway
 
-Add these DNS records in Cloudflare:
+1. **Backend Custom Domain:**
+   - Go to Backend Service → Settings → Networking
+   - Add custom domain: `api.braida.uk`
+   - Copy the CNAME target Railway provides
+
+2. **Frontend Custom Domain:**
+   - Go to Frontend Service → Settings → Networking
+   - Add custom domain: `braida.uk` and `www.braida.uk`
+   - Copy the CNAME targets
+
+3. **Update Cloudflare DNS:**
 
 | Type | Name | Content | Proxy |
 |------|------|---------|-------|
-| CNAME | @ | cname.vercel-dns.com | DNS only |
-| CNAME | www | cname.vercel-dns.com | DNS only |
+| CNAME | @ | `<frontend-target>.up.railway.app` | DNS only |
+| CNAME | www | `<frontend-target>.up.railway.app` | DNS only |
+| CNAME | api | `<backend-target>.up.railway.app` | DNS only |
 
-### For Backend API (api.braida.uk)
+### Keep Existing Email Records
 
-| Type | Name | Content | Proxy |
-|------|------|---------|-------|
-| CNAME | api | <railway-domain>.up.railway.app | DNS only |
-
-### Existing Records (Keep These)
-
-Your current email records should remain:
-- MX records for `braida.uk` → `inbound-smtp...`
-- MX records for `send` → `feedback-smtp...`
+Don't delete these (for Resend email):
+- MX records for `braida.uk`
+- MX records for `send`
 - TXT records for SPF/DKIM
 
 ---
 
-## Environment Variables
+## Environment Variables Reference
 
-### Backend Variables (Railway)
+### Backend Variables
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| DATABASE_URL | PostgreSQL connection | postgresql://... |
-| APP_URL | Frontend URL | https://braida.uk |
-| JWT_SECRET | Auth token secret | random-32-chars |
-| RESEND_API_KEY | Email API key | re_xxxxx |
-| FROM_EMAIL | Sender email | noreply@braida.uk |
-| STRIPE_SECRET_KEY | Stripe secret | sk_live_xxxxx |
-| STRIPE_WEBHOOK_SECRET | Webhook secret | whsec_xxxxx |
-| MAPBOX_ACCESS_TOKEN | Maps token | pk.xxxxx |
-| ONFIDO_API_KEY | KYC API key | api_live_xxxxx |
-| VERIFF_API_KEY | KYC API key | xxxxx |
-| VERIFF_API_SECRET | KYC secret | xxxxx |
-| VAPID_PUBLIC_KEY | Push notifications | xxxxx |
-| VAPID_PRIVATE_KEY | Push notifications | xxxxx |
+| Variable | Source | Description |
+|----------|--------|-------------|
+| DATABASE_URL | Railway PostgreSQL | Database connection |
+| APP_URL | Your domain | Frontend URL |
+| JWT_SECRET | Your secrets | Auth token signing |
+| RESEND_API_KEY | Resend dashboard | Email sending |
+| FROM_EMAIL | Resend verified | Sender address |
+| STRIPE_SECRET_KEY | Stripe dashboard | Payment processing |
+| STRIPE_WEBHOOK_SECRET | Stripe webhooks | Webhook verification |
+| MAPBOX_ACCESS_TOKEN | Mapbox account | Geocoding/maps |
+| ONFIDO_API_KEY | Onfido dashboard | KYC verification |
+| VERIFF_API_KEY | Veriff dashboard | KYC verification |
+| VERIFF_API_SECRET | Veriff dashboard | KYC verification |
+| VAPID_PUBLIC_KEY | Generated | Push notifications |
+| VAPID_PRIVATE_KEY | Generated | Push notifications |
 
-### Frontend Variables (Vercel)
+### Frontend Variables
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| VITE_API_URL | Backend API URL | https://api.braida.uk |
-| VITE_CLIENT_TARGET | Backend target | https://api.braida.uk |
-| VITE_APP_URL | Frontend URL | https://braida.uk |
-| VITE_STRIPE_PUBLISHABLE_KEY | Stripe public key | pk_live_xxxxx |
-| VITE_MAPBOX_ACCESS_TOKEN | Maps token | pk.xxxxx |
+| Variable | Description |
+|----------|-------------|
+| VITE_API_URL | Backend API URL |
+| VITE_CLIENT_TARGET | Backend target (same as API_URL) |
+| VITE_APP_URL | Frontend URL |
+| VITE_STRIPE_PUBLISHABLE_KEY | Stripe public key |
+| VITE_MAPBOX_ACCESS_TOKEN | Mapbox token |
 
 ---
 
 ## Post-Deployment Checklist
 
-### 1. Verify Deployment
-- [ ] Backend health check: `https://api.braida.uk/health/check`
-- [ ] Frontend loads: `https://braida.uk`
-- [ ] API connectivity from frontend
+### ✅ Verify Services
+- [ ] Backend is running: Visit `https://api.braida.uk/health/check`
+- [ ] Frontend is running: Visit `https://braida.uk`
+- [ ] Database connected: Check Railway logs
 
-### 2. Test Authentication
+### ✅ Test Authentication
 - [ ] Registration works
 - [ ] Verification email received
 - [ ] Login works
 - [ ] Password reset works
 
-### 3. Configure Stripe Webhooks
-1. Go to Stripe Dashboard → Webhooks
+### ✅ Configure Stripe Webhooks
+1. Go to [Stripe Dashboard → Webhooks](https://dashboard.stripe.com/webhooks)
 2. Add endpoint: `https://api.braida.uk/payments/webhook`
-3. Select events: `payment_intent.succeeded`, `payment_intent.payment_failed`, `charge.refunded`
-4. Copy webhook secret to Railway environment variables
+3. Select events:
+   - `payment_intent.succeeded`
+   - `payment_intent.payment_failed`
+   - `charge.refunded`
+4. Copy webhook secret → Update `STRIPE_WEBHOOK_SECRET` in Railway
 
-### 4. Test Payment Flow
-- [ ] Can create booking with payment
-- [ ] Payment processes successfully
-- [ ] Webhook receives events
+### ✅ Test Payments
+- [ ] Create test booking
+- [ ] Payment processes
+- [ ] Webhook received
 
-### 5. Configure Email
-- [ ] Verification emails arrive
-- [ ] Password reset emails arrive
-- [ ] Booking notification emails arrive
-
-### 6. SSL/Security
-- [ ] HTTPS working on both domains
+### ✅ SSL/Security
+- [ ] HTTPS working on all domains
 - [ ] No mixed content warnings
-- [ ] CORS configured correctly
 
 ---
 
 ## Troubleshooting
 
-### Backend Not Starting
-- Check Railway logs for errors
-- Verify all environment variables are set
-- Ensure DATABASE_URL is correct
+### Build Failing
+```bash
+# Check Railway build logs
+# Common issues:
+# - Missing dependencies in package.json
+# - Incorrect root directory
+# - Build command errors
+```
 
-### Frontend API Errors
-- Check browser console for CORS errors
-- Verify VITE_API_URL is correct
-- Check network tab for failed requests
+### API Connection Errors
+1. Check `VITE_API_URL` is correct
+2. Check backend service is running
+3. Check for CORS errors in browser console
 
-### Emails Not Sending
-- Verify RESEND_API_KEY is correct
-- Check Resend dashboard for delivery status
-- Ensure FROM_EMAIL domain is verified
+### Database Errors
+1. Verify `DATABASE_URL` is linked correctly
+2. Check PostgreSQL service is running
+3. Run migrations if needed
 
-### Stripe Webhooks Failing
-- Check Stripe dashboard for webhook logs
-- Verify STRIPE_WEBHOOK_SECRET matches
-- Ensure endpoint URL is correct
+### Email Not Sending
+1. Verify Resend API key is correct
+2. Check Resend dashboard for delivery status
+3. Ensure domain is verified in Resend
 
 ---
 
-## Cost Estimates
+## Cost Estimate (Railway Hobby Plan)
 
-### Railway (Backend)
-- Starter: $5/month credit (covers small projects)
-- Pro: $20/month + usage
+| Resource | Cost |
+|----------|------|
+| Base plan | $5/month credit |
+| Backend service | ~$2-5/month |
+| Frontend service | ~$1-2/month |
+| PostgreSQL | ~$1-3/month |
+| **Total** | **~$5-10/month** |
 
-### Vercel (Frontend)
-- Hobby: Free (personal projects)
-- Pro: $20/month (commercial)
-
-### Total Estimated Cost
-- Small project: ~$5-25/month
-- Growing business: ~$50-100/month
+The Hobby plan's $5 credit often covers small projects!
 
 ---
 
 ## Support
 
-For issues or questions:
-- GitHub Issues: [Repository Issues](https://github.com/oeolamiju/braida-beauty-marketplace/issues)
-- Email: support@braida.uk
-
+- **Railway Docs**: https://docs.railway.app
+- **GitHub Issues**: https://github.com/oeolamiju/braida-beauty-marketplace/issues
+- **Email**: support@braida.uk
