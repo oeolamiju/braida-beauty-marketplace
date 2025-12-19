@@ -1,22 +1,18 @@
-import { secret } from "encore.dev/config";
 import { sendEmail } from "../notifications/email_service";
-
-const appUrl = secret("AppURL");
-
-// Production domain for Braida
-const PRODUCTION_DOMAIN = "https://braida.uk";
 
 // Token expiry configuration (in hours)
 export const VERIFICATION_TOKEN_EXPIRY_HOURS = 24;
 export const PASSWORD_RESET_TOKEN_EXPIRY_HOURS = 1;
 
 function getAppUrl(): string {
-  const configuredUrl = appUrl();
-  // Default to production domain if not configured or empty
-  if (!configuredUrl || configuredUrl.trim() === "") {
-    return PRODUCTION_DOMAIN;
+  if (typeof process !== 'undefined' && process.env.ENCORE_ENVIRONMENT) {
+    const env = process.env.ENCORE_ENVIRONMENT;
+    if (env === 'production') {
+      return "https://braida.uk";
+    }
+    return "https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.lp.dev";
   }
-  return configuredUrl;
+  return "https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.lp.dev";
 }
 
 export async function sendVerificationEmail(email: string, token: string): Promise<void> {
