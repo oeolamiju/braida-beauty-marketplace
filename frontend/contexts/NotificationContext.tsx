@@ -74,51 +74,11 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
 
   useEffect(() => {
     refreshNotifications();
+
+    const interval = setInterval(refreshNotifications, 30000);
+
+    return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      return;
-    }
-
-    let eventSource: EventSource | null = null;
-    let reconnectTimeout: NodeJS.Timeout | null = null;
-
-    const connectSSE = () => {
-      const url = `${import.meta.env.VITE_API_BASE_URL || "https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.api.lp.dev"}/notifications/stream`;
-      
-      eventSource = new EventSource(url, {
-        withCredentials: true,
-      });
-
-      eventSource.onmessage = (event) => {
-        try {
-          const notification: Notification = JSON.parse(event.data);
-          setNotifications(prev => [notification, ...prev]);
-          setUnreadCount(prev => prev + 1);
-        } catch (error) {
-          console.error("Failed to parse notification:", error);
-        }
-      };
-
-      eventSource.onerror = () => {
-        eventSource?.close();
-        
-        reconnectTimeout = setTimeout(() => {
-          connectSSE();
-        }, 5000);
-      };
-    };
-
-    connectSSE();
-
-    return () => {
-      if (reconnectTimeout) {
-        clearTimeout(reconnectTimeout);
-      }
-      eventSource?.close();
-    };
-  }, [isAuthenticated]);
 
   return (
     <NotificationContext.Provider
