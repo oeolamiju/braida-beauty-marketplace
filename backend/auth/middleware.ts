@@ -15,7 +15,7 @@ export async function checkAccountStatus(userId: string): Promise<void> {
   `;
 
   if (!user) {
-    throw APIError.unauthenticated("user not found");
+    throw APIError.unauthenticated("session expired", new Error("user not found"));
   }
 
   if (user.account_status === "banned") {

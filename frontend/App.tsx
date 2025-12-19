@@ -91,6 +91,10 @@ export default function App() {
       if (!allowedOrigins.includes(event.origin)) {
         return;
       }
+
+      if (!event.data || typeof event.data !== 'object') {
+        return;
+      }
     };
 
     window.addEventListener('message', handleMessage);
