@@ -1201,11 +1201,6 @@ import { getPreferences as api_notifications_get_preferences_getPreferences } fr
 import { list as api_notifications_list_list } from "~backend/notifications/list";
 import { listPaginated as api_notifications_list_paginated_listPaginated } from "~backend/notifications/list_paginated";
 import { markRead as api_notifications_mark_read_markRead } from "~backend/notifications/mark_read";
-import {
-    getVapidPublicKey as api_notifications_push_subscription_getVapidPublicKey,
-    subscribePush as api_notifications_push_subscription_subscribePush,
-    unsubscribePush as api_notifications_push_subscription_unsubscribePush
-} from "~backend/notifications/push_subscription";
 import { stream as api_notifications_stream_stream } from "~backend/notifications/stream";
 import { updatePreferences as api_notifications_update_preferences_updatePreferences } from "~backend/notifications/update_preferences";
 
@@ -1218,14 +1213,11 @@ export namespace notifications {
             this.baseClient = baseClient
             this.clearRead = this.clearRead.bind(this)
             this.getPreferences = this.getPreferences.bind(this)
-            this.getVapidPublicKey = this.getVapidPublicKey.bind(this)
             this.list = this.list.bind(this)
             this.listPaginated = this.listPaginated.bind(this)
             this.markAllRead = this.markAllRead.bind(this)
             this.markRead = this.markRead.bind(this)
             this.stream = this.stream.bind(this)
-            this.subscribePush = this.subscribePush.bind(this)
-            this.unsubscribePush = this.unsubscribePush.bind(this)
             this.updatePreferences = this.updatePreferences.bind(this)
         }
 
@@ -1239,12 +1231,6 @@ export namespace notifications {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/notifications/preferences`, {method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_notifications_get_preferences_getPreferences>
-        }
-
-        public async getVapidPublicKey(): Promise<ResponseType<typeof api_notifications_push_subscription_getVapidPublicKey>> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/notifications/push/vapid-key`, {method: "GET", body: undefined})
-            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_notifications_push_subscription_getVapidPublicKey>
         }
 
         public async list(): Promise<ResponseType<typeof api_notifications_list_list>> {
@@ -1277,18 +1263,6 @@ export namespace notifications {
 
         public async stream(): Promise<StreamIn<StreamResponse<typeof api_notifications_stream_stream>>> {
             return await this.baseClient.createStreamIn(`/notifications/stream`)
-        }
-
-        public async subscribePush(params: RequestType<typeof api_notifications_push_subscription_subscribePush>): Promise<ResponseType<typeof api_notifications_push_subscription_subscribePush>> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/notifications/push/subscribe`, {method: "POST", body: JSON.stringify(params)})
-            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_notifications_push_subscription_subscribePush>
-        }
-
-        public async unsubscribePush(params: RequestType<typeof api_notifications_push_subscription_unsubscribePush>): Promise<ResponseType<typeof api_notifications_push_subscription_unsubscribePush>> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/notifications/push/unsubscribe`, {method: "POST", body: JSON.stringify(params)})
-            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_notifications_push_subscription_unsubscribePush>
         }
 
         public async updatePreferences(params: RequestType<typeof api_notifications_update_preferences_updatePreferences>): Promise<ResponseType<typeof api_notifications_update_preferences_updatePreferences>> {
@@ -2378,10 +2352,8 @@ import { adminApprove as api_verification_admin_approve_adminApprove } from "~ba
 import { adminGet as api_verification_admin_get_adminGet } from "~backend/verification/admin_get";
 import { adminList as api_verification_admin_list_adminList } from "~backend/verification/admin_list";
 import { adminReject as api_verification_admin_reject_adminReject } from "~backend/verification/admin_reject";
-import { completeKyc as api_verification_complete_kyc_completeKyc } from "~backend/verification/complete_kyc";
 import { getDocument as api_verification_get_document_getDocument } from "~backend/verification/get_document";
 import { getStatus as api_verification_get_status_getStatus } from "~backend/verification/get_status";
-import { startKyc as api_verification_start_kyc_startKyc } from "~backend/verification/start_kyc";
 import { submit as api_verification_submit_submit } from "~backend/verification/submit";
 
 export namespace verification {
@@ -2395,10 +2367,8 @@ export namespace verification {
             this.adminGet = this.adminGet.bind(this)
             this.adminList = this.adminList.bind(this)
             this.adminReject = this.adminReject.bind(this)
-            this.completeKyc = this.completeKyc.bind(this)
             this.getDocument = this.getDocument.bind(this)
             this.getStatus = this.getStatus.bind(this)
-            this.startKyc = this.startKyc.bind(this)
             this.submit = this.submit.bind(this)
         }
 
@@ -2426,12 +2396,6 @@ export namespace verification {
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_verification_admin_reject_adminReject>
         }
 
-        public async completeKyc(params: RequestType<typeof api_verification_complete_kyc_completeKyc>): Promise<ResponseType<typeof api_verification_complete_kyc_completeKyc>> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/verification/complete-kyc`, {method: "POST", body: JSON.stringify(params)})
-            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_verification_complete_kyc_completeKyc>
-        }
-
         public async getDocument(params: { freelancerId: string }): Promise<ResponseType<typeof api_verification_get_document_getDocument>> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/verification/document/${encodeURIComponent(params.freelancerId)}`, {method: "GET", body: undefined})
@@ -2442,12 +2406,6 @@ export namespace verification {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/verification/status`, {method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_verification_get_status_getStatus>
-        }
-
-        public async startKyc(params: RequestType<typeof api_verification_start_kyc_startKyc>): Promise<ResponseType<typeof api_verification_start_kyc_startKyc>> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/verification/start-kyc`, {method: "POST", body: JSON.stringify(params)})
-            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_verification_start_kyc_startKyc>
         }
 
         public async submit(params: RequestType<typeof api_verification_submit_submit>): Promise<ResponseType<typeof api_verification_submit_submit>> {

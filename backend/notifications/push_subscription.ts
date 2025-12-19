@@ -27,7 +27,7 @@ interface SubscribeResponse {
 }
 
 export const subscribePush = api<SubscribeRequest, SubscribeResponse>(
-  { method: "POST", path: "/notifications/push/subscribe", expose: true, auth: true },
+  { method: "POST", path: "/notifications/push/subscribe", expose: false, auth: true },
   async (req): Promise<SubscribeResponse> => {
     const auth = getAuthData()! as AuthData;
     const userId = auth.userID;
@@ -69,7 +69,7 @@ export const subscribePush = api<SubscribeRequest, SubscribeResponse>(
 );
 
 export const unsubscribePush = api(
-  { method: "POST", path: "/notifications/push/unsubscribe", expose: true, auth: true },
+  { method: "POST", path: "/notifications/push/unsubscribe", expose: false, auth: true },
   async (req: { endpoint: string }): Promise<{ success: boolean }> => {
     const auth = getAuthData()! as AuthData;
     const userId = auth.userID;
@@ -84,7 +84,7 @@ export const unsubscribePush = api(
 );
 
 export const getVapidPublicKey = api(
-  { method: "GET", path: "/notifications/push/vapid-key", expose: true },
+  { method: "GET", path: "/notifications/push/vapid-key", expose: false },
   async (): Promise<{ publicKey: string }> => {
     return { publicKey: vapidPublicKey() || "" };
   }
