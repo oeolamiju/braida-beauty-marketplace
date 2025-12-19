@@ -22,8 +22,10 @@ export default function ResetPasswordPage() {
   useEffect(() => {
     const tokenParam = searchParams.get("token");
     if (tokenParam) {
+      const trimmedToken = tokenParam.trim();
       console.log("Original token from URL:", tokenParam);
-      setToken(tokenParam);
+      console.log("Trimmed token:", trimmedToken);
+      setToken(trimmedToken);
     } else {
       toast({
         variant: "destructive",
