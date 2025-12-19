@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
-import { CheckCircle, XCircle, Clock, AlertCircle, Upload } from "lucide-react";
+import { CheckCircle, XCircle, Clock, AlertCircle } from "lucide-react";
+import { createVeriffFrame } from "@veriff/incontext-sdk";
 
 export default function Verification() {
   const { toast } = useToast();
@@ -13,14 +14,12 @@ export default function Verification() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  const [legalName, setLegalName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [addressLine1, setAddressLine1] = useState("");
-  const [addressLine2, setAddressLine2] = useState("");
   const [city, setCity] = useState("");
   const [postcode, setPostcode] = useState("");
-  const [idDocumentType, setIdDocumentType] = useState<"passport" | "brp" | "driving_licence">("passport");
-  const [idDocumentFile, setIdDocumentFile] = useState<File | null>(null);
 
   useEffect(() => {
     loadStatus();
@@ -30,15 +29,6 @@ export default function Verification() {
     try {
       const result = await backend.verification.getStatus();
       setStatus(result);
-
-      if (result.status !== 'unverified' && result.status !== 'rejected') {
-        setLegalName(result.legalName || "");
-        setDateOfBirth(result.dateOfBirth || "");
-        setAddressLine1(result.addressLine1 || "");
-        setAddressLine2(result.addressLine2 || "");
-        setCity(result.city || "");
-        setPostcode(result.postcode || "");
-      }
     } catch (err: any) {
       console.error("Failed to load verification status:", err);
       toast({
@@ -51,25 +41,10 @@ export default function Verification() {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      if (file.size > 10 * 1024 * 1024) {
-        toast({
-          title: "File too large",
-          description: "Maximum file size is 10MB",
-          variant: "destructive",
-        });
-        return;
-      }
-      setIdDocumentFile(file);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!legalName || !dateOfBirth || !addressLine1 || !city || !postcode) {
+    if (!firstName || !lastName || !dateOfBirth || !addressLine1 || !city || !postcode) {
       toast({
         title: "Missing fields",
         description: "Please fill in all required fields",
@@ -78,60 +53,54 @@ export default function Verification() {
       return;
     }
 
-    if (!idDocumentFile) {
-      toast({
-        title: "Missing document",
-        description: "Please upload your ID document",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setSubmitting(true);
 
     try {
-      const reader = new FileReader();
-      reader.readAsDataURL(idDocumentFile);
-      reader.onload = async () => {
-        const base64 = reader.result as string;
-        const base64Data = base64.split(",")[1];
+      const session = await backend.verification.startKyc({
+        firstName,
+        lastName,
+        dateOfBirth,
+        addressLine1,
+        city,
+        postcode,
+      });
 
-        try {
-          await backend.verification.submit({
-            legalName,
-            dateOfBirth,
-            addressLine1,
-            addressLine2: addressLine2 || undefined,
-            city,
-            postcode,
-            idDocumentData: base64Data,
-            idDocumentType,
-          });
+      const veriffFrame = createVeriffFrame({
+        url: session.sessionUrl,
+        onEvent: async (msg: string) => {
+          if (msg === "FINISHED") {
+            try {
+              const result = await backend.verification.completeKyc({
+                verificationId: session.verificationId,
+              });
 
-          toast({
-            title: "Verification submitted",
-            description: "Your verification has been submitted for review",
-          });
+              toast({
+                title: result.status === "verified" ? "Verified!" : "Submitted",
+                description: result.message,
+              });
 
-          loadStatus();
-        } catch (err: any) {
-          console.error("Verification submission failed:", err);
-          toast({
-            title: "Submission failed",
-            description: err.message || "Failed to submit verification",
-            variant: "destructive",
-          });
-        } finally {
-          setSubmitting(false);
-        }
-      };
+              loadStatus();
+            } catch (err: any) {
+              console.error("Failed to complete verification:", err);
+              toast({
+                title: "Error",
+                description: err.message || "Failed to complete verification",
+                variant: "destructive",
+              });
+            }
+          }
+        },
+      });
+
+      veriffFrame.mount();
     } catch (err: any) {
-      console.error("File read error:", err);
+      console.error("Failed to start verification:", err);
       toast({
-        title: "File error",
-        description: "Failed to read document file",
+        title: "Error",
+        description: err.message || "Failed to start verification",
         variant: "destructive",
       });
+    } finally {
       setSubmitting(false);
     }
   };
@@ -232,22 +201,35 @@ export default function Verification() {
       {canSubmit && (
         <Card>
           <CardHeader>
-            <CardTitle>Verification Information</CardTitle>
+            <CardTitle>Start Verification</CardTitle>
             <CardDescription>
-              Provide your legal information and ID document. All information is encrypted and stored securely.
+              Provide your information to start the identity verification process with Veriff.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Legal Name *</label>
-                <Input
-                  type="text"
-                  value={legalName}
-                  onChange={(e) => setLegalName(e.target.value)}
-                  placeholder="Full name as shown on ID"
-                  required
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">First Name *</label>
+                  <Input
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="First name"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Last Name *</label>
+                  <Input
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Last name"
+                    required
+                  />
+                </div>
               </div>
 
               <div>
@@ -269,16 +251,6 @@ export default function Verification() {
                   onChange={(e) => setAddressLine1(e.target.value)}
                   placeholder="Street address"
                   required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Address Line 2</label>
-                <Input
-                  type="text"
-                  value={addressLine2}
-                  onChange={(e) => setAddressLine2(e.target.value)}
-                  placeholder="Apartment, suite, etc. (optional)"
                 />
               </div>
 
@@ -306,42 +278,8 @@ export default function Verification() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">ID Document Type *</label>
-                <select
-                  value={idDocumentType}
-                  onChange={(e) => setIdDocumentType(e.target.value as any)}
-                  className="w-full px-3 py-2 border rounded-md bg-background"
-                  required
-                >
-                  <option value="passport">Passport</option>
-                  <option value="brp">Biometric Residence Permit (BRP)</option>
-                  <option value="driving_licence">UK Driving Licence</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Upload ID Document *</label>
-                <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors">
-                  <input
-                    type="file"
-                    onChange={handleFileChange}
-                    accept="image/*,.pdf"
-                    className="hidden"
-                    id="id-upload"
-                    required
-                  />
-                  <label htmlFor="id-upload" className="cursor-pointer">
-                    <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">
-                      {idDocumentFile ? idDocumentFile.name : "Click to upload (Max 10MB)"}
-                    </p>
-                  </label>
-                </div>
-              </div>
-
               <Button type="submit" disabled={submitting} className="w-full">
-                {submitting ? "Submitting..." : status?.status === 'rejected' ? "Resubmit Verification" : "Submit Verification"}
+                {submitting ? "Starting verification..." : status?.status === 'rejected' ? "Retry Verification" : "Start Verification"}
               </Button>
             </form>
           </CardContent>

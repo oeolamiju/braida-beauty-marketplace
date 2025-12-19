@@ -2355,6 +2355,7 @@ import { adminReject as api_verification_admin_reject_adminReject } from "~backe
 import { getDocument as api_verification_get_document_getDocument } from "~backend/verification/get_document";
 import { getStatus as api_verification_get_status_getStatus } from "~backend/verification/get_status";
 import { submit as api_verification_submit_submit } from "~backend/verification/submit";
+import { webhook as api_verification_webhook_webhook } from "~backend/verification/webhook";
 
 export namespace verification {
 
@@ -2370,6 +2371,7 @@ export namespace verification {
             this.getDocument = this.getDocument.bind(this)
             this.getStatus = this.getStatus.bind(this)
             this.submit = this.submit.bind(this)
+            this.webhook = this.webhook.bind(this)
         }
 
         public async adminApprove(params: RequestType<typeof api_verification_admin_approve_adminApprove>): Promise<ResponseType<typeof api_verification_admin_approve_adminApprove>> {
@@ -2412,6 +2414,22 @@ export namespace verification {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/verification/submit`, {method: "POST", body: JSON.stringify(params)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_verification_submit_submit>
+        }
+
+        public async webhook(params: RequestType<typeof api_verification_webhook_webhook>): Promise<ResponseType<typeof api_verification_webhook_webhook>> {
+            // Convert our params into the objects we need for the request
+            const headers = makeRecord<string, string>({
+                "x-signature": params.signature,
+            })
+
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                event: params.event,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/verification/webhook`, {headers, method: "POST", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_verification_webhook_webhook>
         }
     }
 }

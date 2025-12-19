@@ -33,10 +33,10 @@ ResendAPIKey=re_...                         # From Resend dashboard
 MapboxAPIKey=pk.eyJ1...                     # From Mapbox account
 ```
 
-### KYC Verification (Onfido) - Optional
+### KYC Verification (Veriff) - Optional
 ```
-OnfidoAPIKey=api_...                        # From Onfido dashboard
-OnfidoWebhookSecret=<webhook secret>
+VeriffApiKey=<api key>                      # From Veriff dashboard
+VeriffApiSecret=<api secret>                # Shared secret for webhook signature
 ```
 
 ### Push Notifications - Optional

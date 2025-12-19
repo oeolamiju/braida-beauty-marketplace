@@ -4,6 +4,7 @@ import db from "../db";
 import { APIError } from "encore.dev/api";
 import { getAuthData } from "~encore/auth";
 import type { AuthData } from "../auth/auth";
+import { createVerificationSession } from "./veriff_service";
 
 export interface StartKycRequest {
   firstName: string;
@@ -15,8 +16,9 @@ export interface StartKycRequest {
 }
 
 export interface StartKycResponse {
-  sdkToken: string;
-  applicantId: string;
+  sessionUrl: string;
+  sessionToken: string;
+  verificationId: string;
 }
 
 export const startKyc = api<StartKycRequest, StartKycResponse>(
@@ -49,6 +51,16 @@ export const startKyc = api<StartKycRequest, StartKycResponse>(
       throw APIError.invalidArgument("User email not found");
     }
 
+    const session = await createVerificationSession(
+      req.firstName,
+      req.lastName,
+      auth.userID,
+      req.dateOfBirth,
+      req.addressLine1,
+      req.city,
+      req.postcode
+    );
+
     await db.exec`
       UPDATE freelancer_profiles
       SET 
@@ -57,14 +69,15 @@ export const startKyc = api<StartKycRequest, StartKycResponse>(
         verification_address_line1 = ${req.addressLine1 || null},
         verification_postcode = ${req.postcode || null},
         verification_city = ${req.city || null},
+        verification_applicant_id = ${session.verification.id},
         updated_at = NOW()
       WHERE user_id = ${auth.userID}
     `;
 
     return {
-      sdkToken: "",
-      applicantId: "",
+      sessionUrl: session.verification.url,
+      sessionToken: session.verification.sessionToken,
+      verificationId: session.verification.id,
     };
   }
 );
-
