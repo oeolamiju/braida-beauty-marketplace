@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { NotificationProvider } from "./contexts/NotificationContext";
@@ -80,6 +81,22 @@ import ClientLoyalty from "./pages/client/Loyalty";
 import BookPackage from "./pages/client/BookPackage";
 
 export default function App() {
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      const allowedOrigins = [
+        window.location.origin,
+        'https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.lp.dev',
+      ];
+      
+      if (!allowedOrigins.includes(event.origin)) {
+        return;
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
   return (
     <NotificationProvider>
       <BrowserRouter>

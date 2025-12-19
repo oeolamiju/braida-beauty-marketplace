@@ -1,4 +1,4 @@
-CREATE TABLE service_images (
+CREATE TABLE IF NOT EXISTS service_images (
   id SERIAL PRIMARY KEY,
   service_id INTEGER NOT NULL REFERENCES services(id) ON DELETE CASCADE,
   image_url TEXT NOT NULL,
@@ -7,4 +7,4 @@ CREATE TABLE service_images (
   UNIQUE(service_id, display_order)
 );
 
-CREATE INDEX idx_service_images_service_id ON service_images(service_id);
+CREATE INDEX IF NOT EXISTS idx_service_images_service_id ON service_images(service_id);
