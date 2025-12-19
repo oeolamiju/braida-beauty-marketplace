@@ -21,7 +21,7 @@ export async function sendVerificationEmail(email: string, token: string): Promi
   const appUrlValue = getAppUrl();
   console.log(`[EMAIL] AppURL value: ${appUrlValue}`);
   
-  const verificationUrl = `${appUrlValue}/auth/verify?token=${token}`;
+  const verificationUrl = `${appUrlValue}/auth/verify?token=${encodeURIComponent(token)}`;
   console.log(`[EMAIL] Verification URL: ${verificationUrl}`);
   
   console.log(`[EMAIL] About to call sendEmail`);
