@@ -117,18 +117,21 @@ export default function VerifyPage() {
     } catch (error: any) {
       console.error("Resend error:", error);
       
-      // Handle specific error cases
       if (error?.message?.includes("already verified")) {
         toast({
           title: "Already Verified",
           description: "Your account is already verified. Please log in.",
         });
         setTimeout(() => navigate("/auth/login"), 1500);
-      } else if (error?.message?.includes("not found")) {
+      } else if (error?.message?.includes("not found") || error?.message?.includes("account not found")) {
         toast({
           variant: "destructive",
           title: "Account not found",
-          description: "No account found with this email. Please check and try again.",
+          description: "No account exists with this email. Please register first or check if you used a different email.",
+        });
+        setErrorInfo({
+          type: "invalid",
+          message: "No account found with this email address."
         });
       } else {
         toast({
@@ -218,6 +221,36 @@ export default function VerifyPage() {
                   onClick={() => navigate("/auth/login")}
                 >
                   Go to Login
+                </Button>
+              </div>
+            ) : errorInfo.type === "invalid" && errorInfo.message.includes("No account found") ? (
+              <div className="space-y-4">
+                <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                  <p className="text-sm text-amber-800 mb-3">
+                    It looks like you don't have an account yet. Here's what you can do:
+                  </p>
+                  <ul className="text-xs text-amber-700 space-y-2 list-disc list-inside">
+                    <li>Register for a new account using the button below</li>
+                    <li>Check if you used a different email address</li>
+                    <li>Try using your phone number instead if you registered with that</li>
+                  </ul>
+                </div>
+                <Button 
+                  className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700" 
+                  onClick={() => navigate("/auth/register")}
+                >
+                  Register a New Account
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="w-full border-2"
+                  onClick={() => {
+                    setErrorInfo(null);
+                    setState("awaiting");
+                    setResendEmail("");
+                  }}
+                >
+                  Try a Different Email
                 </Button>
               </div>
             ) : resendSuccess ? (
