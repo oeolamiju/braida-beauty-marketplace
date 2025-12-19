@@ -41,7 +41,7 @@ export const login = api<LoginRequest, LoginResponse>(
     }>`
       SELECT id, first_name, last_name, email, phone, password_hash, role, is_verified, status
       FROM users
-      WHERE email = ${req.emailOrPhone} OR phone = ${req.emailOrPhone}
+      WHERE LOWER(email) = LOWER(${req.emailOrPhone}) OR phone = ${req.emailOrPhone}
     `;
 
     if (!user || !user.password_hash) {
