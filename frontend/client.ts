@@ -39,15 +39,21 @@ export class Client {
     public readonly availability: availability.ServiceClient
     public readonly bookings: bookings.ServiceClient
     public readonly disputes: disputes.ServiceClient
+    public readonly favorites: favorites.ServiceClient
     public readonly freelancers: freelancers.ServiceClient
     public readonly health: health.ServiceClient
+    public readonly loyalty: loyalty.ServiceClient
+    public readonly messages: messages.ServiceClient
     public readonly notifications: notifications.ServiceClient
+    public readonly packages: packages.ServiceClient
     public readonly payments: payments.ServiceClient
     public readonly payouts: payouts.ServiceClient
     public readonly policies: policies.ServiceClient
     public readonly profiles: profiles.ServiceClient
+    public readonly referrals: referrals.ServiceClient
     public readonly reports: reports.ServiceClient
     public readonly reviews: reviews.ServiceClient
+    public readonly safety: safety.ServiceClient
     public readonly search: search.ServiceClient
     public readonly services: services.ServiceClient
     public readonly styles: styles.ServiceClient
@@ -72,15 +78,21 @@ export class Client {
         this.availability = new availability.ServiceClient(base)
         this.bookings = new bookings.ServiceClient(base)
         this.disputes = new disputes.ServiceClient(base)
+        this.favorites = new favorites.ServiceClient(base)
         this.freelancers = new freelancers.ServiceClient(base)
         this.health = new health.ServiceClient(base)
+        this.loyalty = new loyalty.ServiceClient(base)
+        this.messages = new messages.ServiceClient(base)
         this.notifications = new notifications.ServiceClient(base)
+        this.packages = new packages.ServiceClient(base)
         this.payments = new payments.ServiceClient(base)
         this.payouts = new payouts.ServiceClient(base)
         this.policies = new policies.ServiceClient(base)
         this.profiles = new profiles.ServiceClient(base)
+        this.referrals = new referrals.ServiceClient(base)
         this.reports = new reports.ServiceClient(base)
         this.reviews = new reviews.ServiceClient(base)
+        this.safety = new safety.ServiceClient(base)
         this.search = new search.ServiceClient(base)
         this.services = new services.ServiceClient(base)
         this.styles = new styles.ServiceClient(base)
@@ -130,18 +142,34 @@ export interface ClientOptions {
 /**
  * Import the endpoint handlers to derive the types for the client.
  */
+import { listAuditLogs as api_admin_audit_logs_listAuditLogs } from "~backend/admin/audit_logs";
 import { deactivateService as api_admin_deactivate_service_deactivateService } from "~backend/admin/deactivate_service";
 import { getBooking as api_admin_get_booking_getBooking } from "~backend/admin/get_booking";
-import { getSettings as api_admin_get_settings_getSettings } from "~backend/admin/get_settings";
 import { getUser as api_admin_get_user_getUser } from "~backend/admin/get_user";
 import { listBookings as api_admin_list_bookings_listBookings } from "~backend/admin/list_bookings";
 import { listLogs as api_admin_list_logs_listLogs } from "~backend/admin/list_logs";
 import { listServices as api_admin_list_services_listServices } from "~backend/admin/list_services";
 import { listUsers as api_admin_list_users_listUsers } from "~backend/admin/list_users";
+import {
+    getMyPermissions as api_admin_rbac_getMyPermissions,
+    updateAdminRole as api_admin_rbac_updateAdminRole
+} from "~backend/admin/rbac";
 import { reactivateService as api_admin_reactivate_service_reactivateService } from "~backend/admin/reactivate_service";
+import {
+    listServicesEnhanced as api_admin_services_enhanced_listServicesEnhanced,
+    updateServiceStatus as api_admin_services_enhanced_updateServiceStatus
+} from "~backend/admin/services_enhanced";
+import {
+    getSettings as api_admin_settings_enhanced_getSettings,
+    updateSettings as api_admin_settings_enhanced_updateSettings
+} from "~backend/admin/settings_enhanced";
 import { suspendUser as api_admin_suspend_user_suspendUser } from "~backend/admin/suspend_user";
 import { unsuspendUser as api_admin_unsuspend_user_unsuspendUser } from "~backend/admin/unsuspend_user";
-import { updateSettings as api_admin_update_settings_updateSettings } from "~backend/admin/update_settings";
+import {
+    getUserDetail as api_admin_users_enhanced_getUserDetail,
+    listUsersEnhanced as api_admin_users_enhanced_listUsersEnhanced,
+    updateUserStatus as api_admin_users_enhanced_updateUserStatus
+} from "~backend/admin/users_enhanced";
 
 export namespace admin {
 
@@ -152,16 +180,24 @@ export namespace admin {
             this.baseClient = baseClient
             this.deactivateService = this.deactivateService.bind(this)
             this.getBooking = this.getBooking.bind(this)
+            this.getMyPermissions = this.getMyPermissions.bind(this)
             this.getSettings = this.getSettings.bind(this)
             this.getUser = this.getUser.bind(this)
+            this.getUserDetail = this.getUserDetail.bind(this)
+            this.listAuditLogs = this.listAuditLogs.bind(this)
             this.listBookings = this.listBookings.bind(this)
             this.listLogs = this.listLogs.bind(this)
             this.listServices = this.listServices.bind(this)
+            this.listServicesEnhanced = this.listServicesEnhanced.bind(this)
             this.listUsers = this.listUsers.bind(this)
+            this.listUsersEnhanced = this.listUsersEnhanced.bind(this)
             this.reactivateService = this.reactivateService.bind(this)
             this.suspendUser = this.suspendUser.bind(this)
             this.unsuspendUser = this.unsuspendUser.bind(this)
+            this.updateAdminRole = this.updateAdminRole.bind(this)
+            this.updateServiceStatus = this.updateServiceStatus.bind(this)
             this.updateSettings = this.updateSettings.bind(this)
+            this.updateUserStatus = this.updateUserStatus.bind(this)
         }
 
         public async deactivateService(params: RequestType<typeof api_admin_deactivate_service_deactivateService>): Promise<void> {
@@ -179,16 +215,49 @@ export namespace admin {
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_get_booking_getBooking>
         }
 
-        public async getSettings(): Promise<ResponseType<typeof api_admin_get_settings_getSettings>> {
+        /**
+         * Get current admin's permissions
+         */
+        public async getMyPermissions(): Promise<ResponseType<typeof api_admin_rbac_getMyPermissions>> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/admin/settings`, {method: "GET", body: undefined})
-            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_get_settings_getSettings>
+            const resp = await this.baseClient.callTypedAPI(`/admin/permissions`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_rbac_getMyPermissions>
+        }
+
+        public async getSettings(): Promise<ResponseType<typeof api_admin_settings_enhanced_getSettings>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/settings/platform`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_settings_enhanced_getSettings>
         }
 
         public async getUser(params: { userId: string }): Promise<ResponseType<typeof api_admin_get_user_getUser>> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/admin/users/${encodeURIComponent(params.userId)}`, {method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_get_user_getUser>
+        }
+
+        public async getUserDetail(params: { userId: string }): Promise<ResponseType<typeof api_admin_users_enhanced_getUserDetail>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/users/${encodeURIComponent(params.userId)}/detail`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_users_enhanced_getUserDetail>
+        }
+
+        public async listAuditLogs(params: RequestType<typeof api_admin_audit_logs_listAuditLogs>): Promise<ResponseType<typeof api_admin_audit_logs_listAuditLogs>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                actorId:    params.actorId,
+                endDate:    params.endDate,
+                eventType:  params.eventType === undefined ? undefined : String(params.eventType),
+                limit:      params.limit === undefined ? undefined : String(params.limit),
+                page:       params.page === undefined ? undefined : String(params.page),
+                startDate:  params.startDate,
+                targetId:   params.targetId,
+                targetType: params.targetType,
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/audit-logs`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_audit_logs_listAuditLogs>
         }
 
         public async listBookings(params: RequestType<typeof api_admin_list_bookings_listBookings>): Promise<ResponseType<typeof api_admin_list_bookings_listBookings>> {
@@ -209,10 +278,49 @@ export namespace admin {
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_list_services_listServices>
         }
 
+        public async listServicesEnhanced(params: RequestType<typeof api_admin_services_enhanced_listServicesEnhanced>): Promise<ResponseType<typeof api_admin_services_enhanced_listServicesEnhanced>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                category:  params.category,
+                city:      params.city,
+                limit:     params.limit === undefined ? undefined : String(params.limit),
+                page:      params.page === undefined ? undefined : String(params.page),
+                priceMax:  params.priceMax === undefined ? undefined : String(params.priceMax),
+                priceMin:  params.priceMin === undefined ? undefined : String(params.priceMin),
+                search:    params.search,
+                sortBy:    params.sortBy === undefined ? undefined : String(params.sortBy),
+                sortOrder: params.sortOrder === undefined ? undefined : String(params.sortOrder),
+                status:    params.status === undefined ? undefined : String(params.status),
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/services/enhanced`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_services_enhanced_listServicesEnhanced>
+        }
+
         public async listUsers(params: RequestType<typeof api_admin_list_users_listUsers>): Promise<ResponseType<typeof api_admin_list_users_listUsers>> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/admin/users/list`, {method: "POST", body: JSON.stringify(params)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_list_users_listUsers>
+        }
+
+        public async listUsersEnhanced(params: RequestType<typeof api_admin_users_enhanced_listUsersEnhanced>): Promise<ResponseType<typeof api_admin_users_enhanced_listUsersEnhanced>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                city:      params.city,
+                kycStatus: params.kycStatus === undefined ? undefined : String(params.kycStatus),
+                limit:     params.limit === undefined ? undefined : String(params.limit),
+                page:      params.page === undefined ? undefined : String(params.page),
+                role:      params.role === undefined ? undefined : String(params.role),
+                search:    params.search,
+                sortBy:    params.sortBy === undefined ? undefined : String(params.sortBy),
+                sortOrder: params.sortOrder === undefined ? undefined : String(params.sortOrder),
+                status:    params.status === undefined ? undefined : String(params.status),
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/users/enhanced`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_users_enhanced_listUsersEnhanced>
         }
 
         public async reactivateService(params: { serviceId: string }): Promise<void> {
@@ -232,8 +340,54 @@ export namespace admin {
             await this.baseClient.callTypedAPI(`/admin/users/${encodeURIComponent(params.userId)}/unsuspend`, {method: "POST", body: undefined})
         }
 
-        public async updateSettings(params: RequestType<typeof api_admin_update_settings_updateSettings>): Promise<void> {
-            await this.baseClient.callTypedAPI(`/admin/settings`, {method: "POST", body: JSON.stringify(params)})
+        /**
+         * Update admin role (super_admin only)
+         */
+        public async updateAdminRole(params: RequestType<typeof api_admin_rbac_updateAdminRole>): Promise<ResponseType<typeof api_admin_rbac_updateAdminRole>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                adminRole: params.adminRole,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/users/${encodeURIComponent(params.userId)}/role`, {method: "PUT", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_rbac_updateAdminRole>
+        }
+
+        /**
+         * Activate/deactivate service
+         */
+        public async updateServiceStatus(params: RequestType<typeof api_admin_services_enhanced_updateServiceStatus>): Promise<ResponseType<typeof api_admin_services_enhanced_updateServiceStatus>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                isActive: params.isActive,
+                reason:   params.reason,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/services/${encodeURIComponent(params.serviceId)}/status`, {method: "PUT", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_services_enhanced_updateServiceStatus>
+        }
+
+        public async updateSettings(params: RequestType<typeof api_admin_settings_enhanced_updateSettings>): Promise<ResponseType<typeof api_admin_settings_enhanced_updateSettings>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/settings/platform`, {method: "PUT", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_settings_enhanced_updateSettings>
+        }
+
+        /**
+         * Suspend/unsuspend user
+         */
+        public async updateUserStatus(params: RequestType<typeof api_admin_users_enhanced_updateUserStatus>): Promise<ResponseType<typeof api_admin_users_enhanced_updateUserStatus>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                reason: params.reason,
+                status: params.status,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/users/${encodeURIComponent(params.userId)}/status`, {method: "PUT", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_users_enhanced_updateUserStatus>
         }
     }
 }
@@ -241,6 +395,10 @@ export namespace admin {
 /**
  * Import the endpoint handlers to derive the types for the client.
  */
+import {
+    getCityAnalytics as api_analytics_city_metrics_getCityAnalytics,
+    getSupportedCities as api_analytics_city_metrics_getSupportedCities
+} from "~backend/analytics/city_metrics";
 import { getKPIs as api_analytics_get_kpis_getKPIs } from "~backend/analytics/get_kpis";
 import { track as api_analytics_track_track } from "~backend/analytics/track";
 
@@ -251,14 +409,38 @@ export namespace analytics {
 
         constructor(baseClient: BaseClient) {
             this.baseClient = baseClient
+            this.getCityAnalytics = this.getCityAnalytics.bind(this)
             this.getKPIs = this.getKPIs.bind(this)
+            this.getSupportedCities = this.getSupportedCities.bind(this)
             this.track = this.track.bind(this)
+        }
+
+        public async getCityAnalytics(params: RequestType<typeof api_analytics_city_metrics_getCityAnalytics>): Promise<ResponseType<typeof api_analytics_city_metrics_getCityAnalytics>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                cities:    params.cities?.map((v) => v),
+                endDate:   params.endDate,
+                startDate: params.startDate,
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/analytics/cities`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_analytics_city_metrics_getCityAnalytics>
         }
 
         public async getKPIs(): Promise<ResponseType<typeof api_analytics_get_kpis_getKPIs>> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/analytics/kpis`, {method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_analytics_get_kpis_getKPIs>
+        }
+
+        /**
+         * Get list of supported cities for frontend
+         */
+        public async getSupportedCities(): Promise<ResponseType<typeof api_analytics_city_metrics_getSupportedCities>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/cities`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_analytics_city_metrics_getSupportedCities>
         }
 
         public async track(params: RequestType<typeof api_analytics_track_track>): Promise<ResponseType<typeof api_analytics_track_track>> {
@@ -352,6 +534,12 @@ export namespace auth {
  * Import the endpoint handlers to derive the types for the client.
  */
 import { addException as api_availability_add_exception_addException } from "~backend/availability/add_exception";
+import {
+    blockTime as api_availability_calendar_blockTime,
+    exportIcal as api_availability_calendar_exportIcal,
+    getCalendar as api_availability_calendar_getCalendar,
+    unblockTime as api_availability_calendar_unblockTime
+} from "~backend/availability/calendar";
 import { deleteException as api_availability_delete_exception_deleteException } from "~backend/availability/delete_exception";
 import { getRules as api_availability_get_rules_getRules } from "~backend/availability/get_rules";
 import { getSchedule as api_availability_get_schedule_getSchedule } from "~backend/availability/get_schedule";
@@ -369,7 +557,10 @@ export namespace availability {
         constructor(baseClient: BaseClient) {
             this.baseClient = baseClient
             this.addException = this.addException.bind(this)
+            this.blockTime = this.blockTime.bind(this)
             this.deleteException = this.deleteException.bind(this)
+            this.exportIcal = this.exportIcal.bind(this)
+            this.getCalendar = this.getCalendar.bind(this)
             this.getRules = this.getRules.bind(this)
             this.getSchedule = this.getSchedule.bind(this)
             this.getServiceSlots = this.getServiceSlots.bind(this)
@@ -377,6 +568,7 @@ export namespace availability {
             this.listExceptions = this.listExceptions.bind(this)
             this.setRules = this.setRules.bind(this)
             this.setSettings = this.setSettings.bind(this)
+            this.unblockTime = this.unblockTime.bind(this)
         }
 
         public async addException(params: RequestType<typeof api_availability_add_exception_addException>): Promise<ResponseType<typeof api_availability_add_exception_addException>> {
@@ -385,10 +577,38 @@ export namespace availability {
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_availability_add_exception_addException>
         }
 
+        public async blockTime(params: RequestType<typeof api_availability_calendar_blockTime>): Promise<ResponseType<typeof api_availability_calendar_blockTime>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/availability/block`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_availability_calendar_blockTime>
+        }
+
         public async deleteException(params: { id: number }): Promise<ResponseType<typeof api_availability_delete_exception_deleteException>> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/availability/exceptions/${encodeURIComponent(params.id)}`, {method: "DELETE", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_availability_delete_exception_deleteException>
+        }
+
+        /**
+         * iCal export
+         */
+        public async exportIcal(): Promise<ResponseType<typeof api_availability_calendar_exportIcal>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/availability/ical`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_availability_calendar_exportIcal>
+        }
+
+        public async getCalendar(params: RequestType<typeof api_availability_calendar_getCalendar>): Promise<ResponseType<typeof api_availability_calendar_getCalendar>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                endDate:   params.endDate,
+                startDate: params.startDate,
+                view:      params.view === undefined ? undefined : String(params.view),
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/availability/calendar`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_availability_calendar_getCalendar>
         }
 
         public async getRules(): Promise<ResponseType<typeof api_availability_get_rules_getRules>> {
@@ -448,6 +668,12 @@ export namespace availability {
             const resp = await this.baseClient.callTypedAPI(`/availability/settings`, {method: "POST", body: JSON.stringify(params)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_availability_set_settings_setSettings>
         }
+
+        public async unblockTime(params: { id: number }): Promise<ResponseType<typeof api_availability_calendar_unblockTime>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/availability/block/${encodeURIComponent(params.id)}`, {method: "DELETE", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_availability_calendar_unblockTime>
+        }
     }
 }
 
@@ -463,8 +689,17 @@ import { getDashboardStats as api_bookings_get_dashboard_stats_getDashboardStats
 import { getSlots as api_bookings_get_slots_getSlots } from "~backend/bookings/get_slots";
 import { list as api_bookings_list_list } from "~backend/bookings/list";
 import { listRescheduleRequests as api_bookings_list_reschedule_requests_listRescheduleRequests } from "~backend/bookings/list_reschedule_requests";
+import {
+    createMultiServiceBooking as api_bookings_multi_service_createMultiServiceBooking,
+    getBookingDuration as api_bookings_multi_service_getBookingDuration
+} from "~backend/bookings/multi_service";
 import { requestReschedule as api_bookings_request_reschedule_requestReschedule } from "~backend/bookings/request_reschedule";
 import { respondReschedule as api_bookings_respond_reschedule_respondReschedule } from "~backend/bookings/respond_reschedule";
+import {
+    getSharedBooking as api_bookings_share_getSharedBooking,
+    revokeBookingShare as api_bookings_share_revokeBookingShare,
+    shareBooking as api_bookings_share_shareBooking
+} from "~backend/bookings/share";
 
 export namespace bookings {
 
@@ -476,14 +711,19 @@ export namespace bookings {
             this.accept = this.accept.bind(this)
             this.cancel = this.cancel.bind(this)
             this.create = this.create.bind(this)
+            this.createMultiServiceBooking = this.createMultiServiceBooking.bind(this)
             this.decline = this.decline.bind(this)
             this.get = this.get.bind(this)
+            this.getBookingDuration = this.getBookingDuration.bind(this)
             this.getDashboardStats = this.getDashboardStats.bind(this)
+            this.getSharedBooking = this.getSharedBooking.bind(this)
             this.getSlots = this.getSlots.bind(this)
             this.list = this.list.bind(this)
             this.listRescheduleRequests = this.listRescheduleRequests.bind(this)
             this.requestReschedule = this.requestReschedule.bind(this)
             this.respondReschedule = this.respondReschedule.bind(this)
+            this.revokeBookingShare = this.revokeBookingShare.bind(this)
+            this.shareBooking = this.shareBooking.bind(this)
         }
 
         public async accept(params: { id: number }): Promise<ResponseType<typeof api_bookings_accept_accept>> {
@@ -509,6 +749,12 @@ export namespace bookings {
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_bookings_create_create>
         }
 
+        public async createMultiServiceBooking(params: RequestType<typeof api_bookings_multi_service_createMultiServiceBooking>): Promise<ResponseType<typeof api_bookings_multi_service_createMultiServiceBooking>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/bookings/multi`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_bookings_multi_service_createMultiServiceBooking>
+        }
+
         public async decline(params: RequestType<typeof api_bookings_decline_decline>): Promise<ResponseType<typeof api_bookings_decline_decline>> {
             // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
             const body: Record<string, any> = {
@@ -526,10 +772,22 @@ export namespace bookings {
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_bookings_get_get>
         }
 
+        public async getBookingDuration(params: RequestType<typeof api_bookings_multi_service_getBookingDuration>): Promise<ResponseType<typeof api_bookings_multi_service_getBookingDuration>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/bookings/calculate-duration`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_bookings_multi_service_getBookingDuration>
+        }
+
         public async getDashboardStats(): Promise<ResponseType<typeof api_bookings_get_dashboard_stats_getDashboardStats>> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/bookings/dashboard-stats`, {method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_bookings_get_dashboard_stats_getDashboardStats>
+        }
+
+        public async getSharedBooking(params: { shareCode: string }): Promise<ResponseType<typeof api_bookings_share_getSharedBooking>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/shared-booking/${encodeURIComponent(params.shareCode)}`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_bookings_share_getSharedBooking>
         }
 
         public async getSlots(params: RequestType<typeof api_bookings_get_slots_getSlots>): Promise<ResponseType<typeof api_bookings_get_slots_getSlots>> {
@@ -587,6 +845,31 @@ export namespace bookings {
             const resp = await this.baseClient.callTypedAPI(`/bookings/reschedule/${encodeURIComponent(params.rescheduleRequestId)}/respond`, {method: "POST", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_bookings_respond_reschedule_respondReschedule>
         }
+
+        public async revokeBookingShare(params: RequestType<typeof api_bookings_share_revokeBookingShare>): Promise<ResponseType<typeof api_bookings_share_revokeBookingShare>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                shareCode: params.shareCode,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/bookings/${encodeURIComponent(params.bookingId)}/share/revoke`, {method: "POST", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_bookings_share_revokeBookingShare>
+        }
+
+        public async shareBooking(params: RequestType<typeof api_bookings_share_shareBooking>): Promise<ResponseType<typeof api_bookings_share_shareBooking>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                expiresInHours: params.expiresInHours,
+                recipientEmail: params.recipientEmail,
+                recipientName:  params.recipientName,
+                recipientPhone: params.recipientPhone,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/bookings/${encodeURIComponent(params.bookingId)}/share`, {method: "POST", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_bookings_share_shareBooking>
+        }
     }
 }
 
@@ -594,6 +877,10 @@ export namespace bookings {
  * Import the endpoint handlers to derive the types for the client.
  */
 import { adminAddNote as api_disputes_admin_add_note_adminAddNote } from "~backend/disputes/admin_add_note";
+import {
+    getDashboardStats as api_disputes_admin_dashboard_getDashboardStats,
+    getDisputeDetails as api_disputes_admin_dashboard_getDisputeDetails
+} from "~backend/disputes/admin_dashboard";
 import { adminGet as api_disputes_admin_get_adminGet } from "~backend/disputes/admin_get";
 import { adminList as api_disputes_admin_list_adminList } from "~backend/disputes/admin_list";
 import { adminResolve as api_disputes_admin_resolve_adminResolve } from "~backend/disputes/admin_resolve";
@@ -617,6 +904,8 @@ export namespace disputes {
             this.adminUpdateStatus = this.adminUpdateStatus.bind(this)
             this.create = this.create.bind(this)
             this.get = this.get.bind(this)
+            this.getDashboardStats = this.getDashboardStats.bind(this)
+            this.getDisputeDetails = this.getDisputeDetails.bind(this)
             this.listByBooking = this.listByBooking.bind(this)
             this.uploadAttachment = this.uploadAttachment.bind(this)
         }
@@ -688,6 +977,24 @@ export namespace disputes {
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_disputes_get_get>
         }
 
+        /**
+         * Get dispute dashboard statistics
+         */
+        public async getDashboardStats(): Promise<ResponseType<typeof api_disputes_admin_dashboard_getDashboardStats>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/disputes/stats`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_disputes_admin_dashboard_getDashboardStats>
+        }
+
+        /**
+         * Get detailed dispute view for admin
+         */
+        public async getDisputeDetails(params: { id: string }): Promise<ResponseType<typeof api_disputes_admin_dashboard_getDisputeDetails>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/disputes/${encodeURIComponent(params.id)}/details`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_disputes_admin_dashboard_getDisputeDetails>
+        }
+
         public async listByBooking(params: { booking_id: string }): Promise<ResponseType<typeof api_disputes_list_by_booking_listByBooking>> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/bookings/${encodeURIComponent(params.booking_id)}/disputes`, {method: "GET", body: undefined})
@@ -704,6 +1011,45 @@ export namespace disputes {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/disputes/${encodeURIComponent(params.dispute_id)}/attachments`, {method: "POST", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_disputes_upload_attachment_uploadAttachment>
+        }
+    }
+}
+
+/**
+ * Import the endpoint handlers to derive the types for the client.
+ */
+import { checkFavorite as api_favorites_check_favorite_checkFavorite } from "~backend/favorites/check_favorite";
+import { listFavoriteFreelancers as api_favorites_list_freelancers_listFavoriteFreelancers } from "~backend/favorites/list_freelancers";
+import { toggleFavoriteFreelancer as api_favorites_toggle_freelancer_toggleFavoriteFreelancer } from "~backend/favorites/toggle_freelancer";
+
+export namespace favorites {
+
+    export class ServiceClient {
+        private baseClient: BaseClient
+
+        constructor(baseClient: BaseClient) {
+            this.baseClient = baseClient
+            this.checkFavorite = this.checkFavorite.bind(this)
+            this.listFavoriteFreelancers = this.listFavoriteFreelancers.bind(this)
+            this.toggleFavoriteFreelancer = this.toggleFavoriteFreelancer.bind(this)
+        }
+
+        public async checkFavorite(params: { freelancerId: string }): Promise<ResponseType<typeof api_favorites_check_favorite_checkFavorite>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/favorites/freelancers/${encodeURIComponent(params.freelancerId)}/check`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_favorites_check_favorite_checkFavorite>
+        }
+
+        public async listFavoriteFreelancers(): Promise<ResponseType<typeof api_favorites_list_freelancers_listFavoriteFreelancers>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/favorites/freelancers`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_favorites_list_freelancers_listFavoriteFreelancers>
+        }
+
+        public async toggleFavoriteFreelancer(params: RequestType<typeof api_favorites_toggle_freelancer_toggleFavoriteFreelancer>): Promise<ResponseType<typeof api_favorites_toggle_freelancer_toggleFavoriteFreelancer>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/favorites/freelancers/toggle`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_favorites_toggle_freelancer_toggleFavoriteFreelancer>
         }
     }
 }
@@ -774,9 +1120,92 @@ export namespace health {
 /**
  * Import the endpoint handlers to derive the types for the client.
  */
+import { getLoyaltyStatus as api_loyalty_get_status_getLoyaltyStatus } from "~backend/loyalty/get_status";
+
+export namespace loyalty {
+
+    export class ServiceClient {
+        private baseClient: BaseClient
+
+        constructor(baseClient: BaseClient) {
+            this.baseClient = baseClient
+            this.getLoyaltyStatus = this.getLoyaltyStatus.bind(this)
+        }
+
+        public async getLoyaltyStatus(): Promise<ResponseType<typeof api_loyalty_get_status_getLoyaltyStatus>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/loyalty/status`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_loyalty_get_status_getLoyaltyStatus>
+        }
+    }
+}
+
+/**
+ * Import the endpoint handlers to derive the types for the client.
+ */
+import { createConversation as api_messages_create_conversation_createConversation } from "~backend/messages/create_conversation";
+import { getMessages as api_messages_get_messages_getMessages } from "~backend/messages/get_messages";
+import { listConversations as api_messages_list_conversations_listConversations } from "~backend/messages/list_conversations";
+import { sendMessage as api_messages_send_message_sendMessage } from "~backend/messages/send_message";
+
+export namespace messages {
+
+    export class ServiceClient {
+        private baseClient: BaseClient
+
+        constructor(baseClient: BaseClient) {
+            this.baseClient = baseClient
+            this.createConversation = this.createConversation.bind(this)
+            this.getMessages = this.getMessages.bind(this)
+            this.listConversations = this.listConversations.bind(this)
+            this.sendMessage = this.sendMessage.bind(this)
+        }
+
+        public async createConversation(params: RequestType<typeof api_messages_create_conversation_createConversation>): Promise<ResponseType<typeof api_messages_create_conversation_createConversation>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/messages/conversations`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_messages_create_conversation_createConversation>
+        }
+
+        public async getMessages(params: RequestType<typeof api_messages_get_messages_getMessages>): Promise<ResponseType<typeof api_messages_get_messages_getMessages>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                before: params.before === undefined ? undefined : String(params.before),
+                limit:  params.limit === undefined ? undefined : String(params.limit),
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/messages/conversations/${encodeURIComponent(params.conversationId)}`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_messages_get_messages_getMessages>
+        }
+
+        public async listConversations(): Promise<ResponseType<typeof api_messages_list_conversations_listConversations>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/messages/conversations`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_messages_list_conversations_listConversations>
+        }
+
+        public async sendMessage(params: RequestType<typeof api_messages_send_message_sendMessage>): Promise<ResponseType<typeof api_messages_send_message_sendMessage>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/messages/send`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_messages_send_message_sendMessage>
+        }
+    }
+}
+
+/**
+ * Import the endpoint handlers to derive the types for the client.
+ */
+import { clearRead as api_notifications_clear_read_clearRead } from "~backend/notifications/clear_read";
 import { getPreferences as api_notifications_get_preferences_getPreferences } from "~backend/notifications/get_preferences";
 import { list as api_notifications_list_list } from "~backend/notifications/list";
+import { listPaginated as api_notifications_list_paginated_listPaginated } from "~backend/notifications/list_paginated";
 import { markRead as api_notifications_mark_read_markRead } from "~backend/notifications/mark_read";
+import {
+    getVapidPublicKey as api_notifications_push_subscription_getVapidPublicKey,
+    subscribePush as api_notifications_push_subscription_subscribePush,
+    unsubscribePush as api_notifications_push_subscription_unsubscribePush
+} from "~backend/notifications/push_subscription";
 import { stream as api_notifications_stream_stream } from "~backend/notifications/stream";
 import { updatePreferences as api_notifications_update_preferences_updatePreferences } from "~backend/notifications/update_preferences";
 
@@ -787,12 +1216,23 @@ export namespace notifications {
 
         constructor(baseClient: BaseClient) {
             this.baseClient = baseClient
+            this.clearRead = this.clearRead.bind(this)
             this.getPreferences = this.getPreferences.bind(this)
+            this.getVapidPublicKey = this.getVapidPublicKey.bind(this)
             this.list = this.list.bind(this)
+            this.listPaginated = this.listPaginated.bind(this)
             this.markAllRead = this.markAllRead.bind(this)
             this.markRead = this.markRead.bind(this)
             this.stream = this.stream.bind(this)
+            this.subscribePush = this.subscribePush.bind(this)
+            this.unsubscribePush = this.unsubscribePush.bind(this)
             this.updatePreferences = this.updatePreferences.bind(this)
+        }
+
+        public async clearRead(): Promise<ResponseType<typeof api_notifications_clear_read_clearRead>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/notifications/read`, {method: "DELETE", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_notifications_clear_read_clearRead>
         }
 
         public async getPreferences(): Promise<ResponseType<typeof api_notifications_get_preferences_getPreferences>> {
@@ -801,10 +1241,30 @@ export namespace notifications {
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_notifications_get_preferences_getPreferences>
         }
 
+        public async getVapidPublicKey(): Promise<ResponseType<typeof api_notifications_push_subscription_getVapidPublicKey>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/notifications/push/vapid-key`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_notifications_push_subscription_getVapidPublicKey>
+        }
+
         public async list(): Promise<ResponseType<typeof api_notifications_list_list>> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/notifications`, {method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_notifications_list_list>
+        }
+
+        public async listPaginated(params: RequestType<typeof api_notifications_list_paginated_listPaginated>): Promise<ResponseType<typeof api_notifications_list_paginated_listPaginated>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                limit:      params.limit === undefined ? undefined : String(params.limit),
+                page:       params.page === undefined ? undefined : String(params.page),
+                type:       params.type === undefined ? undefined : String(params.type),
+                unreadOnly: params.unreadOnly === undefined ? undefined : String(params.unreadOnly),
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/notifications/paginated`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_notifications_list_paginated_listPaginated>
         }
 
         public async markAllRead(): Promise<void> {
@@ -819,10 +1279,96 @@ export namespace notifications {
             return await this.baseClient.createStreamIn(`/notifications/stream`)
         }
 
+        public async subscribePush(params: RequestType<typeof api_notifications_push_subscription_subscribePush>): Promise<ResponseType<typeof api_notifications_push_subscription_subscribePush>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/notifications/push/subscribe`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_notifications_push_subscription_subscribePush>
+        }
+
+        public async unsubscribePush(params: RequestType<typeof api_notifications_push_subscription_unsubscribePush>): Promise<ResponseType<typeof api_notifications_push_subscription_unsubscribePush>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/notifications/push/unsubscribe`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_notifications_push_subscription_unsubscribePush>
+        }
+
         public async updatePreferences(params: RequestType<typeof api_notifications_update_preferences_updatePreferences>): Promise<ResponseType<typeof api_notifications_update_preferences_updatePreferences>> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/notifications/preferences`, {method: "PUT", body: JSON.stringify(params)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_notifications_update_preferences_updatePreferences>
+        }
+    }
+}
+
+/**
+ * Import the endpoint handlers to derive the types for the client.
+ */
+import { createPackage as api_packages_create_createPackage } from "~backend/packages/create";
+import { deletePackage as api_packages_delete_deletePackage } from "~backend/packages/delete";
+import { getPackage as api_packages_get_getPackage } from "~backend/packages/get";
+import { listPackages as api_packages_list_listPackages } from "~backend/packages/list";
+import { updatePackage as api_packages_update_updatePackage } from "~backend/packages/update";
+
+export namespace packages {
+
+    export class ServiceClient {
+        private baseClient: BaseClient
+
+        constructor(baseClient: BaseClient) {
+            this.baseClient = baseClient
+            this.createPackage = this.createPackage.bind(this)
+            this.deletePackage = this.deletePackage.bind(this)
+            this.getPackage = this.getPackage.bind(this)
+            this.listPackages = this.listPackages.bind(this)
+            this.updatePackage = this.updatePackage.bind(this)
+        }
+
+        public async createPackage(params: RequestType<typeof api_packages_create_createPackage>): Promise<ResponseType<typeof api_packages_create_createPackage>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/packages`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_packages_create_createPackage>
+        }
+
+        public async deletePackage(params: { id: number }): Promise<ResponseType<typeof api_packages_delete_deletePackage>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/packages/${encodeURIComponent(params.id)}`, {method: "DELETE", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_packages_delete_deletePackage>
+        }
+
+        public async getPackage(params: { id: number }): Promise<ResponseType<typeof api_packages_get_getPackage>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/packages/${encodeURIComponent(params.id)}`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_packages_get_getPackage>
+        }
+
+        public async listPackages(params: RequestType<typeof api_packages_list_listPackages>): Promise<ResponseType<typeof api_packages_list_listPackages>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                activeOnly:   params.activeOnly === undefined ? undefined : String(params.activeOnly),
+                freelancerId: params.freelancerId,
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/packages`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_packages_list_listPackages>
+        }
+
+        public async updatePackage(params: RequestType<typeof api_packages_update_updatePackage>): Promise<ResponseType<typeof api_packages_update_updatePackage>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                description:         params.description,
+                discountAmountPence: params.discountAmountPence,
+                discountPercent:     params.discountPercent,
+                imageUrl:            params.imageUrl,
+                isActive:            params.isActive,
+                maxUses:             params.maxUses,
+                name:                params.name,
+                serviceIds:          params.serviceIds,
+                validUntil:          params.validUntil,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/packages/${encodeURIComponent(params.id)}`, {method: "PUT", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_packages_update_updatePackage>
         }
     }
 }
@@ -1146,6 +1692,45 @@ export namespace profiles {
 /**
  * Import the endpoint handlers to derive the types for the client.
  */
+import { applyReferralCode as api_referrals_apply_code_applyReferralCode } from "~backend/referrals/apply_code";
+import { getReferralCode as api_referrals_get_code_getReferralCode } from "~backend/referrals/get_code";
+import { listReferrals as api_referrals_list_referrals_listReferrals } from "~backend/referrals/list_referrals";
+
+export namespace referrals {
+
+    export class ServiceClient {
+        private baseClient: BaseClient
+
+        constructor(baseClient: BaseClient) {
+            this.baseClient = baseClient
+            this.applyReferralCode = this.applyReferralCode.bind(this)
+            this.getReferralCode = this.getReferralCode.bind(this)
+            this.listReferrals = this.listReferrals.bind(this)
+        }
+
+        public async applyReferralCode(params: RequestType<typeof api_referrals_apply_code_applyReferralCode>): Promise<ResponseType<typeof api_referrals_apply_code_applyReferralCode>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/referrals/apply`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_referrals_apply_code_applyReferralCode>
+        }
+
+        public async getReferralCode(): Promise<ResponseType<typeof api_referrals_get_code_getReferralCode>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/referrals/code`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_referrals_get_code_getReferralCode>
+        }
+
+        public async listReferrals(): Promise<ResponseType<typeof api_referrals_list_referrals_listReferrals>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/referrals/list`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_referrals_list_referrals_listReferrals>
+        }
+    }
+}
+
+/**
+ * Import the endpoint handlers to derive the types for the client.
+ */
 import { adminAccountAction as api_reports_admin_account_action_adminAccountAction } from "~backend/reports/admin_account_action";
 import { adminGet as api_reports_admin_get_adminGet } from "~backend/reports/admin_get";
 import { adminList as api_reports_admin_list_adminList } from "~backend/reports/admin_list";
@@ -1216,6 +1801,7 @@ import { adminRestore as api_reviews_admin_restore_adminRestore } from "~backend
 import { create as api_reviews_create_create } from "~backend/reviews/create";
 import { getBookingReview as api_reviews_get_booking_review_getBookingReview } from "~backend/reviews/get_booking_review";
 import { listByFreelancer as api_reviews_list_by_freelancer_listByFreelancer } from "~backend/reviews/list_by_freelancer";
+import { triggerReviewReminders as api_reviews_reminders_triggerReviewReminders } from "~backend/reviews/reminders";
 import {
     confirmPhoto as api_reviews_upload_photo_confirmPhoto,
     uploadPhoto as api_reviews_upload_photo_uploadPhoto
@@ -1236,6 +1822,7 @@ export namespace reviews {
             this.create = this.create.bind(this)
             this.getBookingReview = this.getBookingReview.bind(this)
             this.listByFreelancer = this.listByFreelancer.bind(this)
+            this.triggerReviewReminders = this.triggerReviewReminders.bind(this)
             this.uploadPhoto = this.uploadPhoto.bind(this)
         }
 
@@ -1310,10 +1897,94 @@ export namespace reviews {
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_reviews_list_by_freelancer_listByFreelancer>
         }
 
+        /**
+         * Manual trigger for testing
+         */
+        public async triggerReviewReminders(): Promise<ResponseType<typeof api_reviews_reminders_triggerReviewReminders>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/review-reminders/trigger`, {method: "POST", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_reviews_reminders_triggerReviewReminders>
+        }
+
         public async uploadPhoto(params: { reviewId: number }): Promise<ResponseType<typeof api_reviews_upload_photo_uploadPhoto>> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/reviews/${encodeURIComponent(params.reviewId)}/photo/upload-url`, {method: "POST", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_reviews_upload_photo_uploadPhoto>
+        }
+    }
+}
+
+/**
+ * Import the endpoint handlers to derive the types for the client.
+ */
+import {
+    addEmergencyContact as api_safety_emergency_addEmergencyContact,
+    deleteEmergencyContact as api_safety_emergency_deleteEmergencyContact,
+    getEmergencyInfo as api_safety_emergency_getEmergencyInfo,
+    listEmergencyContacts as api_safety_emergency_listEmergencyContacts,
+    triggerEmergencyAlert as api_safety_emergency_triggerEmergencyAlert
+} from "~backend/safety/emergency";
+import {
+    getSafetyResource as api_safety_resources_getSafetyResource,
+    getSafetyResources as api_safety_resources_getSafetyResources
+} from "~backend/safety/resources";
+
+export namespace safety {
+
+    export class ServiceClient {
+        private baseClient: BaseClient
+
+        constructor(baseClient: BaseClient) {
+            this.baseClient = baseClient
+            this.addEmergencyContact = this.addEmergencyContact.bind(this)
+            this.deleteEmergencyContact = this.deleteEmergencyContact.bind(this)
+            this.getEmergencyInfo = this.getEmergencyInfo.bind(this)
+            this.getSafetyResource = this.getSafetyResource.bind(this)
+            this.getSafetyResources = this.getSafetyResources.bind(this)
+            this.listEmergencyContacts = this.listEmergencyContacts.bind(this)
+            this.triggerEmergencyAlert = this.triggerEmergencyAlert.bind(this)
+        }
+
+        public async addEmergencyContact(params: RequestType<typeof api_safety_emergency_addEmergencyContact>): Promise<ResponseType<typeof api_safety_emergency_addEmergencyContact>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/safety/emergency-contacts`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_safety_emergency_addEmergencyContact>
+        }
+
+        public async deleteEmergencyContact(params: { id: number }): Promise<ResponseType<typeof api_safety_emergency_deleteEmergencyContact>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/safety/emergency-contacts/${encodeURIComponent(params.id)}`, {method: "DELETE", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_safety_emergency_deleteEmergencyContact>
+        }
+
+        public async getEmergencyInfo(): Promise<ResponseType<typeof api_safety_emergency_getEmergencyInfo>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/safety/emergency-info`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_safety_emergency_getEmergencyInfo>
+        }
+
+        public async getSafetyResource(params: { id: string }): Promise<ResponseType<typeof api_safety_resources_getSafetyResource>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/safety/resources/${encodeURIComponent(params.id)}`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_safety_resources_getSafetyResource>
+        }
+
+        public async getSafetyResources(): Promise<ResponseType<typeof api_safety_resources_getSafetyResources>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/safety/resources`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_safety_resources_getSafetyResources>
+        }
+
+        public async listEmergencyContacts(): Promise<ResponseType<typeof api_safety_emergency_listEmergencyContacts>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/safety/emergency-contacts`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_safety_emergency_listEmergencyContacts>
+        }
+
+        public async triggerEmergencyAlert(params: RequestType<typeof api_safety_emergency_triggerEmergencyAlert>): Promise<ResponseType<typeof api_safety_emergency_triggerEmergencyAlert>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/safety/emergency-alert`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_safety_emergency_triggerEmergencyAlert>
         }
     }
 }
@@ -1384,11 +2055,22 @@ import { activate as api_services_activate_activate } from "~backend/services/ac
 import { create as api_services_create_create } from "~backend/services/create";
 import { deactivate as api_services_deactivate_deactivate } from "~backend/services/deactivate";
 import { deleteImage as api_services_delete_image_deleteImage } from "~backend/services/delete_image";
+import { duplicate as api_services_duplicate_duplicate } from "~backend/services/duplicate";
 import { get as api_services_get_get } from "~backend/services/get";
 import { list as api_services_list_list } from "~backend/services/list";
 import { listImages as api_services_list_images_listImages } from "~backend/services/list_images";
+import { reorderImages as api_services_reorder_images_reorderImages } from "~backend/services/reorder_images";
+import {
+    getServiceTemplate as api_services_templates_getServiceTemplate,
+    getServiceTemplates as api_services_templates_getServiceTemplates
+} from "~backend/services/templates";
 import { update as api_services_update_update } from "~backend/services/update";
 import { uploadImage as api_services_upload_image_uploadImage } from "~backend/services/upload_image";
+import {
+    deleteVideo as api_services_upload_video_deleteVideo,
+    listVideos as api_services_upload_video_listVideos,
+    uploadVideo as api_services_upload_video_uploadVideo
+} from "~backend/services/upload_video";
 
 export namespace services {
 
@@ -1401,11 +2083,18 @@ export namespace services {
             this.create = this.create.bind(this)
             this.deactivate = this.deactivate.bind(this)
             this.deleteImage = this.deleteImage.bind(this)
+            this.deleteVideo = this.deleteVideo.bind(this)
+            this.duplicate = this.duplicate.bind(this)
             this.get = this.get.bind(this)
+            this.getServiceTemplate = this.getServiceTemplate.bind(this)
+            this.getServiceTemplates = this.getServiceTemplates.bind(this)
             this.list = this.list.bind(this)
             this.listImages = this.listImages.bind(this)
+            this.listVideos = this.listVideos.bind(this)
+            this.reorderImages = this.reorderImages.bind(this)
             this.update = this.update.bind(this)
             this.uploadImage = this.uploadImage.bind(this)
+            this.uploadVideo = this.uploadVideo.bind(this)
         }
 
         public async activate(params: { id: number }): Promise<ResponseType<typeof api_services_activate_activate>> {
@@ -1430,6 +2119,23 @@ export namespace services {
             await this.baseClient.callTypedAPI(`/services/${encodeURIComponent(params.serviceId)}/images/${encodeURIComponent(params.imageId)}`, {method: "DELETE", body: undefined})
         }
 
+        public async deleteVideo(params: { serviceId: number, videoId: number }): Promise<ResponseType<typeof api_services_upload_video_deleteVideo>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/services/${encodeURIComponent(params.serviceId)}/videos/${encodeURIComponent(params.videoId)}`, {method: "DELETE", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_services_upload_video_deleteVideo>
+        }
+
+        public async duplicate(params: RequestType<typeof api_services_duplicate_duplicate>): Promise<ResponseType<typeof api_services_duplicate_duplicate>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                newTitle: params.newTitle,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/services/${encodeURIComponent(params.serviceId)}/duplicate`, {method: "POST", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_services_duplicate_duplicate>
+        }
+
         /**
          * Retrieves detailed information about a specific service
          */
@@ -1437,6 +2143,23 @@ export namespace services {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/services/${encodeURIComponent(params.id)}`, {method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_services_get_get>
+        }
+
+        public async getServiceTemplate(params: { name: string }): Promise<ResponseType<typeof api_services_templates_getServiceTemplate>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/services/templates/${encodeURIComponent(params.name)}`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_services_templates_getServiceTemplate>
+        }
+
+        public async getServiceTemplates(params: RequestType<typeof api_services_templates_getServiceTemplates>): Promise<ResponseType<typeof api_services_templates_getServiceTemplates>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                category: params.category,
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/services/templates`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_services_templates_getServiceTemplates>
         }
 
         /**
@@ -1459,6 +2182,23 @@ export namespace services {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/services/${encodeURIComponent(params.serviceId)}/images`, {method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_services_list_images_listImages>
+        }
+
+        public async listVideos(params: { serviceId: number }): Promise<ResponseType<typeof api_services_upload_video_listVideos>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/services/${encodeURIComponent(params.serviceId)}/videos`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_services_upload_video_listVideos>
+        }
+
+        public async reorderImages(params: RequestType<typeof api_services_reorder_images_reorderImages>): Promise<ResponseType<typeof api_services_reorder_images_reorderImages>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                imageOrder: params.imageOrder,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/services/${encodeURIComponent(params.serviceId)}/images/reorder`, {method: "PUT", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_services_reorder_images_reorderImages>
         }
 
         public async update(params: RequestType<typeof api_services_update_update>): Promise<ResponseType<typeof api_services_update_update>> {
@@ -1497,7 +2237,25 @@ export namespace services {
             const resp = await this.baseClient.callTypedAPI(`/services/${encodeURIComponent(params.serviceId)}/images`, {method: "POST", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_services_upload_image_uploadImage>
         }
+
+        public async uploadVideo(params: RequestType<typeof api_services_upload_video_uploadVideo>): Promise<ResponseType<typeof api_services_upload_video_uploadVideo>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                mimeType:      params.mimeType,
+                thumbnailData: params.thumbnailData,
+                title:         params.title,
+                videoData:     params.videoData,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/services/${encodeURIComponent(params.serviceId)}/videos`, {method: "POST", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_services_upload_video_uploadVideo>
+        }
     }
+}
+
+
+export namespace shared {
 }
 
 /**
@@ -1620,8 +2378,10 @@ import { adminApprove as api_verification_admin_approve_adminApprove } from "~ba
 import { adminGet as api_verification_admin_get_adminGet } from "~backend/verification/admin_get";
 import { adminList as api_verification_admin_list_adminList } from "~backend/verification/admin_list";
 import { adminReject as api_verification_admin_reject_adminReject } from "~backend/verification/admin_reject";
+import { completeKyc as api_verification_complete_kyc_completeKyc } from "~backend/verification/complete_kyc";
 import { getDocument as api_verification_get_document_getDocument } from "~backend/verification/get_document";
 import { getStatus as api_verification_get_status_getStatus } from "~backend/verification/get_status";
+import { startKyc as api_verification_start_kyc_startKyc } from "~backend/verification/start_kyc";
 import { submit as api_verification_submit_submit } from "~backend/verification/submit";
 
 export namespace verification {
@@ -1635,8 +2395,10 @@ export namespace verification {
             this.adminGet = this.adminGet.bind(this)
             this.adminList = this.adminList.bind(this)
             this.adminReject = this.adminReject.bind(this)
+            this.completeKyc = this.completeKyc.bind(this)
             this.getDocument = this.getDocument.bind(this)
             this.getStatus = this.getStatus.bind(this)
+            this.startKyc = this.startKyc.bind(this)
             this.submit = this.submit.bind(this)
         }
 
@@ -1664,6 +2426,12 @@ export namespace verification {
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_verification_admin_reject_adminReject>
         }
 
+        public async completeKyc(params: RequestType<typeof api_verification_complete_kyc_completeKyc>): Promise<ResponseType<typeof api_verification_complete_kyc_completeKyc>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/verification/complete-kyc`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_verification_complete_kyc_completeKyc>
+        }
+
         public async getDocument(params: { freelancerId: string }): Promise<ResponseType<typeof api_verification_get_document_getDocument>> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/verification/document/${encodeURIComponent(params.freelancerId)}`, {method: "GET", body: undefined})
@@ -1674,6 +2442,12 @@ export namespace verification {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/verification/status`, {method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_verification_get_status_getStatus>
+        }
+
+        public async startKyc(params: RequestType<typeof api_verification_start_kyc_startKyc>): Promise<ResponseType<typeof api_verification_start_kyc_startKyc>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/verification/start-kyc`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_verification_start_kyc_startKyc>
         }
 
         public async submit(params: RequestType<typeof api_verification_submit_submit>): Promise<ResponseType<typeof api_verification_submit_submit>> {
