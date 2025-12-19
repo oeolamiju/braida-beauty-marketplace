@@ -12,6 +12,9 @@ interface SendEmailParams {
 export async function sendEmail(params: SendEmailParams): Promise<void> {
   const { to, subject, html } = params;
 
+  console.log(`[EMAIL] Attempting to send email to: ${to}`);
+  console.log(`[EMAIL] Subject: ${subject}`);
+
   if (!resendApiKey()) {
     const error = "ResendAPIKey not configured. Please add it in Settings to enable email notifications.";
     console.error(`[EMAIL ERROR] ${error}`);
@@ -19,24 +22,38 @@ export async function sendEmail(params: SendEmailParams): Promise<void> {
   }
 
   const from = fromEmail() || "Braida <noreply@braida.uk>";
+  console.log(`[EMAIL] From address: ${from}`);
   
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${resendApiKey()}`,
-    },
-    body: JSON.stringify({
-      from,
-      to: [to],
-      subject,
-      html,
-    }),
-  });
+  const requestBody = {
+    from,
+    to: [to],
+    subject,
+    html,
+  };
+  
+  console.log(`[EMAIL] Making request to Resend API...`);
+  
+  let response;
+  try {
+    response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${resendApiKey()}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
+  } catch (fetchError) {
+    console.error(`[EMAIL ERROR] Network error while calling Resend API:`, fetchError);
+    throw new Error(`Network error while sending email: ${fetchError instanceof Error ? fetchError.message : String(fetchError)}`);
+  }
+
+  console.log(`[EMAIL] Resend API response status: ${response.status}`);
 
   if (!response.ok) {
     const error = await response.text();
     console.error(`[EMAIL ERROR] Failed to send email to ${to}:`, response.status, error);
+    console.error(`[EMAIL ERROR] Response headers:`, JSON.stringify(Object.fromEntries(response.headers.entries())));
     throw new Error(`Failed to send email: ${response.status} - ${error}`);
   }
 

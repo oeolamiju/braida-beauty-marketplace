@@ -15,7 +15,11 @@ export interface ForgotPasswordResponse {
 export const forgotPassword = api<ForgotPasswordRequest, ForgotPasswordResponse>(
   { expose: true, method: "POST", path: "/auth/forgot-password" },
   async (req) => {
+    console.log(`[FORGOT_PASSWORD] Request received for email: ${req.email}`);
+    
     await checkRateLimit(req.email, RATE_LIMITS.passwordReset);
+    console.log(`[FORGOT_PASSWORD] Rate limit check passed`);
+    
     const user = await db.queryRow<{
       id: string;
       email: string | null;
@@ -26,16 +30,20 @@ export const forgotPassword = api<ForgotPasswordRequest, ForgotPasswordResponse>
     `;
 
     if (!user || !user.email) {
+      console.log(`[FORGOT_PASSWORD] User not found for email: ${req.email}`);
       return {
         message: "If an account exists with this email, a password reset link has been sent.",
       };
     }
 
+    console.log(`[FORGOT_PASSWORD] User found: ${user.id}`);
+    
     await db.exec`
       UPDATE password_reset_tokens
       SET used_at = NOW()
       WHERE user_id = ${user.id} AND used_at IS NULL
     `;
+    console.log(`[FORGOT_PASSWORD] Invalidated existing tokens`);
 
     const resetToken = generateVerificationToken();
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
@@ -44,8 +52,17 @@ export const forgotPassword = api<ForgotPasswordRequest, ForgotPasswordResponse>
       INSERT INTO password_reset_tokens (user_id, token, expires_at)
       VALUES (${user.id}, ${resetToken}, ${expiresAt})
     `;
+    console.log(`[FORGOT_PASSWORD] Created new reset token`);
 
-    await sendPasswordResetEmail(user.email, resetToken);
+    try {
+      await sendPasswordResetEmail(user.email, resetToken);
+      console.log(`[FORGOT_PASSWORD] Password reset email sent successfully to ${user.email}`);
+    } catch (emailError) {
+      console.error(`[FORGOT_PASSWORD] Failed to send email to ${user.email}:`, emailError);
+      throw APIError.internal(
+        "Failed to send password reset email. Please try again or contact support."
+      );
+    }
 
     return {
       message: "If an account exists with this email, a password reset link has been sent.",
