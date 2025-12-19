@@ -32,9 +32,9 @@ export const forgotPassword = api<ForgotPasswordRequest, ForgotPasswordResponse>
 
     if (!user || !user.email) {
       console.log(`[FORGOT_PASSWORD] User not found for email: ${req.email}`);
-      return {
-        message: "If an account exists with this email, a password reset link has been sent.",
-      };
+      throw APIError.notFound(
+        "No account found with this email address. Please register to create an account."
+      );
     }
 
     console.log(`[FORGOT_PASSWORD] User found: ${user.id}`);
@@ -66,7 +66,7 @@ export const forgotPassword = api<ForgotPasswordRequest, ForgotPasswordResponse>
     }
 
     return {
-      message: "If an account exists with this email, a password reset link has been sent.",
+      message: "Password reset link has been sent to your email.",
     };
   }
 );

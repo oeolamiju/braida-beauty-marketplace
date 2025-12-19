@@ -49,7 +49,9 @@ export const login = api<LoginRequest, LoginResponse>(
         eventType: "user_login_failed",
         details: { reason: "user_not_found", identifier: req.emailOrPhone },
       });
-      throw APIError.unauthenticated("invalid credentials");
+      throw APIError.notFound(
+        "No account found with this email or phone. Please register to create an account."
+      );
     }
 
     const isValidPassword = await bcrypt.compare(req.password, user.password_hash);
