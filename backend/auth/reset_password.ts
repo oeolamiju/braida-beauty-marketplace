@@ -18,6 +18,8 @@ const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d
 export const resetPassword = api<ResetPasswordRequest, ResetPasswordResponse>(
   { expose: true, method: "POST", path: "/auth/reset-password" },
   async (req) => {
+    console.log(`[RESET_PASSWORD] Token received: "${req.token}" (length: ${req.token.length})`);
+    
     await checkRateLimit(req.token, RATE_LIMITS.passwordReset);
     if (req.newPassword.length < PASSWORD_MIN_LENGTH) {
       throw APIError.invalidArgument(
@@ -43,6 +45,7 @@ export const resetPassword = api<ResetPasswordRequest, ResetPasswordResponse>(
     `;
 
     if (!tokenRecord) {
+      console.log(`[RESET_PASSWORD] No token found in database for: "${req.token}"`);
       throw APIError.notFound("invalid reset token");
     }
 

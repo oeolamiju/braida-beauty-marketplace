@@ -43,12 +43,10 @@ export async function sendVerificationSMS(phone: string, code: string): Promise<
 
 export async function sendPasswordResetEmail(email: string, token: string): Promise<void> {
   const appUrlValue = getAppUrl();
-  const encodedToken = encodeURIComponent(token);
-  const resetUrl = `${appUrlValue}/auth/reset-password?token=${encodedToken}`;
+  const resetUrl = `${appUrlValue}/auth/reset-password?token=${token}`;
   
   console.log(`[EMAIL] Sending password reset email to ${email}`);
-  console.log(`[EMAIL] Original token: ${token}`);
-  console.log(`[EMAIL] Encoded token: ${encodedToken}`);
+  console.log(`[EMAIL] Token: ${token}`);
   console.log(`[EMAIL] Reset URL: ${resetUrl}`);
   
   await sendEmail({
