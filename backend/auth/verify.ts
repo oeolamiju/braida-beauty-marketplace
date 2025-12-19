@@ -1,7 +1,7 @@
 import { api, APIError } from "encore.dev/api";
 import db from "../db";
 import { generateToken } from "./auth";
-import { RATE_LIMITS, checkRateLimit } from "../shared/rate_limiter";
+import { RATE_LIMITS, applyRateLimit } from "../shared/rate_limiter";
 
 export interface VerifyRequest {
   token: string;
@@ -23,7 +23,8 @@ export interface VerifyResponse {
 export const verify = api<VerifyRequest, VerifyResponse>(
   { expose: true, method: "POST", path: "/auth/verify" },
   async (req) => {
-    await checkRateLimit(req.token, RATE_LIMITS.verification);
+    // Rate limit verification attempts by token prefix
+    await applyRateLimit(req.token.substring(0, 10), RATE_LIMITS.verification);
     const tokenRecord = await db.queryRow<{
       id: number;
       user_id: string;

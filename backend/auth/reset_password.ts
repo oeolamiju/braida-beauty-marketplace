@@ -1,7 +1,7 @@
 import { api, APIError } from "encore.dev/api";
 import bcrypt from "bcryptjs";
 import db from "../db";
-import { RATE_LIMITS, checkRateLimit } from "../shared/rate_limiter";
+import { RATE_LIMITS, applyRateLimit } from "../shared/rate_limiter";
 
 export interface ResetPasswordRequest {
   token: string;
@@ -20,7 +20,8 @@ export const resetPassword = api<ResetPasswordRequest, ResetPasswordResponse>(
   async (req) => {
     console.log(`[RESET_PASSWORD] Token received: "${req.token}" (length: ${req.token.length})`);
     
-    await checkRateLimit(req.token, RATE_LIMITS.passwordReset);
+    // Rate limit by token prefix to prevent brute force
+    await applyRateLimit(req.token.substring(0, 10), RATE_LIMITS.passwordReset);
     if (req.newPassword.length < PASSWORD_MIN_LENGTH) {
       throw APIError.invalidArgument(
         `password must be at least ${PASSWORD_MIN_LENGTH} characters`

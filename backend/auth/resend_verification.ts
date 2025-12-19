@@ -2,6 +2,7 @@ import { api, APIError } from "encore.dev/api";
 import db from "../db";
 import { generateVerificationToken } from "./auth";
 import { sendVerificationEmail, sendVerificationSMS } from "./notifications";
+import { RATE_LIMITS, applyRateLimit } from "../shared/rate_limiter";
 
 export interface ResendVerificationRequest {
   emailOrPhone: string;
@@ -14,6 +15,8 @@ export interface ResendVerificationResponse {
 export const resendVerification = api<ResendVerificationRequest, ResendVerificationResponse>(
   { expose: true, method: "POST", path: "/auth/resend-verification" },
   async (req) => {
+    // Rate limit verification resend requests
+    await applyRateLimit(req.emailOrPhone, RATE_LIMITS.verification);
     try {
       const user = await db.queryRow<{
         id: string;

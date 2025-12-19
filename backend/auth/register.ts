@@ -1,7 +1,7 @@
 import { api, APIError } from "encore.dev/api";
 import bcrypt from "bcryptjs";
 import db from "../db";
-import { RATE_LIMITS, checkRateLimit } from "../shared/rate_limiter";
+import { RATE_LIMITS, applyRateLimit } from "../shared/rate_limiter";
 import { trackEvent } from "../analytics/track";
 import { sendVerificationEmail } from "./notifications";
 
@@ -26,7 +26,8 @@ const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d
 export const register = api<RegisterRequest, RegisterResponse>(
   { expose: true, method: "POST", path: "/auth/register" },
   async (req) => {
-    await checkRateLimit(req.email || req.phone || "", RATE_LIMITS.register);
+    // Rate limit registration by email or phone
+    await applyRateLimit(req.email || req.phone || "unknown", RATE_LIMITS.register);
     if (!req.email && !req.phone) {
       throw APIError.invalidArgument("email or phone is required");
     }

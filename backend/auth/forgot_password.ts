@@ -2,7 +2,7 @@ import { api, APIError } from "encore.dev/api";
 import db from "../db";
 import { generateVerificationToken } from "./auth";
 import { sendPasswordResetEmail } from "./notifications";
-import { RATE_LIMITS, checkRateLimit } from "../shared/rate_limiter";
+import { RATE_LIMITS, applyRateLimit } from "../shared/rate_limiter";
 
 export interface ForgotPasswordRequest {
   email: string;
@@ -17,7 +17,8 @@ export const forgotPassword = api<ForgotPasswordRequest, ForgotPasswordResponse>
   async (req) => {
     console.log(`[FORGOT_PASSWORD] Request received for email: ${req.email}`);
     
-    await checkRateLimit(req.email, RATE_LIMITS.passwordReset);
+    // Rate limit by email to prevent abuse
+    await applyRateLimit(req.email, RATE_LIMITS.passwordReset);
     console.log(`[FORGOT_PASSWORD] Rate limit check passed`);
     
     const user = await db.queryRow<{
