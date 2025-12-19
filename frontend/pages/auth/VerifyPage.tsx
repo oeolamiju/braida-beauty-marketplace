@@ -62,7 +62,11 @@ export default function VerifyPage() {
     setState("loading");
 
     try {
-      const response = await backend.auth.verify({ token });
+      const decodedToken = decodeURIComponent(token);
+      console.log("Original token:", token);
+      console.log("Decoded token:", decodedToken);
+      
+      const response = await backend.auth.verify({ token: decodedToken });
 
       localStorage.setItem("authToken", response.authToken);
       localStorage.setItem("user", JSON.stringify(response.user));

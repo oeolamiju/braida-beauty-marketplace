@@ -2,7 +2,7 @@ import { api, APIError } from "encore.dev/api";
 import db from "../db";
 import { generateVerificationToken } from "./auth";
 import { sendPasswordResetEmail } from "./notifications";
-import { checkRateLimit } from "../shared/rate_limiter";
+import { RATE_LIMITS, checkRateLimit } from "../shared/rate_limiter";
 
 export interface ForgotPasswordRequest {
   email: string;
@@ -15,7 +15,7 @@ export interface ForgotPasswordResponse {
 export const forgotPassword = api<ForgotPasswordRequest, ForgotPasswordResponse>(
   { expose: true, method: "POST", path: "/auth/forgot-password" },
   async (req) => {
-    await checkRateLimit(req.email, "auth_forgot_password");
+    await checkRateLimit(req.email, RATE_LIMITS.passwordReset);
     const user = await db.queryRow<{
       id: string;
       email: string | null;

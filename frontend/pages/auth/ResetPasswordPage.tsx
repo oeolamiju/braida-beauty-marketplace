@@ -22,7 +22,10 @@ export default function ResetPasswordPage() {
   useEffect(() => {
     const tokenParam = searchParams.get("token");
     if (tokenParam) {
-      setToken(tokenParam);
+      const decodedToken = decodeURIComponent(tokenParam);
+      console.log("Original token:", tokenParam);
+      console.log("Decoded token:", decodedToken);
+      setToken(decodedToken);
     } else {
       toast({
         variant: "destructive",
@@ -30,7 +33,7 @@ export default function ResetPasswordPage() {
         description: "Invalid reset link",
       });
     }
-  }, [searchParams]);
+  }, [searchParams, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +59,8 @@ export default function ResetPasswordPage() {
     setLoading(true);
 
     try {
+      console.log("Attempting password reset with token:", token);
+      
       const response = await backend.auth.resetPassword({
         token,
         newPassword: formData.newPassword,

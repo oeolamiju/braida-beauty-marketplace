@@ -1,7 +1,7 @@
 import { api, APIError } from "encore.dev/api";
 import bcrypt from "bcryptjs";
 import db from "../db";
-import { checkRateLimit } from "../shared/rate_limiter";
+import { RATE_LIMITS, checkRateLimit } from "../shared/rate_limiter";
 import { trackEvent } from "../analytics/track";
 import { sendVerificationEmail } from "./notifications";
 
@@ -26,7 +26,7 @@ const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d
 export const register = api<RegisterRequest, RegisterResponse>(
   { expose: true, method: "POST", path: "/auth/register" },
   async (req) => {
-    await checkRateLimit(req.email || req.phone || "", "auth_register");
+    await checkRateLimit(req.email || req.phone || "", RATE_LIMITS.register);
     if (!req.email && !req.phone) {
       throw APIError.invalidArgument("email or phone is required");
     }
@@ -57,7 +57,7 @@ export const register = api<RegisterRequest, RegisterResponse>(
 
     const existing = await db.queryRow<{ id: string }>`
       SELECT id FROM users 
-      WHERE email = ${req.email || null} 
+      WHERE LOWER(email) = LOWER(${req.email || null})
          OR phone = ${req.phone || null}
     `;
 

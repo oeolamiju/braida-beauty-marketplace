@@ -1,7 +1,7 @@
 import { api, APIError } from "encore.dev/api";
 import bcrypt from "bcryptjs";
 import db from "../db";
-import { checkRateLimit } from "../shared/rate_limiter";
+import { RATE_LIMITS, checkRateLimit } from "../shared/rate_limiter";
 
 export interface ResetPasswordRequest {
   token: string;
@@ -18,7 +18,7 @@ const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d
 export const resetPassword = api<ResetPasswordRequest, ResetPasswordResponse>(
   { expose: true, method: "POST", path: "/auth/reset-password" },
   async (req) => {
-    await checkRateLimit(req.token, "auth_reset_password");
+    await checkRateLimit(req.token, RATE_LIMITS.passwordReset);
     if (req.newPassword.length < PASSWORD_MIN_LENGTH) {
       throw APIError.invalidArgument(
         `password must be at least ${PASSWORD_MIN_LENGTH} characters`
