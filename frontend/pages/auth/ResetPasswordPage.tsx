@@ -22,10 +22,8 @@ export default function ResetPasswordPage() {
   useEffect(() => {
     const tokenParam = searchParams.get("token");
     if (tokenParam) {
-      const decodedToken = decodeURIComponent(tokenParam);
-      console.log("Original token:", tokenParam);
-      console.log("Decoded token:", decodedToken);
-      setToken(decodedToken);
+      console.log("Original token from URL:", tokenParam);
+      setToken(tokenParam);
     } else {
       toast({
         variant: "destructive",
