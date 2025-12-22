@@ -33,21 +33,31 @@ export default function LoginPage() {
         password: formData.password,
       });
 
+      console.log("[LOGIN] Success! Token received, length:", response.token?.length);
+      console.log("[LOGIN] User role:", response.user.role);
+      
       localStorage.setItem("authToken", response.token);
       localStorage.setItem("user", JSON.stringify(response.user));
+      
+      // Verify token was stored
+      const storedToken = localStorage.getItem("authToken");
+      console.log("[LOGIN] Token stored in localStorage:", !!storedToken, "length:", storedToken?.length);
 
       toast({
         title: "Login successful",
         description: `Welcome back, ${response.user.firstName}!`,
       });
 
-      if (response.user.role === "CLIENT") {
-        navigate("/client/discover");
-      } else if (response.user.role === "FREELANCER") {
-        navigate("/freelancer/dashboard");
-      } else if (response.user.role === "ADMIN") {
-        navigate("/admin/dashboard");
-      }
+      const targetPath = response.user.role === "CLIENT" 
+        ? "/client/discover" 
+        : response.user.role === "FREELANCER" 
+          ? "/freelancer/dashboard" 
+          : response.user.role === "ADMIN" 
+            ? "/admin/dashboard" 
+            : "/";
+      
+      console.log("[LOGIN] Navigating to:", targetPath);
+      navigate(targetPath);
     } catch (error: any) {
       console.error("Login error:", error);
       
