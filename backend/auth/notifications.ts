@@ -5,14 +5,8 @@ export const VERIFICATION_TOKEN_EXPIRY_HOURS = 24;
 export const PASSWORD_RESET_TOKEN_EXPIRY_HOURS = 1;
 
 function getAppUrl(): string {
-  if (typeof process !== 'undefined' && process.env.ENCORE_ENVIRONMENT) {
-    const env = process.env.ENCORE_ENVIRONMENT;
-    if (env === 'production') {
-      return "https://braida.uk";
-    }
-    // Staging environment uses Railway frontend
-    return "https://braida-beauty-marketplace-production.up.railway.app";
-  }
+  // Always use Railway frontend URL for all environments
+  // braida.uk should be configured as a DNS CNAME to Railway
   return "https://braida-beauty-marketplace-production.up.railway.app";
 }
 
