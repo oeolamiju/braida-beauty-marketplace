@@ -1,3 +1,4 @@
+# Railway configuration
 [build]
 builder = "nixpacks"
 
