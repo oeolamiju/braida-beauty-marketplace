@@ -33,21 +33,16 @@ export default function LoginPage() {
         password: formData.password,
       });
 
-      console.log("[LOGIN] Success! Token received, length:", response.token?.length);
-      console.log("[LOGIN] User role:", response.user.role);
-      
+      // Store auth data
       localStorage.setItem("authToken", response.token);
       localStorage.setItem("user", JSON.stringify(response.user));
-      
-      // Verify token was stored
-      const storedToken = localStorage.getItem("authToken");
-      console.log("[LOGIN] Token stored in localStorage:", !!storedToken, "length:", storedToken?.length);
 
       toast({
         title: "Login successful",
         description: `Welcome back, ${response.user.firstName}!`,
       });
 
+      // Determine target path based on role
       const targetPath = response.user.role === "CLIENT" 
         ? "/client/discover" 
         : response.user.role === "FREELANCER" 
@@ -56,8 +51,8 @@ export default function LoginPage() {
             ? "/admin/dashboard" 
             : "/";
       
-      console.log("[LOGIN] Navigating to:", targetPath);
-      navigate(targetPath);
+      // Use window.location for guaranteed redirect (more reliable than React Router navigate)
+      window.location.href = targetPath;
     } catch (error: any) {
       console.error("Login error:", error);
       
