@@ -12,9 +12,12 @@ export default function ClientLayout() {
   useEffect(() => {
     async function checkAuth() {
       try {
+        console.log("[ClientLayout] Checking auth, token exists:", !!localStorage.getItem("authToken"));
         const userData = await backend.auth.me();
+        console.log("[ClientLayout] Auth successful, user:", userData);
         
         if (userData.role !== "CLIENT") {
+          console.log("[ClientLayout] Wrong role:", userData.role, "expected CLIENT");
           localStorage.removeItem("authToken");
           localStorage.removeItem("user");
           navigate("/auth/login");
@@ -22,7 +25,8 @@ export default function ClientLayout() {
         }
 
         setUser(userData);
-      } catch (error) {
+      } catch (error: any) {
+        console.error("[ClientLayout] Auth check failed:", error?.message || error);
         localStorage.removeItem("authToken");
         localStorage.removeItem("user");
         navigate("/auth/login");
