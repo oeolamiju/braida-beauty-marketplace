@@ -17,7 +17,9 @@ export interface UserInfo {
 export const me = api<void, UserInfo>(
   { auth: true, expose: true, method: "GET", path: "/auth/me" },
   async () => {
+    console.log("[ME] Endpoint called");
     const auth = getAuthData()! as AuthData;
+    console.log("[ME] Auth data:", { userID: auth.userID, role: auth.role });
 
     const user = await db.queryRow<{
       first_name: string;
@@ -34,8 +36,11 @@ export const me = api<void, UserInfo>(
     `;
 
     if (!user) {
+      console.error("[ME] User not found for ID:", auth.userID);
       throw new Error("User not found");
     }
+
+    console.log("[ME] User found:", { firstName: user.first_name, role: user.role });
 
     return {
       id: auth.userID,

@@ -24,20 +24,31 @@ export const auth = authHandler<AuthParams, AuthData>(async (data) => {
     throw APIError.unauthenticated("missing token");
   }
 
+  let decoded: any;
   try {
-    const decoded = jwt.verify(token, jwtSecret()) as any;
-
-    await checkAccountStatus(decoded.userId);
-
-    return {
-      userID: decoded.userId,
-      email: decoded.email,
-      role: decoded.role,
-      isVerified: decoded.isVerified,
-    };
-  } catch (err) {
-    throw APIError.unauthenticated("invalid token", err as Error);
+    decoded = jwt.verify(token, jwtSecret()) as any;
+  } catch (jwtErr) {
+    console.error("[AUTH] JWT verification failed:", jwtErr);
+    throw APIError.unauthenticated("invalid or expired token");
   }
+
+  try {
+    await checkAccountStatus(decoded.userId);
+  } catch (statusErr: any) {
+    console.error("[AUTH] Account status check failed:", statusErr);
+    // If it's already an APIError, re-throw it (e.g., "account suspended")
+    if (statusErr?.code) {
+      throw statusErr;
+    }
+    throw APIError.unauthenticated("account verification failed");
+  }
+
+  return {
+    userID: decoded.userId,
+    email: decoded.email,
+    role: decoded.role,
+    isVerified: decoded.isVerified,
+  };
 });
 
 export const gw = new Gateway({ authHandler: auth });
