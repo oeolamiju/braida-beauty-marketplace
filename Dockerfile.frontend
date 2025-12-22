@@ -1,13 +1,11 @@
-# Build stage
+# Build stage for Braida Beauty Frontend
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy frontend source
-COPY . ./frontend/
-
-# Copy backend shared modules (needed for imports)
-COPY ../backend/shared ./backend/shared/
+# Copy both frontend and backend (for shared modules)
+COPY frontend ./frontend/
+COPY backend ./backend/
 
 WORKDIR /app/frontend
 
@@ -29,7 +27,7 @@ WORKDIR /app
 RUN npm install -g serve
 
 # Copy built files from builder
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/frontend/dist ./dist
 
 # Expose port
 EXPOSE 3000
