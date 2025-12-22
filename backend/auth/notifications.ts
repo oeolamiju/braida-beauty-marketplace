@@ -10,9 +10,10 @@ function getAppUrl(): string {
     if (env === 'production') {
       return "https://braida.uk";
     }
-    return "https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.lp.dev";
+    // Staging environment uses Railway frontend
+    return "https://braida-beauty-marketplace-production.up.railway.app";
   }
-  return "https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.lp.dev";
+  return "https://braida-beauty-marketplace-production.up.railway.app";
 }
 
 export async function sendVerificationEmail(email: string, token: string): Promise<void> {
