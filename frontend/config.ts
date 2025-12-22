@@ -1,8 +1,8 @@
 // Braida Beauty Marketplace - Frontend Configuration
 // All values can be overridden via environment variables
 
-// API Configuration
-export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+// API Configuration - Hardcoded for production
+export const API_URL = "https://staging-braida-beauty-marketplace-vrc2.encr.app";
 
 // Stripe Configuration
 export const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "pk_test_51SJWKzPWaiD9PFTK4WdKZCnEZpjR7eLRsmIBm6y2SrCRZPc7USecnBixQEa9UEjo5lR1IRf6aN4ZBpvM31f4btty00lMWmfykF";
