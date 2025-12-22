@@ -1,4 +1,4 @@
-import { api, Query } from "encore.dev/api";
+﻿import { api, Query } from "encore.dev/api";
 import { z } from "zod";
 import db from "../db";
 import { validateSchema } from "../shared/validation";
@@ -154,7 +154,7 @@ export const search = api<SearchParams, SearchResponse>(
     const baseQuery = `
       SELECT 
         s.id,
-        s.freelancer_id,
+        s.stylist_id as freelancer_id,
         s.title,
         s.category,
         s.subcategory,
@@ -173,11 +173,11 @@ export const search = api<SearchParams, SearchResponse>(
         COALESCE(AVG(r.rating), 0) as avg_rating,
         COUNT(r.id) as review_count
       FROM services s
-      INNER JOIN freelancer_profiles fp ON s.freelancer_id = fp.user_id
+      INNER JOIN freelancer_profiles fp ON s.stylist_id = fp.user_id
       LEFT JOIN bookings b ON s.id = b.service_id
       LEFT JOIN reviews r ON b.id = r.booking_id
       WHERE ${whereConditions.join(' AND ')}
-      GROUP BY s.id, s.freelancer_id, s.title, s.category, s.subcategory, s.description,
+      GROUP BY s.id, s.stylist_id, s.title, s.category, s.subcategory, s.description,
                s.base_price_pence, s.duration_minutes, s.location_types,
                fp.display_name, fp.profile_photo_url, fp.verification_status,
                fp.postcode, fp.location_area, fp.categories,
@@ -277,7 +277,7 @@ export const search = api<SearchParams, SearchResponse>(
     const countQuery = `
       SELECT COUNT(DISTINCT s.id) as total
       FROM services s
-      INNER JOIN freelancer_profiles fp ON s.freelancer_id = fp.user_id
+      INNER JOIN freelancer_profiles fp ON s.stylist_id = fp.user_id
       LEFT JOIN bookings b ON s.id = b.service_id
       LEFT JOIN reviews r ON b.id = r.booking_id
       WHERE ${whereConditions.join(' AND ')}
