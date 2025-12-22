@@ -1,6 +1,9 @@
 # Build stage for Braida Beauty Frontend
 FROM node:20-alpine AS builder
 
+# Set the API URL for the build (Encore Cloud backend)
+ENV VITE_API_URL=https://staging-braida-beauty-marketplace-vrc2.encr.app
+
 WORKDIR /app
 
 # Copy both frontend and backend (for shared modules)
@@ -15,7 +18,7 @@ RUN echo '{"name":"braida-frontend","version":"1.0.0","type":"module","scripts":
 # Install dependencies
 RUN npm install
 
-# Build the app
+# Build the app with API URL
 RUN npm run build
 
 # Production stage
