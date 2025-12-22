@@ -1,6 +1,6 @@
 {
-  "name": "frontend",
-  "version": "1.0.0",
+  "name": "braida-beauty-frontend",
+  "version": "1.0.1",
   "type": "module",
   "engines": {
     "node": "20.x"
