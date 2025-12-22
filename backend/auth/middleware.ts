@@ -5,11 +5,15 @@ import db from "../db";
 
 export async function checkAccountStatus(userId: string): Promise<void> {
   const user = await db.queryRow<{
-    account_status: string;
+    status: string;
+    suspended: boolean;
     suspension_reason: string | null;
-    suspended_until: Date | null;
+    suspended_at: Date | null;
   }>`
-    SELECT account_status, suspension_reason, suspended_until
+    SELECT status, 
+           COALESCE(suspended, false) as suspended,
+           suspension_reason, 
+           suspended_at
     FROM users
     WHERE id = ${userId}
   `;
@@ -18,27 +22,17 @@ export async function checkAccountStatus(userId: string): Promise<void> {
     throw APIError.unauthenticated("session expired", new Error("user not found"));
   }
 
-  if (user.account_status === "banned") {
+  // Check if account is suspended via the status enum
+  if (user.status === "suspended") {
     throw APIError.permissionDenied(
-      `Your account has been banned. Reason: ${user.suspension_reason || "Violation of terms"}`
+      `Your account is suspended. Reason: ${user.suspension_reason || "Under review"}`
     );
   }
 
-  if (user.account_status === "suspended") {
-    if (user.suspended_until && new Date() > user.suspended_until) {
-      await db.exec`
-        UPDATE users
-        SET account_status = 'active', suspended_until = NULL, suspension_reason = NULL
-        WHERE id = ${userId}
-      `;
-      return;
-    }
-
-    const untilMsg = user.suspended_until
-      ? ` until ${user.suspended_until.toISOString()}`
-      : "";
+  // Also check the suspended boolean flag (from user_suspensions migration)
+  if (user.suspended) {
     throw APIError.permissionDenied(
-      `Your account is suspended${untilMsg}. Reason: ${user.suspension_reason || "Under review"}`
+      `Your account is suspended. Reason: ${user.suspension_reason || "Under review"}`
     );
   }
 }
