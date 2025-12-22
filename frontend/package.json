@@ -12,6 +12,8 @@
     "start": "npx serve dist -s -l $PORT"
   },
   "dependencies": {
+    "vite": "^6.2.5",
+    "@vitejs/plugin-react": "^4.6.0",
     "serve": "^14.2.4",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-dropdown-menu": "^2.1.6",
