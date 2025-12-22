@@ -28,7 +28,10 @@ describe("Slot Generator", () => {
   });
 
   it("should generate slots for a day with availability rules", async () => {
-    const testDate = new Date('2025-12-22');
+    // Create date in local timezone to match slot generator behavior
+    const testDate = new Date();
+    testDate.setFullYear(2025, 11, 22); // Dec 22, 2025
+    testDate.setHours(0, 0, 0, 0);
     const dayOfWeek = testDate.getDay();
 
     await db.exec`
@@ -47,6 +50,7 @@ describe("Slot Generator", () => {
     const result = await generateAvailableSlots(options);
     
     expect(result.slots.length).toBeGreaterThan(0);
+    // First slot should be at 9am local time
     expect(result.slots[0].getHours()).toBe(9);
   });
 
@@ -214,7 +218,10 @@ describe("Slot Generator", () => {
   });
 
   it("should handle multiple availability rules on same day", async () => {
-    const testDate = new Date('2025-12-22');
+    // Create date in local timezone to match slot generator behavior
+    const testDate = new Date();
+    testDate.setFullYear(2025, 11, 22); // Dec 22, 2025
+    testDate.setHours(0, 0, 0, 0);
     const dayOfWeek = testDate.getDay();
 
     await db.exec`
