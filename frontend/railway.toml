@@ -1,11 +1,5 @@
 # Railway configuration
 [build]
-builder = "nixpacks"
-
-[build.nixpacks]
-installCmd = "npm install --include=dev"
-buildCmd = "npm run build"
-
-[deploy]
-startCommand = "npx serve dist -s -l $PORT"
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
 
