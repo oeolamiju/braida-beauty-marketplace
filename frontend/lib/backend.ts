@@ -1,6 +1,7 @@
 import { Client } from '~backend/client';
+import { API_URL } from '../config';
 
-const backend = new Client(import.meta.env.VITE_CLIENT_TARGET, {
+const backend = new Client(API_URL, {
   requestInit: { credentials: "include" },
   auth: () => {
     const token = localStorage.getItem("authToken");
