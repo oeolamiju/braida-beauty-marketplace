@@ -86,7 +86,7 @@ export function getBookingRequestEmail(freelancerName: string, clientName: strin
             <p><strong>Service:</strong> ${serviceName}</p>
             <p><strong>Date & Time:</strong> ${bookingDate.toLocaleString()}</p>
             <p>Please review and respond to this booking request as soon as possible.</p>
-            <a href="https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.lp.dev/freelancer/bookings/${bookingId}" class="button">View Booking</a>
+            <a href="https://braida-beauty-marketplace-production.up.railway.app/freelancer/bookings/${bookingId}" class="button">View Booking</a>
           </div>
           <div class="footer">
             <p>© 2025 Braida Beauty Marketplace. All rights reserved.</p>
@@ -122,7 +122,7 @@ export function getBookingAcceptedEmail(clientName: string, freelancerName: stri
             <p><strong>Service:</strong> ${serviceName}</p>
             <p><strong>Date & Time:</strong> ${bookingDate.toLocaleString()}</p>
             <p>We'll send you a reminder before your appointment.</p>
-            <a href="https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.lp.dev/client/bookings/${bookingId}" class="button">View Booking Details</a>
+            <a href="https://braida-beauty-marketplace-production.up.railway.app/client/bookings/${bookingId}" class="button">View Booking Details</a>
           </div>
           <div class="footer">
             <p>© 2025 Braida Beauty Marketplace. All rights reserved.</p>
@@ -158,7 +158,7 @@ export function getBookingDeclinedEmail(clientName: string, freelancerName: stri
             <p><strong>Service:</strong> ${serviceName}</p>
             <p><strong>Date & Time:</strong> ${bookingDate.toLocaleString()}</p>
             <p>We encourage you to explore other available beauty professionals on our platform.</p>
-            <a href="https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.lp.dev/client/discover" class="button">Browse Services</a>
+            <a href="https://braida-beauty-marketplace-production.up.railway.app/client/discover" class="button">Browse Services</a>
           </div>
           <div class="footer">
             <p>© 2025 Braida Beauty Marketplace. All rights reserved.</p>
@@ -194,7 +194,7 @@ export function getBookingReminderEmail(userName: string, serviceName: string, b
             <p><strong>Service:</strong> ${serviceName}</p>
             <p><strong>Date & Time:</strong> ${bookingDate.toLocaleString()}</p>
             <p>Please make sure you're ready for your appointment. If you need to cancel or reschedule, please do so as soon as possible.</p>
-            <a href="https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.lp.dev/client/bookings/${bookingId}" class="button">View Booking</a>
+            <a href="https://braida-beauty-marketplace-production.up.railway.app/client/bookings/${bookingId}" class="button">View Booking</a>
           </div>
           <div class="footer">
             <p>© 2025 Braida Beauty Marketplace. All rights reserved.</p>
@@ -231,7 +231,7 @@ export function getPaymentReceiptEmail(clientName: string, serviceName: string, 
             <p><strong>Service:</strong> ${serviceName}</p>
             <div class="amount">$${(amount / 100).toFixed(2)}</div>
             <p>Your payment will be released to the service provider after successful completion of your appointment.</p>
-            <a href="https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.lp.dev/client/bookings/${bookingId}" class="button">View Booking</a>
+            <a href="https://braida-beauty-marketplace-production.up.railway.app/client/bookings/${bookingId}" class="button">View Booking</a>
           </div>
           <div class="footer">
             <p>© 2025 Braida Beauty Marketplace. All rights reserved.</p>
@@ -305,7 +305,7 @@ export function getPayoutEmail(freelancerName: string, amount: number, bookingCo
             <div class="amount">$${(amount / 100).toFixed(2)}</div>
             <p><strong>Bookings included:</strong> ${bookingCount}</p>
             <p>The funds should arrive in your connected account within 2-3 business days.</p>
-            <a href="https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.lp.dev/freelancer/earnings" class="button">View Earnings</a>
+            <a href="https://braida-beauty-marketplace-production.up.railway.app/freelancer/earnings" class="button">View Earnings</a>
           </div>
           <div class="footer">
             <p>© 2025 Braida Beauty Marketplace. All rights reserved.</p>
@@ -341,7 +341,7 @@ export function getReviewReminderEmail(clientName: string, freelancerName: strin
             <p><strong>Service:</strong> ${serviceName}</p>
             <p>Your feedback helps other clients make informed decisions and helps beauty professionals improve their services.</p>
             <p>Would you mind taking a moment to leave a review?</p>
-            <a href="https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.lp.dev/client/bookings/${bookingId}" class="button">Leave a Review</a>
+            <a href="https://braida-beauty-marketplace-production.up.railway.app/client/bookings/${bookingId}" class="button">Leave a Review</a>
           </div>
           <div class="footer">
             <p>© 2025 Braida Beauty Marketplace. All rights reserved.</p>
