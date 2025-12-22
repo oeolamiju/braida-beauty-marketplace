@@ -2,12 +2,10 @@
   "name": "backend",
   "version": "1.0.0",
   "type": "module",
+  "packageManager": "bun",
   "scripts": {
-    "dev": "encore run",
-    "start": "encore run",
-    "build": "encore build",
-    "test": "vitest",
-    "build:frontend": "cd ../frontend && npm install && npx vite build --outDir=../backend/frontend/dist"
+    "build": "cd ../frontend \u0026\u0026 bun install \u0026\u0026 npx vite build --outDir=../backend/frontend/dist",
+    "test": "vitest"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -19,8 +17,5 @@
   "devDependencies": {
     "typescript": "^5.8.3",
     "vitest": "^3.0.9"
-  },
-  "engines": {
-    "node": ">=18"
   }
 }
