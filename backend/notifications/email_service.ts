@@ -21,7 +21,7 @@ export async function sendEmail(params: SendEmailParams): Promise<void> {
     throw new Error(error);
   }
 
-  const from = fromEmail() || "Braida <noreply@braida.uk>";
+  const from = fromEmail();
   console.log(`[EMAIL] From address: ${from}`);
   
   const requestBody = {
