@@ -15,6 +15,9 @@ RUN echo '{"name":"braida-frontend","version":"1.0.1","type":"module","scripts":
 # Install dependencies
 RUN npm install
 
+# Remove type imports from client.ts that reference backend files
+RUN sed -i '/^import .* from "~backend\//d' client.ts || true
+
 # Build the app with API URL set explicitly during build command
 RUN VITE_API_URL=https://staging-braida-beauty-marketplace-vrc2.encr.app npm run build
 

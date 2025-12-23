@@ -1,4 +1,4 @@
-import { Client } from '~backend/client';
+import { Client } from '../client';
 import { API_URL } from '../config';
 
 console.log("[BACKEND CLIENT] Initializing with API_URL:", API_URL);
