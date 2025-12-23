@@ -52,9 +52,12 @@ export default function LoginPage() {
             : "/";
       
       // Use window.location for guaranteed redirect (more reliable than React Router navigate)
+      // Don't return - let finally block run but we'll navigate away
       window.location.href = targetPath;
+      return; // Exit early - no need to reset loading since we're navigating
     } catch (error: any) {
       console.error("Login error:", error);
+      setLoading(false);
       
       // Check if the error is about verification
       const errorMessage = error?.message?.toLowerCase() || "";
@@ -67,8 +70,6 @@ export default function LoginPage() {
           description: error.message || "Invalid credentials",
         });
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -189,7 +190,7 @@ export default function LoginPage() {
                   setResendSuccess(false);
                 }}
               >
-                ← Back to Login
+                â† Back to Login
               </Button>
             </div>
           ) : (
