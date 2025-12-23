@@ -2,7 +2,7 @@
 // All values can be overridden via environment variables
 
 // API Configuration - Read from environment with fallback
-export const API_URL = import.meta.env.VITE_API_URL || "https://staging-braida-beauty-marketplace-vrc2.encr.app";
+export const API_URL = import.meta.env.VITE_API_URL || "https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.api.lp.dev";
 
 // Stripe Configuration
 export const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "pk_test_51SJWKzPWaiD9PFTK4WdKZCnEZpjR7eLRsmIBm6y2SrCRZPc7USecnBixQEa9UEjo5lR1IRf6aN4ZBpvM31f4btty00lMWmfykF";
