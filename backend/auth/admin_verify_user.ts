@@ -72,7 +72,7 @@ export const adminVerifyUser = api<AdminVerifyUserRequest, AdminVerifyUserRespon
       WHERE user_id = ${req.userId} AND used_at IS NULL
     `;
 
-    console.log(`[ADMIN] User ${user.email} manually verified by admin ${authData.userId}`);
+    console.log(`[ADMIN] User ${user.email} manually verified by admin ${authData.userID}`);
 
     return {
       message: "User verified successfully",
