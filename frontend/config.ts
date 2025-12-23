@@ -2,7 +2,6 @@
 // All values can be overridden via environment variables
 
 // API Configuration - Read from environment with fallback
-// For Railway deployment, set VITE_API_URL environment variable to your backend URL
 export const API_URL = import.meta.env.VITE_API_URL || "https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.api.lp.dev";
 
 // Stripe Configuration
