@@ -15,7 +15,8 @@ export const logout = api<void, LogoutResponse>(
         expires: new Date(0),
         httpOnly: true,
         secure: true,
-        sameSite: "Lax",
+        sameSite: "None",
+        domain: ".braida.uk",
       },
     };
   }

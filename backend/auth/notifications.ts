@@ -1,13 +1,13 @@
 import { sendEmail } from "../notifications/email_service";
+import { secret } from "encore.dev/config";
 
-// Token expiry configuration (in hours)
+const appUrl = secret("AppURL");
+
 export const VERIFICATION_TOKEN_EXPIRY_HOURS = 24;
 export const PASSWORD_RESET_TOKEN_EXPIRY_HOURS = 1;
 
 function getAppUrl(): string {
-  // Always use Railway frontend URL for all environments
-  // braida.uk should be configured as a DNS CNAME to Railway
-  return "https://braida-beauty-marketplace-production.up.railway.app";
+  return appUrl();
 }
 
 export async function sendVerificationEmail(email: string, token: string): Promise<void> {
