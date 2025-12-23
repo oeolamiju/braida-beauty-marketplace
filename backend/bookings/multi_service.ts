@@ -207,7 +207,7 @@ export const createMultiServiceBooking = api<MultiServiceBookingRequest, MultiSe
     }
 
     // Create Stripe PaymentIntent
-    const stripe = new Stripe(stripeSecretKey(), { apiVersion: "2024-06-20" });
+    const stripe = new Stripe(stripeSecretKey(), { apiVersion: "2025-02-24.acacia" });
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalPricePence,

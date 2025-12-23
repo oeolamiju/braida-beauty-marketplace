@@ -72,11 +72,11 @@ export default function DisputeDashboard() {
       const [statsRes, disputesRes] = await Promise.all([
         backend.disputes.getDashboardStats(),
         backend.disputes.adminList({
-          status: statusFilter === "all" ? undefined : statusFilter,
+          status: statusFilter === "all" ? undefined : (statusFilter as any),
         }),
       ]);
       setStats(statsRes);
-      setDisputes(disputesRes.disputes);
+      setDisputes(disputesRes.disputes as any);
     } catch (error) {
       console.error("Failed to load disputes:", error);
       toast({
@@ -317,11 +317,11 @@ function DisputeDetailModal({
 
     setResolving(true);
     try {
-      await backend.disputes.resolveDispute({
-        id: disputeId,
-        resolution: resolution as any,
-        refundAmountPence: refundAmount ? Math.round(parseFloat(refundAmount) * 100) : undefined,
-        note: resolutionNote,
+      await backend.disputes.adminResolve({
+        dispute_id: disputeId,
+        resolution_type: resolution as any,
+        resolution_amount: refundAmount ? Math.round(parseFloat(refundAmount) * 100) : undefined,
+        resolution_notes: resolutionNote,
       });
 
       toast({
@@ -345,10 +345,9 @@ function DisputeDetailModal({
 
     setAddingNote(true);
     try {
-      await backend.disputes.addInternalNote({
-        id: disputeId,
+      await backend.disputes.adminAddNote({
+        dispute_id: disputeId,
         note: internalNote,
-        isInternal: true,
       });
       setInternalNote("");
       loadDispute();

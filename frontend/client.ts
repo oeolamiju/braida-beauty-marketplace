@@ -2352,8 +2352,10 @@ import { adminApprove as api_verification_admin_approve_adminApprove } from "~ba
 import { adminGet as api_verification_admin_get_adminGet } from "~backend/verification/admin_get";
 import { adminList as api_verification_admin_list_adminList } from "~backend/verification/admin_list";
 import { adminReject as api_verification_admin_reject_adminReject } from "~backend/verification/admin_reject";
+import { completeKyc as api_verification_complete_kyc_completeKyc } from "~backend/verification/complete_kyc";
 import { getDocument as api_verification_get_document_getDocument } from "~backend/verification/get_document";
 import { getStatus as api_verification_get_status_getStatus } from "~backend/verification/get_status";
+import { startKyc as api_verification_start_kyc_startKyc } from "~backend/verification/start_kyc";
 import { submit as api_verification_submit_submit } from "~backend/verification/submit";
 import { webhook as api_verification_webhook_webhook } from "~backend/verification/webhook";
 
@@ -2368,8 +2370,10 @@ export namespace verification {
             this.adminGet = this.adminGet.bind(this)
             this.adminList = this.adminList.bind(this)
             this.adminReject = this.adminReject.bind(this)
+            this.completeKyc = this.completeKyc.bind(this)
             this.getDocument = this.getDocument.bind(this)
             this.getStatus = this.getStatus.bind(this)
+            this.startKyc = this.startKyc.bind(this)
             this.submit = this.submit.bind(this)
             this.webhook = this.webhook.bind(this)
         }
@@ -2398,6 +2402,12 @@ export namespace verification {
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_verification_admin_reject_adminReject>
         }
 
+        public async completeKyc(params: RequestType<typeof api_verification_complete_kyc_completeKyc>): Promise<ResponseType<typeof api_verification_complete_kyc_completeKyc>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/verification/complete-kyc`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_verification_complete_kyc_completeKyc>
+        }
+
         public async getDocument(params: { freelancerId: string }): Promise<ResponseType<typeof api_verification_get_document_getDocument>> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/verification/document/${encodeURIComponent(params.freelancerId)}`, {method: "GET", body: undefined})
@@ -2408,6 +2418,12 @@ export namespace verification {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/verification/status`, {method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_verification_get_status_getStatus>
+        }
+
+        public async startKyc(params: RequestType<typeof api_verification_start_kyc_startKyc>): Promise<ResponseType<typeof api_verification_start_kyc_startKyc>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/verification/start-kyc`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_verification_start_kyc_startKyc>
         }
 
         public async submit(params: RequestType<typeof api_verification_submit_submit>): Promise<ResponseType<typeof api_verification_submit_submit>> {

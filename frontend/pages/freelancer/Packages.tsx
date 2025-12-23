@@ -81,7 +81,7 @@ export default function FreelancerPackages() {
       ]);
 
       setPackages(packagesRes.packages);
-      setServices(servicesRes.services.filter((s: any) => s.isActive));
+      setServices(servicesRes.services.filter((s: any) => s.isActive) as any);
     } catch (error: any) {
       console.error("Failed to load data:", error);
       toast({

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Settings as SettingsIcon } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import type { PlatformSettings } from "~backend/admin/get_settings";
+import type { PlatformSettings } from "~backend/admin/settings_enhanced";
 
 export default function Settings() {
   const [settings, setSettings] = useState<PlatformSettings | null>(null);
@@ -79,9 +79,9 @@ export default function Settings() {
               min="0"
               max="100"
               step="0.1"
-              value={settings.commissionPercentage}
+              value={settings.commissionPercent}
               onChange={(e) =>
-                setSettings({ ...settings, commissionPercentage: parseFloat(e.target.value) })
+                setSettings({ ...settings, commissionPercent: parseFloat(e.target.value) })
               }
             />
             <p className="text-xs text-muted-foreground mt-1">
@@ -97,9 +97,9 @@ export default function Settings() {
               type="number"
               min="0"
               step="0.01"
-              value={settings.bookingFeeAmount}
+              value={settings.bookingFeePence / 100}
               onChange={(e) =>
-                setSettings({ ...settings, bookingFeeAmount: parseFloat(e.target.value) })
+                setSettings({ ...settings, bookingFeePence: Math.round(parseFloat(e.target.value) * 100) })
               }
             />
             <p className="text-xs text-muted-foreground mt-1">
@@ -136,9 +136,9 @@ export default function Settings() {
             <Input
               type="number"
               min="1"
-              value={settings.autoConfirmHours}
+              value={settings.autoConfirmTimeoutHours}
               onChange={(e) =>
-                setSettings({ ...settings, autoConfirmHours: parseInt(e.target.value) })
+                setSettings({ ...settings, autoConfirmTimeoutHours: parseInt(e.target.value) })
               }
             />
             <p className="text-xs text-muted-foreground mt-1">
@@ -158,9 +158,9 @@ export default function Settings() {
             <Input
               type="number"
               min="1"
-              value={settings.cancellationFreeHours}
+              value={settings.cancellationWindows.fullRefundHours}
               onChange={(e) =>
-                setSettings({ ...settings, cancellationFreeHours: parseInt(e.target.value) })
+                setSettings({ ...settings, cancellationWindows: { ...settings.cancellationWindows, fullRefundHours: parseInt(e.target.value) } })
               }
             />
             <p className="text-xs text-muted-foreground mt-1">
@@ -175,11 +175,11 @@ export default function Settings() {
             <Input
               type="number"
               min="1"
-              value={settings.cancellationPartialRefundHours}
+              value={settings.cancellationWindows.partialRefundHours}
               onChange={(e) =>
                 setSettings({
                   ...settings,
-                  cancellationPartialRefundHours: parseInt(e.target.value),
+                  cancellationWindows: { ...settings.cancellationWindows, partialRefundHours: parseInt(e.target.value) },
                 })
               }
             />
@@ -196,11 +196,11 @@ export default function Settings() {
               type="number"
               min="0"
               max="100"
-              value={settings.cancellationPartialRefundPercentage}
+              value={settings.cancellationWindows.partialRefundPercent}
               onChange={(e) =>
                 setSettings({
                   ...settings,
-                  cancellationPartialRefundPercentage: parseInt(e.target.value),
+                  cancellationWindows: { ...settings.cancellationWindows, partialRefundPercent: parseInt(e.target.value) },
                 })
               }
             />

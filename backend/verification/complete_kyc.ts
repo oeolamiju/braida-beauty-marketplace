@@ -16,7 +16,7 @@ export interface CompleteKycResponse {
 }
 
 export const completeKyc = api<CompleteKycRequest, CompleteKycResponse>(
-  { method: "POST", path: "/verification/complete-kyc", expose: false, auth: true },
+  { method: "POST", path: "/verification/complete-kyc", expose: true, auth: true },
   async (req): Promise<CompleteKycResponse> => {
     requireFreelancer();
     const auth = getAuthData() as AuthData;

@@ -32,7 +32,7 @@ export default function Favorites() {
   const loadFavorites = async () => {
     try {
       const response = await backend.favorites.listFavoriteFreelancers();
-      setFavorites(response.freelancers);
+      setFavorites(response.freelancers as any);
     } catch (error: any) {
       console.error("Failed to load favorites:", error);
       toast({

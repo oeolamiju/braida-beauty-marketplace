@@ -35,7 +35,7 @@ interface AdminModule {
   id: string;
   name: string;
   description: string;
-  icon: JSX.Element;
+  icon: React.ReactElement;
   path: string;
   permission: keyof AdminPermissions;
   action: string;

@@ -43,7 +43,7 @@ export default function Loyalty() {
   const loadLoyaltyStatus = async () => {
     try {
       const response = await backend.loyalty.getLoyaltyStatus();
-      setStatus(response.status);
+      setStatus(response as any);
     } catch (error: any) {
       console.error("Failed to load loyalty status:", error);
       toast({

@@ -30,7 +30,7 @@ export const listPackages = api<ListPackagesRequest, ListPackagesResponse>(
 
     const packages: ServicePackage[] = [];
 
-    const packagesQuery = await db.rawQuery<any>(
+    const packagesQueryResult = await db.rawQuery<any>(
       `SELECT 
         sp.id, sp.freelancer_id, sp.name, sp.description,
         sp.discount_percent, sp.discount_amount_pence,
@@ -42,9 +42,14 @@ export const listPackages = api<ListPackagesRequest, ListPackagesResponse>(
       params
     );
 
-    for (const pkg of packagesQuery.rows) {
+    const packagesRows: any[] = [];
+    for await (const row of packagesQueryResult) {
+      packagesRows.push(row);
+    }
+
+    for (const pkg of packagesRows) {
       // Get services in this package
-      const servicesQuery = await db.rawQuery<any>(
+      const servicesQueryResult = await db.rawQuery<any>(
         `SELECT 
           ps.id, ps.service_id, ps.sort_order,
           s.title, s.duration_minutes, s.studio_price_pence
@@ -55,7 +60,12 @@ export const listPackages = api<ListPackagesRequest, ListPackagesResponse>(
         [pkg.id]
       );
 
-      const services: PackageService[] = servicesQuery.rows.map((s: any) => ({
+      const servicesRows: any[] = [];
+      for await (const row of servicesQueryResult) {
+        servicesRows.push(row);
+      }
+
+      const services: PackageService[] = servicesRows.map((s: any) => ({
         id: s.id,
         serviceId: s.service_id,
         title: s.title,

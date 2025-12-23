@@ -6,37 +6,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { MessageCircle, Send, ArrowLeft, User } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import backend from "@/lib/backend";
-
-interface Message {
-  id: number;
-  conversationId: number;
-  senderId: string;
-  content: string;
-  messageType: string;
-  readAt: string | null;
-  createdAt: string;
-}
-
-interface Conversation {
-  id: number;
-  bookingId: number | null;
-  clientId: string;
-  freelancerId: string;
-  lastMessage: string | null;
-  lastMessageAt: string | null;
-  clientUnreadCount: number;
-  freelancerUnreadCount: number;
-  otherUserName: string;
-  otherUserPhoto: string | null;
-  bookingServiceTitle: string | null;
-  bookingDate: string | null;
-}
+import type { Message, ConversationWithDetails } from "~backend/messages/types";
 
 export default function Messages() {
   const { conversationId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [conversations, setConversations] = useState<ConversationWithDetails[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
@@ -181,23 +157,23 @@ export default function Messages() {
                 >
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#E91E63] to-[#F4B942] flex items-center justify-center flex-shrink-0">
-                      {conv.otherUserPhoto ? (
-                        <img src={conv.otherUserPhoto} alt="" className="w-full h-full rounded-full object-cover" />
+                      {conv.other_user_photo ? (
+                        <img src={conv.other_user_photo} alt="" className="w-full h-full rounded-full object-cover" />
                       ) : (
                         <User className="h-5 w-5 text-white" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start">
-                        <span className="font-medium truncate">{conv.otherUserName}</span>
-                        {conv.lastMessageAt && (
-                          <span className="text-xs text-muted-foreground">{formatTime(conv.lastMessageAt)}</span>
+                        <span className="font-medium truncate">{conv.other_user_name}</span>
+                        {conv.last_message_at && (
+                          <span className="text-xs text-muted-foreground">{formatTime(new Date(conv.last_message_at).toISOString())}</span>
                         )}
                       </div>
-                      {conv.bookingServiceTitle && (
-                        <p className="text-xs text-[#E91E63]">{conv.bookingServiceTitle}</p>
+                      {conv.booking_service_title && (
+                        <p className="text-xs text-[#E91E63]">{conv.booking_service_title}</p>
                       )}
-                      <p className="text-sm text-muted-foreground truncate">{conv.lastMessage || "No messages yet"}</p>
+                      <p className="text-sm text-muted-foreground truncate">{conv.last_message || "No messages yet"}</p>
                     </div>
                   </div>
                 </div>
@@ -215,16 +191,16 @@ export default function Messages() {
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#E91E63] to-[#F4B942] flex items-center justify-center">
-                  {selectedConversation.otherUserPhoto ? (
-                    <img src={selectedConversation.otherUserPhoto} alt="" className="w-full h-full rounded-full object-cover" />
+                  {selectedConversation.other_user_photo ? (
+                    <img src={selectedConversation.other_user_photo} alt="" className="w-full h-full rounded-full object-cover" />
                   ) : (
                     <User className="h-4 w-4 text-white" />
                   )}
                 </div>
                 <div>
-                  <p className="font-medium">{selectedConversation.otherUserName}</p>
-                  {selectedConversation.bookingServiceTitle && (
-                    <p className="text-xs text-muted-foreground">{selectedConversation.bookingServiceTitle}</p>
+                  <p className="font-medium">{selectedConversation.other_user_name}</p>
+                  {selectedConversation.booking_service_title && (
+                    <p className="text-xs text-muted-foreground">{selectedConversation.booking_service_title}</p>
                   )}
                 </div>
               </div>
@@ -233,18 +209,18 @@ export default function Messages() {
                 {messages.map(msg => (
                   <div
                     key={msg.id}
-                    className={`flex ${msg.senderId === currentUser?.id ? "justify-end" : "justify-start"}`}
+                    className={`flex ${msg.sender_id === currentUser?.id ? "justify-end" : "justify-start"}`}
                   >
                     <div
                       className={`max-w-[70%] rounded-2xl px-4 py-2 ${
-                        msg.senderId === currentUser?.id
+                        msg.sender_id === currentUser?.id
                           ? "bg-gradient-to-r from-[#E91E63] to-[#F4B942] text-white"
                           : "bg-gray-100"
                       }`}
                     >
                       <p>{msg.content}</p>
-                      <p className={`text-xs mt-1 ${msg.senderId === currentUser?.id ? "text-white/70" : "text-muted-foreground"}`}>
-                        {formatTime(msg.createdAt)}
+                      <p className={`text-xs mt-1 ${msg.sender_id === currentUser?.id ? "text-white/70" : "text-muted-foreground"}`}>
+                        {formatTime(new Date(msg.created_at).toISOString())}
                       </p>
                     </div>
                   </div>

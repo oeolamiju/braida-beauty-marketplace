@@ -32,6 +32,9 @@ export const getPreferences = api(
         booking_reschedule_rejected,
         review_reminder,
         email_enabled,
+        push_enabled,
+        email_marketing,
+        email_product_updates,
         updated_at
       FROM notification_preferences
       WHERE user_id = ${userId}
@@ -65,6 +68,9 @@ export const getPreferences = api(
         booking_reschedule_rejected: true,
         review_reminder: true,
         email_enabled: true,
+        push_enabled: false,
+        email_marketing: false,
+        email_product_updates: false,
         updated_at: new Date(),
       };
     }

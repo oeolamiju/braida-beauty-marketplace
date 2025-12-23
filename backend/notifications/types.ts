@@ -18,7 +18,8 @@ export type NotificationType =
   | "review_reminder"
   | "dispute_raised"
   | "dispute_needs_review"
-  | "dispute_resolved";
+  | "dispute_resolved"
+  | "emergency_alert";
 
 export interface Notification {
   id: number;

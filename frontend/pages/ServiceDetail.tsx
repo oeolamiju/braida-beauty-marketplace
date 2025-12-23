@@ -51,7 +51,7 @@ export default function ServiceDetail() {
   async function loadService() {
     try {
       const data = await backend.services.get({ id: parseInt(id!) });
-      setService(data);
+      setService(data as any);
       
       const imagesData = await backend.services.listImages({ serviceId: parseInt(id!) });
       setImages(imagesData.images);

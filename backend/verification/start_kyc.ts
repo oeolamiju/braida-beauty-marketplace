@@ -22,7 +22,7 @@ export interface StartKycResponse {
 }
 
 export const startKyc = api<StartKycRequest, StartKycResponse>(
-  { method: "POST", path: "/verification/start-kyc", expose: false, auth: true },
+  { method: "POST", path: "/verification/start-kyc", expose: true, auth: true },
   async (req): Promise<StartKycResponse> => {
     requireFreelancer();
     const auth = getAuthData() as AuthData;

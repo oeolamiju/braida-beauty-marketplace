@@ -69,8 +69,8 @@ export default function BookPackage() {
       setPkg(response.package);
 
       // Load freelancer details
-      const freelancerRes = await backend.users.getProfile({ userId: response.package.freelancerId });
-      setFreelancer(freelancerRes);
+      const freelancerRes = await backend.profiles.getProfile({ userId: response.package.freelancerId });
+      setFreelancer(freelancerRes as any);
     } catch (error: any) {
       console.error("Failed to load package:", error);
       toast({

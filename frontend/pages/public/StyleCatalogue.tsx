@@ -85,10 +85,10 @@ export default function StyleCatalogue() {
     try {
       setLoading(true);
       const [stylesRes, categoriesRes] = await Promise.all([
-        backend.styles.listAll({}),
+        backend.styles.listAll(),
         backend.styles.listCategories(),
       ]);
-      setStyles(stylesRes.styles);
+      setStyles(stylesRes.styles as any);
       setCategories(categoriesRes.categories);
     } catch (error: any) {
       console.error("Failed to load styles:", error);

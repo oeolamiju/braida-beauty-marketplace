@@ -41,9 +41,9 @@ export default function Referrals() {
         backend.referrals.getReferralCode(),
         backend.referrals.listReferrals(),
       ]);
-      setReferralCode(codeResponse.referralCode);
-      setShareUrl(codeResponse.shareUrl);
-      setReferrals(listResponse.referrals);
+      setReferralCode(codeResponse as any);
+      setShareUrl((codeResponse as any).shareUrl);
+      setReferrals(listResponse.referrals as any);
     } catch (error: any) {
       console.error("Failed to load referral data:", error);
       toast({

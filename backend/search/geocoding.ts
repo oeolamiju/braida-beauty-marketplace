@@ -131,9 +131,9 @@ async function geocodeWithMapbox(location: string): Promise<{ lat: number; lng: 
       return null;
     }
     
-    const data = await response.json();
+    const data = await response.json() as any;
     
-    if (data.features && data.features.length > 0) {
+    if (data?.features && data.features.length > 0) {
       const [lng, lat] = data.features[0].center;
       return { lat, lng };
     }

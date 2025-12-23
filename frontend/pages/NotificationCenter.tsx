@@ -21,21 +21,14 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import backend from "@/lib/backend";
 import TopNav from "@/components/navigation/TopNav";
+import type { Notification } from "~backend/notifications/types";
 
-interface Notification {
-  id: number;
-  user_id: string;
-  type: string;
-  title: string;
-  message: string;
-  data?: Record<string, any>;
-  read: boolean;
-  created_at: string;
+interface NotificationWithLink extends Notification {
   link?: string;
 }
 
 export default function NotificationCenter() {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<NotificationWithLink[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("all");
@@ -68,7 +61,7 @@ export default function NotificationCenter() {
 
   const handleMarkRead = async (id: number) => {
     try {
-      await backend.notifications.markRead({ id });
+      await backend.notifications.markRead({ notification_id: id });
       setNotifications(
         notifications.map((n) => (n.id === id ? { ...n, read: true } : n))
       );
@@ -127,8 +120,8 @@ export default function NotificationCenter() {
     return undefined;
   };
 
-  const getNotificationIcon = (type: string) => {
-    const icons: Record<string, JSX.Element> = {
+  const getNotificationIcon = (type: string): React.ReactElement => {
+    const icons: Record<string, React.ReactElement> = {
       new_booking_request: <Calendar className="h-5 w-5 text-blue-500" />,
       booking_confirmed: <Check className="h-5 w-5 text-green-500" />,
       booking_cancelled: <AlertTriangle className="h-5 w-5 text-red-500" />,
@@ -258,7 +251,7 @@ function NotificationList({
   notifications: Notification[];
   loading: boolean;
   onNotificationClick: (n: Notification) => void;
-  getIcon: (type: string) => JSX.Element;
+  getIcon: (type: string) => React.ReactElement;
   formatTime: (date: string) => string;
 }) {
   if (loading && notifications.length === 0) {
@@ -316,7 +309,7 @@ function NotificationList({
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <span className="text-xs text-muted-foreground">
-                  {formatTime(notification.created_at)}
+                  {formatTime(new Date(notification.created_at).toISOString())}
                 </span>
                 {!notification.read && (
                   <div className="h-2 w-2 rounded-full bg-orange-500" />
