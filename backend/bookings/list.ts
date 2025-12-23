@@ -36,10 +36,12 @@ export const list = api<ListBookingsRequest, ListBookingsResponse>(
   { auth: true, expose: true, method: "GET", path: "/bookings" },
   async (req) => {
     const auth = getAuthData()! as AuthData;
-
-    const role = req.role || (auth.role === 'FREELANCER' ? 'freelancer' : 'client');
+    
     const page = req.page || 1;
     const limit = req.limit || 20;
+    
+    try {
+    const role = req.role || (auth.role === 'FREELANCER' ? 'freelancer' : 'client');
     const offset = (page - 1) * limit;
 
     let rows: {
@@ -215,5 +217,15 @@ export const list = api<ListBookingsRequest, ListBookingsResponse>(
       limit,
       hasMore,
     };
+    } catch (error) {
+      console.error('Error listing bookings:', error);
+      return {
+        bookings: [],
+        total: 0,
+        page,
+        limit,
+        hasMore: false,
+      };
+    }
   }
 );

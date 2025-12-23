@@ -41,6 +41,7 @@ interface ListServicesResponse {
 export const list = api<ListServicesParams, ListServicesResponse>(
   { expose: true, method: "GET", path: "/services" },
   async (params): Promise<ListServicesResponse> => {
+    try {
     const { freelancerId, category, includeInactive } = validateSchema(listServicesSchema, params);
     let query = `
       SELECT 
@@ -85,7 +86,7 @@ export const list = api<ListServicesParams, ListServicesResponse>(
       materials_policy: string;
       materials_fee_pence: number;
       materials_description: string | null;
-      location_types: string;
+      location_types: string | string[];
       travel_fee_pence: number;
       is_active: boolean;
     }>(query, ...queryParams);
@@ -114,7 +115,7 @@ export const list = api<ListServicesParams, ListServicesResponse>(
           materialsPolicy: row.materials_policy,
           materialsFee: row.materials_fee_pence,
           materialsDescription: row.materials_description,
-          locationTypes: JSON.parse(row.location_types),
+          locationTypes: typeof row.location_types === 'string' ? JSON.parse(row.location_types) : row.location_types,
           travelFeePence: row.travel_fee_pence,
           isActive: row.is_active,
           styles: styleRows.map(s => ({ id: s.id, name: s.name })),
@@ -123,5 +124,9 @@ export const list = api<ListServicesParams, ListServicesResponse>(
     );
 
     return { services };
+    } catch (error) {
+      console.error('Error listing services:', error);
+      return { services: [] };
+    }
   }
 );

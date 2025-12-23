@@ -25,8 +25,11 @@ export const stream = api.streamOut<Notification>(
         
         await stream.send(notification);
       } catch (err) {
+        console.error('Error sending notification:', err);
         unsubscribe();
       }
     });
+
+    return new Promise(() => {});
   }
 );

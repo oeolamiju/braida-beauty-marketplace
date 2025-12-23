@@ -120,6 +120,7 @@ export default function ResetPasswordPage() {
                 value={formData.newPassword}
                 onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
                 required
+                autoComplete="new-password"
               />
               <p className="text-xs text-muted-foreground">
                 Must be 8+ characters with uppercase, lowercase, number, and special character
@@ -133,6 +134,7 @@ export default function ResetPasswordPage() {
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 required
+                autoComplete="new-password"
               />
             </div>
 

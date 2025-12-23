@@ -45,6 +45,8 @@ export const getDashboardStats = api<void, DashboardStats>(
   async () => {
     const auth = getAuthData()! as AuthData;
     
+    try {
+    
     if (!auth.isVerified) {
       return {
         todayBookings: [],
@@ -273,5 +275,25 @@ export const getDashboardStats = api<void, DashboardStats>(
         completedThisMonth: completedThisMonthResult?.count || 0,
       },
     };
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+      return {
+        todayBookings: [],
+        upcomingBookings: [],
+        recentActivity: [],
+        weeklyCalendar: {
+          weekStart: new Date().toISOString(),
+          weekEnd: new Date().toISOString(),
+          days: [],
+        },
+        statistics: {
+          totalBookings: 0,
+          pendingRequests: 0,
+          confirmedThisWeek: 0,
+          totalRevenueThisWeek: 0,
+          completedThisMonth: 0,
+        },
+      };
+    }
   }
 );

@@ -29,15 +29,22 @@ export function BookingDashboard() {
   useEffect(() => {
     loadStats();
 
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 3;
+
     const connectWebSocket = async () => {
       try {
         const stream = await backend.notifications.stream();
+        reconnectAttempts = 0;
         for await (const notification of stream) {
           handleNotification(notification);
         }
       } catch (err) {
-        console.error("WebSocket error:", err);
-        setTimeout(connectWebSocket, 5000);
+        console.warn("Notification stream unavailable, using polling fallback");
+        reconnectAttempts++;
+        if (reconnectAttempts < maxReconnectAttempts) {
+          setTimeout(connectWebSocket, 10000);
+        }
       }
     };
 

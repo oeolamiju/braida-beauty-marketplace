@@ -214,6 +214,7 @@ export default function LoginPage() {
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="Enter your password"
                   required
+                  autoComplete="current-password"
                   className="border-2 focus:border-orange-600"
                 />
               </div>
