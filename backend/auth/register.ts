@@ -91,8 +91,11 @@ export const register = api<RegisterRequest, RegisterResponse>(
     }
 
     let emailSent = false;
+    let verificationToken = '';
+    let isDevelopmentMode = false;
+    
     if (req.email) {
-      const verificationToken = `${Date.now()}_${Math.random().toString(36).substring(2)}`;
+      verificationToken = `${Date.now()}_${Math.random().toString(36).substring(2)}`;
       const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
       await db.exec`
@@ -103,8 +106,25 @@ export const register = api<RegisterRequest, RegisterResponse>(
       try {
         await sendVerificationEmail(req.email, verificationToken);
         emailSent = true;
-      } catch (error) {
+        console.log(`[REGISTRATION] Verification email sent successfully to ${req.email}`);
+      } catch (error: any) {
         console.error("Failed to send verification email:", error);
+        const errorMessage = error?.message || '';
+        
+        if (errorMessage.includes('ResendAPIKey not configured')) {
+          isDevelopmentMode = true;
+          console.log('\n========================================');
+          console.log('DEVELOPMENT MODE - Email not configured');
+          console.log('Verification Link:', `http://localhost:4000/auth/verify?token=${verificationToken}`);
+          console.log('Or use this API call to verify manually:');
+          console.log(`POST /auth/verify with body: {"token": "${verificationToken}"}`);
+          console.log('========================================\n');
+          
+          await db.exec`
+            UPDATE users SET is_verified = true WHERE id = ${userId}
+          `;
+          console.log(`[DEV MODE] User ${req.email} auto-verified for development`);
+        }
       }
     }
 
@@ -115,7 +135,9 @@ export const register = api<RegisterRequest, RegisterResponse>(
       message: req.email 
         ? (emailSent 
             ? "Registration successful. Please check your email to verify your account."
-            : "Registration successful, but verification email could not be sent. Please contact support or try resending the verification email.")
+            : isDevelopmentMode
+              ? "Registration successful. Development mode: Account auto-verified. You can now log in."
+              : "Registration successful, but verification email could not be sent. Please use the 'Resend Verification Email' option on the login page.")
         : "Registration successful. You can now log in.",
     };
   }

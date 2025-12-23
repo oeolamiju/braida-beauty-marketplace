@@ -60,12 +60,16 @@ export default function RegisterFreelancerPage() {
         description: response.message,
       });
 
-      navigate("/auth/verify", { 
-        state: { 
-          emailOrPhone: formData.email || formData.phone,
-          role: "FREELANCER"
-        } 
-      });
+      if (response.message.includes("auto-verified") || response.message.includes("can now log in")) {
+        setTimeout(() => navigate("/auth/login"), 2000);
+      } else {
+        navigate("/auth/verify", { 
+          state: { 
+            emailOrPhone: formData.email || formData.phone,
+            role: "FREELANCER"
+          } 
+        });
+      }
     } catch (error: any) {
       console.error("Registration error:", error);
       toast({

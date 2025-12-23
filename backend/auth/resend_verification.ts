@@ -48,7 +48,7 @@ export const resendVerification = api<ResendVerificationRequest, ResendVerificat
 
       await db.exec`
         INSERT INTO verification_tokens (user_id, token, type, expires_at)
-        VALUES (${user.id}, ${verificationToken}, ${user.email ? 'email' : 'sms'}, ${expiresAt})
+        VALUES (${user.id}, ${verificationToken}, ${user.email ? 'email_verification' : 'sms'}, ${expiresAt})
       `;
 
       if (user.email) {

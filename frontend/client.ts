@@ -454,6 +454,7 @@ export namespace analytics {
 /**
  * Import the endpoint handlers to derive the types for the client.
  */
+import { adminVerifyUser as api_auth_admin_verify_user_adminVerifyUser } from "~backend/auth/admin_verify_user";
 import { forgotPassword as api_auth_forgot_password_forgotPassword } from "~backend/auth/forgot_password";
 import { login as api_auth_login_login } from "~backend/auth/login";
 import { logout as api_auth_logout_logout } from "~backend/auth/logout";
@@ -470,6 +471,7 @@ export namespace auth {
 
         constructor(baseClient: BaseClient) {
             this.baseClient = baseClient
+            this.adminVerifyUser = this.adminVerifyUser.bind(this)
             this.forgotPassword = this.forgotPassword.bind(this)
             this.login = this.login.bind(this)
             this.logout = this.logout.bind(this)
@@ -478,6 +480,12 @@ export namespace auth {
             this.resendVerification = this.resendVerification.bind(this)
             this.resetPassword = this.resetPassword.bind(this)
             this.verify = this.verify.bind(this)
+        }
+
+        public async adminVerifyUser(params: RequestType<typeof api_auth_admin_verify_user_adminVerifyUser>): Promise<ResponseType<typeof api_auth_admin_verify_user_adminVerifyUser>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/auth/admin/verify-user`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_auth_admin_verify_user_adminVerifyUser>
         }
 
         public async forgotPassword(params: RequestType<typeof api_auth_forgot_password_forgotPassword>): Promise<ResponseType<typeof api_auth_forgot_password_forgotPassword>> {
