@@ -9,11 +9,13 @@ export interface UserInfo {
   lastName: string;
   email: string | null;
   phone: string | null;
-  role: string;
-  roles: string[];
-  activeRole: string;
+  role: string;           // Primary/active role (for backward compatibility)
+  roles: string[];        // All roles user has
+  activeRole: string;     // Currently active role
   isVerified: boolean;
   status: string;
+  hasFreelancerProfile: boolean;
+  freelancerOnboardingStatus: string | null;
 }
 
 export const me = api<void, UserInfo>(
@@ -29,14 +31,20 @@ export const me = api<void, UserInfo>(
       email: string | null;
       phone: string | null;
       role: string;
-      roles: string[];
-      active_role: string;
+      roles: string[] | null;
+      active_role: string | null;
       is_verified: boolean;
       status: string;
+      has_freelancer_profile: boolean;
+      freelancer_onboarding_status: string | null;
     }>`
-      SELECT first_name, last_name, email, phone, role, roles, active_role, is_verified, status
-      FROM users
-      WHERE id = ${auth.userID}
+      SELECT 
+        u.first_name, u.last_name, u.email, u.phone, u.role, 
+        u.roles, u.active_role, u.is_verified, u.status,
+        u.freelancer_onboarding_status,
+        EXISTS(SELECT 1 FROM freelancer_profiles fp WHERE fp.user_id = u.id) as has_freelancer_profile
+      FROM users u
+      WHERE u.id = ${auth.userID}
     `;
 
     if (!user) {
@@ -44,7 +52,11 @@ export const me = api<void, UserInfo>(
       throw new Error("User not found");
     }
 
-    console.log("[ME] User found:", { firstName: user.first_name, role: user.role });
+    // Parse roles - fallback to single role if roles array not yet populated
+    const userRoles: string[] = user.roles || [user.role];
+    const activeRole = user.active_role || user.role;
+
+    console.log("[ME] User found:", { firstName: user.first_name, roles: userRoles, activeRole });
 
     return {
       id: auth.userID,
@@ -52,11 +64,13 @@ export const me = api<void, UserInfo>(
       lastName: user.last_name,
       email: user.email,
       phone: user.phone,
-      role: user.active_role,
-      roles: user.roles || [user.role],
-      activeRole: user.active_role,
+      role: activeRole,
+      roles: userRoles,
+      activeRole: activeRole,
       isVerified: user.is_verified,
       status: user.status,
+      hasFreelancerProfile: user.has_freelancer_profile,
+      freelancerOnboardingStatus: user.freelancer_onboarding_status,
     };
   }
 );

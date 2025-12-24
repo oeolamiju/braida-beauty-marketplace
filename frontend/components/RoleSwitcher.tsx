@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { User, Briefcase, Users } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeftRight, Briefcase, User, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,123 +10,163 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
-import backend from "~backend/client";
 import { useToast } from "@/components/ui/use-toast";
+import backend from "@/lib/backend";
 
 interface RoleSwitcherProps {
   currentRole: string;
-  availableRoles: string[];
-  onRoleChange?: (newRole: string) => void;
+  roles: string[];
+  onRoleSwitch?: (newRole: string) => void;
 }
 
-const roleConfig = {
-  CLIENT: {
-    label: "Client",
-    icon: User,
-    color: "bg-blue-500",
-  },
-  FREELANCER: {
-    label: "Freelancer",
-    icon: Briefcase,
-    color: "bg-purple-500",
-  },
-  ADMIN: {
-    label: "Admin",
-    icon: Users,
-    color: "bg-red-500",
-  },
-};
-
-export function RoleSwitcher({ currentRole, availableRoles, onRoleChange }: RoleSwitcherProps) {
-  const [isLoading, setIsLoading] = useState(false);
+export default function RoleSwitcher({ currentRole, roles, onRoleSwitch }: RoleSwitcherProps) {
+  const navigate = useNavigate();
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [canBecomeFreelancer, setCanBecomeFreelancer] = useState(false);
 
-  const current = roleConfig[currentRole as keyof typeof roleConfig] || roleConfig.CLIENT;
-  const CurrentIcon = current.icon;
+  useEffect(() => {
+    // Check if user can become freelancer (doesn't have freelancer role yet)
+    setCanBecomeFreelancer(!roles.includes("FREELANCER"));
+  }, [roles]);
 
-  if (availableRoles.length <= 1) {
+  const handleSwitchRole = async (targetRole: string) => {
+    if (targetRole === currentRole) return;
+    
+    setLoading(true);
+    try {
+      const response = await backend.auth.switchRole({ targetRole: targetRole as "CLIENT" | "FREELANCER" });
+      
+      // Update stored auth data
+      localStorage.setItem("authToken", response.token);
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        user.activeRole = response.activeRole;
+        user.role = response.activeRole;
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+
+      toast({
+        title: "Role Switched",
+        description: response.message,
+      });
+
+      // Notify parent component
+      if (onRoleSwitch) {
+        onRoleSwitch(response.activeRole);
+      }
+
+      // Navigate to appropriate dashboard
+      if (targetRole === "FREELANCER") {
+        navigate("/freelancer/dashboard");
+      } else if (targetRole === "CLIENT") {
+        navigate("/client/discover");
+      }
+    } catch (error: any) {
+      console.error("Failed to switch role:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to switch role",
+        description: error.message || "Something went wrong",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBecomeFreelancer = () => {
+    navigate("/become-freelancer");
+  };
+
+  const getRoleIcon = (role: string) => {
+    switch (role.toUpperCase()) {
+      case "FREELANCER":
+        return <Briefcase className="h-4 w-4" />;
+      case "CLIENT":
+        return <User className="h-4 w-4" />;
+      default:
+        return <User className="h-4 w-4" />;
+    }
+  };
+
+  const getRoleLabel = (role: string) => {
+    switch (role.toUpperCase()) {
+      case "FREELANCER":
+        return "Freelancer Mode";
+      case "CLIENT":
+        return "Client Mode";
+      case "ADMIN":
+        return "Admin";
+      default:
+        return role;
+    }
+  };
+
+  // If user only has CLIENT role and can become freelancer, show upgrade option
+  if (roles.length === 1 && roles[0] === "CLIENT" && canBecomeFreelancer) {
     return (
-      <Badge variant="outline" className="gap-2 px-3 py-1.5">
-        <CurrentIcon className="h-4 w-4" />
-        {current.label}
-      </Badge>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleBecomeFreelancer}
+        className="flex items-center gap-2 border-pink-200 hover:bg-pink-50 hover:border-pink-300 text-pink-600"
+      >
+        <Sparkles className="h-4 w-4" />
+        <span className="hidden sm:inline">Become a Freelancer</span>
+        <span className="sm:hidden">Freelancer</span>
+      </Button>
     );
   }
 
-  const handleSwitch = async (targetRole: string) => {
-    if (targetRole === currentRole) return;
+  // Show role switcher if user has multiple roles
+  if (roles.length <= 1) return null;
 
-    setIsLoading(true);
-    try {
-      const response = await backend.auth.switchRole({
-        targetRole: targetRole as "CLIENT" | "FREELANCER",
-      });
-
-      localStorage.setItem("authToken", response.token);
-      
-      toast({
-        title: "Role switched",
-        description: `You are now using Braida as a ${roleConfig[targetRole as keyof typeof roleConfig]?.label}`,
-      });
-
-      if (onRoleChange) {
-        onRoleChange(targetRole);
-      } else {
-        window.location.reload();
-      }
-    } catch (error: any) {
-      console.error("Role switch failed:", error);
-      toast({
-        title: "Failed to switch role",
-        description: error.message || "An error occurred",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const availableRoles = roles.filter(r => r !== "ADMIN"); // Don't show admin in switcher
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="gap-2 px-3"
-          disabled={isLoading}
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="flex items-center gap-2 border-pink-200 hover:bg-pink-50"
+          disabled={loading}
         >
-          <CurrentIcon className="h-4 w-4" />
-          {current.label}
+          <ArrowLeftRight className="h-4 w-4" />
+          <span className="hidden sm:inline">{getRoleLabel(currentRole)}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuLabel>Switch Mode</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {availableRoles.map((role) => {
-          const config = roleConfig[role as keyof typeof roleConfig];
-          if (!config) return null;
-
-          const Icon = config.icon;
-          const isCurrent = role === currentRole;
-
-          return (
-            <DropdownMenuItem
-              key={role}
-              onClick={() => handleSwitch(role)}
-              disabled={isCurrent || isLoading}
-              className="gap-2 cursor-pointer"
+        {availableRoles.map((role) => (
+          <DropdownMenuItem
+            key={role}
+            onClick={() => handleSwitchRole(role)}
+            className={`flex items-center gap-2 cursor-pointer ${
+              role === currentRole ? "bg-pink-50 text-pink-600" : ""
+            }`}
+          >
+            {getRoleIcon(role)}
+            <span>{getRoleLabel(role)}</span>
+            {role === currentRole && (
+              <span className="ml-auto text-xs text-pink-500">Active</span>
+            )}
+          </DropdownMenuItem>
+        ))}
+        {canBecomeFreelancer && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              onClick={handleBecomeFreelancer}
+              className="flex items-center gap-2 cursor-pointer text-pink-600"
             >
-              <div className={`h-2 w-2 rounded-full ${config.color}`} />
-              <Icon className="h-4 w-4" />
-              <span className="flex-1">{config.label}</span>
-              {isCurrent && (
-                <Badge variant="secondary" className="text-xs">
-                  Active
-                </Badge>
-              )}
+              <Sparkles className="h-4 w-4" />
+              <span>Become a Freelancer</span>
             </DropdownMenuItem>
-          );
-        })}
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

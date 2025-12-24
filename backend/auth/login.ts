@@ -19,10 +19,11 @@ export interface LoginResponse {
     lastName: string;
     email: string | null;
     phone: string | null;
-    role: string;
-    roles: string[];
-    activeRole: string;
+    role: string;           // Primary/active role (for backward compatibility)
+    roles: string[];        // All roles user has
+    activeRole: string;     // Currently active role
     isVerified: boolean;
+    hasFreelancerProfile: boolean;
   };
 }
 
@@ -38,14 +39,18 @@ export const login = api<LoginRequest, LoginResponse>(
       phone: string | null;
       password_hash: string | null;
       role: string;
-      roles: string[];
-      active_role: string;
+      roles: string[] | null;
+      active_role: string | null;
       is_verified: boolean;
       status: string;
+      has_freelancer_profile: boolean;
     }>`
-      SELECT id, first_name, last_name, email, phone, password_hash, role, roles, active_role, is_verified, status
-      FROM users
-      WHERE LOWER(email) = LOWER(${req.emailOrPhone}) OR phone = ${req.emailOrPhone}
+      SELECT 
+        u.id, u.first_name, u.last_name, u.email, u.phone, u.password_hash, 
+        u.role, u.roles, u.active_role, u.is_verified, u.status,
+        EXISTS(SELECT 1 FROM freelancer_profiles fp WHERE fp.user_id = u.id) as has_freelancer_profile
+      FROM users u
+      WHERE LOWER(u.email) = LOWER(${req.emailOrPhone}) OR u.phone = ${req.emailOrPhone}
     `;
 
     if (!user || !user.password_hash) {
@@ -76,14 +81,14 @@ export const login = api<LoginRequest, LoginResponse>(
       throw APIError.permissionDenied("account suspended. Please contact support.");
     }
 
-    const roles = user.roles || [user.role];
+    // Parse roles - fallback to single role if roles array not yet populated
+    const userRoles: string[] = user.roles || [user.role];
     const activeRole = user.active_role || user.role;
 
     const token = generateToken({
       userId: user.id,
       email: user.email || user.phone || "",
-      roles: roles,
-      activeRole: activeRole,
+      role: activeRole,
       isVerified: user.is_verified,
     });
 
@@ -91,7 +96,7 @@ export const login = api<LoginRequest, LoginResponse>(
     await logAuditEvent({
       eventType: "user_login",
       userId: user.id,
-      details: { role: user.role },
+      details: { role: activeRole, roles: userRoles },
     });
 
     // Update last login timestamp
@@ -116,9 +121,10 @@ export const login = api<LoginRequest, LoginResponse>(
         email: user.email,
         phone: user.phone,
         role: activeRole,
-        roles: roles,
+        roles: userRoles,
         activeRole: activeRole,
         isVerified: user.is_verified,
+        hasFreelancerProfile: user.has_freelancer_profile,
       },
     };
   }

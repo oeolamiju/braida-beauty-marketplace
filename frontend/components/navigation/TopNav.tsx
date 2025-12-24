@@ -3,8 +3,8 @@ import { Menu, User, LogOut, Settings, X, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
 import GlobalSearch from "@/components/GlobalSearch";
-import { BraidaLogoLight, BRAND_COLORS } from "@/components/BraidaLogo";
-import { RoleSwitcher } from "@/components/RoleSwitcher";
+import RoleSwitcher from "@/components/RoleSwitcher";
+import { BraidaLogoLight } from "@/components/BraidaLogo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -187,12 +187,17 @@ export default function TopNav({ role }: TopNavProps) {
             {role && (
               <>
                 <RoleSwitcher 
-                  currentRole={user?.activeRole || user?.role || 'CLIENT'}
-                  availableRoles={user?.roles || [user?.role || 'CLIENT']}
-                  onRoleChange={(newRole) => {
-                    const updatedUser = { ...user, activeRole: newRole, role: newRole };
-                    localStorage.setItem("user", JSON.stringify(updatedUser));
-                    window.location.href = `/${newRole.toLowerCase()}`;
+                  currentRole={user?.activeRole || user?.role || role.toUpperCase()} 
+                  roles={user?.roles || [role.toUpperCase()]}
+                  onRoleSwitch={(newRole) => {
+                    // Update local user state
+                    const userStr = localStorage.getItem("user");
+                    if (userStr) {
+                      const updatedUser = JSON.parse(userStr);
+                      updatedUser.activeRole = newRole;
+                      updatedUser.role = newRole;
+                      setUser(updatedUser);
+                    }
                   }}
                 />
                 <NotificationBell />
@@ -209,7 +214,7 @@ export default function TopNav({ role }: TopNavProps) {
                   <DropdownMenuContent align="end" className="w-56">
                     <div className="px-2 py-1.5">
                       <p className="text-sm font-medium">{user?.displayName || user?.email}</p>
-                      <p className="text-xs text-muted-foreground capitalize">{user?.role?.toLowerCase()}</p>
+                      <p className="text-xs text-muted-foreground capitalize">{user?.activeRole?.toLowerCase() || user?.role?.toLowerCase()}</p>
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => navigate("/")}>

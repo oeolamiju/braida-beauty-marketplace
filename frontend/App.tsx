@@ -79,6 +79,7 @@ import ClientFavorites from "./pages/client/Favorites";
 import ClientReferrals from "./pages/client/Referrals";
 import ClientLoyalty from "./pages/client/Loyalty";
 import BookPackage from "./pages/client/BookPackage";
+import BecomeFreelancerPage from "./pages/BecomeFreelancerPage";
 
 export default function App() {
   return (
@@ -103,6 +104,9 @@ export default function App() {
           <Route path="/auth/verify" element={<VerifyPage />} />
           <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+          
+          {/* Become Freelancer (role upgrade flow) */}
+          <Route path="/become-freelancer" element={<BecomeFreelancerPage />} />
 
           <Route path="/discover" element={<PublicDiscover />} />
           <Route path="/styles" element={<Categories />} />

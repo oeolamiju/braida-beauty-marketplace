@@ -16,14 +16,29 @@ export default function ClientLayout() {
         const userData = await backend.auth.me();
         console.log("[ClientLayout] Auth successful, user:", userData);
         
-        if (userData.role !== "CLIENT") {
-          console.log("[ClientLayout] Wrong role:", userData.role, "expected CLIENT");
+        // With multi-role support, check if user has CLIENT role in their roles array
+        // or if their active role is CLIENT
+        const hasClientRole = userData.roles?.includes("CLIENT") || userData.role === "CLIENT";
+        const isActiveClient = userData.activeRole === "CLIENT" || userData.role === "CLIENT";
+        
+        if (!hasClientRole) {
+          console.log("[ClientLayout] User doesn't have CLIENT role:", userData.roles);
           localStorage.removeItem("authToken");
           localStorage.removeItem("user");
           navigate("/auth/login");
           return;
         }
 
+        // If user is not in client mode but has client role, they can still access
+        // (they might be a freelancer who also has client role)
+        if (!isActiveClient && userData.roles?.includes("FREELANCER")) {
+          console.log("[ClientLayout] User is in FREELANCER mode, redirecting to freelancer dashboard");
+          navigate("/freelancer/dashboard");
+          return;
+        }
+
+        // Update localStorage with full user data including roles
+        localStorage.setItem("user", JSON.stringify(userData));
         setUser(userData);
       } catch (error: any) {
         console.error("[ClientLayout] Auth check failed:", error?.message || error);

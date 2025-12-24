@@ -9,6 +9,8 @@ export type AuditEventType =
   | "password_reset_requested"
   | "password_reset_completed"
   | "email_verified"
+  | "user_role_switched"
+  | "user_became_freelancer"
   
   // Booking events
   | "booking_created"

@@ -12,17 +12,39 @@ export default function FreelancerLayout() {
   useEffect(() => {
     async function checkAuth() {
       try {
+        console.log("[FreelancerLayout] Checking auth...");
         const userData = await backend.auth.me();
+        console.log("[FreelancerLayout] Auth successful, user:", userData);
         
-        if (userData.role !== "FREELANCER") {
-          localStorage.removeItem("authToken");
-          localStorage.removeItem("user");
-          navigate("/auth/login");
+        // With multi-role support, check if user has FREELANCER role
+        const hasFreelancerRole = userData.roles?.includes("FREELANCER") || userData.role === "FREELANCER";
+        const isActiveFreelancer = userData.activeRole === "FREELANCER" || userData.role === "FREELANCER";
+        
+        if (!hasFreelancerRole) {
+          console.log("[FreelancerLayout] User doesn't have FREELANCER role");
+          // If they don't have freelancer role, redirect to become-freelancer page
+          if (userData.roles?.includes("CLIENT")) {
+            navigate("/become-freelancer");
+          } else {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("user");
+            navigate("/auth/login");
+          }
           return;
         }
 
+        // If user is not in freelancer mode but has freelancer role
+        if (!isActiveFreelancer && userData.roles?.includes("CLIENT")) {
+          console.log("[FreelancerLayout] User is in CLIENT mode, redirecting to client dashboard");
+          navigate("/client/discover");
+          return;
+        }
+
+        // Update localStorage with full user data including roles
+        localStorage.setItem("user", JSON.stringify(userData));
         setUser(userData);
-      } catch (error) {
+      } catch (error: any) {
+        console.error("[FreelancerLayout] Auth check failed:", error?.message || error);
         localStorage.removeItem("authToken");
         localStorage.removeItem("user");
         navigate("/auth/login");

@@ -33,7 +33,7 @@ export default function LoginPage() {
         password: formData.password,
       });
 
-      // Store auth data
+      // Store auth data (includes roles array and activeRole)
       localStorage.setItem("authToken", response.token);
       localStorage.setItem("user", JSON.stringify(response.user));
 
@@ -42,12 +42,13 @@ export default function LoginPage() {
         description: `Welcome back, ${response.user.firstName}!`,
       });
 
-      // Determine target path based on role
-      const targetPath = response.user.role === "CLIENT" 
+      // Determine target path based on activeRole (or role for backward compatibility)
+      const activeRole = response.user.activeRole || response.user.role;
+      const targetPath = activeRole === "CLIENT" 
         ? "/client/discover" 
-        : response.user.role === "FREELANCER" 
+        : activeRole === "FREELANCER" 
           ? "/freelancer/dashboard" 
-          : response.user.role === "ADMIN" 
+          : activeRole === "ADMIN" 
             ? "/admin/dashboard" 
             : "/";
       
