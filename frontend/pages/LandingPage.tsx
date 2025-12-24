@@ -13,27 +13,27 @@ const CATEGORIES = [
   { 
     name: "Box Braids", 
     slug: "box-braids",
-    image: "https://images.unsplash.com/photo-1688592969417-953dd3c2b9d8?w=200&h=200&fit=crop&crop=faces"
+    image: "https://images.unsplash.com/photo-1763256377422-fec144edeefc?w=200&h=200&fit=crop&crop=faces"
   },
   { 
     name: "Cornrows", 
     slug: "cornrows",
-    image: "https://images.unsplash.com/photo-1605980776566-0486c3b394f0?w=200&h=200&fit=crop&crop=faces"
+    image: "https://images.unsplash.com/photo-1594254773847-9fce26e950bc?w=200&h=200&fit=crop&crop=faces"
   },
   { 
     name: "Natural Hair", 
     slug: "natural-hair",
-    image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200&h=200&fit=crop&crop=faces"
+    image: "https://images.unsplash.com/photo-1588527962980-72746d95973e?w=200&h=200&fit=crop&crop=faces"
   },
   { 
     name: "Weaves & Wigs", 
     slug: "weaves",
-    image: "https://images.unsplash.com/photo-1595959183082-7b570b7e08e2?w=200&h=200&fit=crop&crop=faces"
+    image: "https://images.unsplash.com/photo-1511929825537-516974a253df?w=200&h=200&fit=crop&crop=faces"
   },
   { 
     name: "Locs", 
     slug: "locs",
-    image: "https://images.unsplash.com/photo-1625536658679-42d76fd167c0?w=200&h=200&fit=crop&crop=faces"
+    image: "https://images.unsplash.com/photo-1711637819201-1f2671641b4e?w=200&h=200&fit=crop&crop=faces"
   },
   { 
     name: "Barbers", 
@@ -50,7 +50,7 @@ const TRENDING_STYLES = [
     bookings: "1,204 bookings this week",
     trending: true,
     large: true,
-    image: "https://images.unsplash.com/photo-1688592969417-953dd3c2b9d8?w=600&h=800&fit=crop"
+    image: "https://images.unsplash.com/photo-1763256377422-fec144edeefc?w=600&h=800&fit=crop"
   },
   {
     id: "skin-fade",
@@ -60,13 +60,13 @@ const TRENDING_STYLES = [
   {
     id: "silk-press",
     name: "Silk Press",
-    image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1588527962980-72746d95973e?w=400&h=300&fit=crop"
   },
   {
     id: "kids-braids",
     name: "Kids Braids",
     subtitle: "Gentle styling for little ones",
-    image: "https://images.unsplash.com/photo-1595959183082-7b570b7e08e2?w=600&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1648010035195-6b0a56e14667?w=600&h=300&fit=crop"
   },
 ];
 
@@ -78,7 +78,7 @@ const TOP_PROS = [
     specialty: "Braids • Faux Locs",
     location: "Brixton, London",
     rating: 5.0,
-    image: "https://images.unsplash.com/photo-1628682814461-c4461c974211?w=300&h=400&fit=crop&crop=faces"
+    image: "https://images.unsplash.com/photo-1763256377422-fec144edeefc?w=300&h=400&fit=crop&crop=faces"
   },
   {
     id: "2",
@@ -86,7 +86,7 @@ const TOP_PROS = [
     specialty: "Natural Hair • Treatments",
     location: "Hackney, London",
     rating: 4.9,
-    image: "https://images.unsplash.com/photo-1650702970095-f5b8ebeebce5?w=300&h=400&fit=crop&crop=faces"
+    image: "https://images.unsplash.com/photo-1596472946996-3152ea4592b1?w=300&h=400&fit=crop&crop=faces"
   },
   {
     id: "3",
@@ -94,7 +94,7 @@ const TOP_PROS = [
     specialty: "Barber • Grooming",
     location: "Manchester",
     rating: 4.9,
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=400&fit=crop&crop=faces"
+    image: "https://images.unsplash.com/photo-1567894340315-735d7c361db0?w=300&h=400&fit=crop&crop=faces"
   },
   {
     id: "4",
@@ -102,7 +102,7 @@ const TOP_PROS = [
     specialty: "Wigs • Custom Color",
     location: "Birmingham",
     rating: 4.8,
-    image: "https://images.unsplash.com/photo-1669428254009-5388fe93b9b2?w=300&h=400&fit=crop&crop=faces"
+    image: "https://images.unsplash.com/photo-1615453261246-4b32e335a4a0?w=300&h=400&fit=crop&crop=faces"
   },
 ];
 
@@ -255,7 +255,7 @@ export default function LandingPage() {
                   {/* Illustration placeholder - using a styled div */}
                   <div className="relative z-10 w-[350px] h-[450px]">
                     <img
-                      src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=500&fit=crop&crop=faces"
+                      src="https://images.unsplash.com/photo-1763256377422-fec144edeefc?w=400&h=500&fit=crop&crop=faces"
                       alt="Woman with beautiful braids"
                       className="w-full h-full object-cover rounded-t-[200px] object-top"
                       style={{ filter: "sepia(20%) saturate(80%)" }}
