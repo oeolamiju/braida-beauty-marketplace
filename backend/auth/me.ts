@@ -10,6 +10,8 @@ export interface UserInfo {
   email: string | null;
   phone: string | null;
   role: string;
+  roles: string[];
+  activeRole: string;
   isVerified: boolean;
   status: string;
 }
@@ -27,10 +29,12 @@ export const me = api<void, UserInfo>(
       email: string | null;
       phone: string | null;
       role: string;
+      roles: string[];
+      active_role: string;
       is_verified: boolean;
       status: string;
     }>`
-      SELECT first_name, last_name, email, phone, role, is_verified, status
+      SELECT first_name, last_name, email, phone, role, roles, active_role, is_verified, status
       FROM users
       WHERE id = ${auth.userID}
     `;
@@ -48,7 +52,9 @@ export const me = api<void, UserInfo>(
       lastName: user.last_name,
       email: user.email,
       phone: user.phone,
-      role: user.role,
+      role: user.active_role,
+      roles: user.roles || [user.role],
+      activeRole: user.active_role,
       isVerified: user.is_verified,
       status: user.status,
     };

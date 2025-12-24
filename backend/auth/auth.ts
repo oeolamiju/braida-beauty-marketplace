@@ -15,6 +15,8 @@ export interface AuthData {
   userID: string;
   email: string;
   role: string;
+  roles: string[];
+  activeRole: string;
   isVerified: boolean;
 }
 
@@ -46,7 +48,9 @@ export const auth = authHandler<AuthParams, AuthData>(async (data) => {
   return {
     userID: decoded.userId,
     email: decoded.email,
-    role: decoded.role,
+    role: decoded.activeRole || decoded.role,
+    roles: decoded.roles || [decoded.role],
+    activeRole: decoded.activeRole || decoded.role,
     isVerified: decoded.isVerified,
   };
 });
@@ -56,7 +60,9 @@ export const gw = new Gateway({ authHandler: auth });
 export function generateToken(payload: {
   userId: string;
   email: string;
-  role: string;
+  role?: string;
+  roles: string[];
+  activeRole: string;
   isVerified: boolean;
 }): string {
   return jwt.sign(payload, jwtSecret(), { expiresIn: "30d" });

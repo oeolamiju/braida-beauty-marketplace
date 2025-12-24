@@ -20,6 +20,8 @@ export interface LoginResponse {
     email: string | null;
     phone: string | null;
     role: string;
+    roles: string[];
+    activeRole: string;
     isVerified: boolean;
   };
 }
@@ -36,10 +38,12 @@ export const login = api<LoginRequest, LoginResponse>(
       phone: string | null;
       password_hash: string | null;
       role: string;
+      roles: string[];
+      active_role: string;
       is_verified: boolean;
       status: string;
     }>`
-      SELECT id, first_name, last_name, email, phone, password_hash, role, is_verified, status
+      SELECT id, first_name, last_name, email, phone, password_hash, role, roles, active_role, is_verified, status
       FROM users
       WHERE LOWER(email) = LOWER(${req.emailOrPhone}) OR phone = ${req.emailOrPhone}
     `;
@@ -72,10 +76,14 @@ export const login = api<LoginRequest, LoginResponse>(
       throw APIError.permissionDenied("account suspended. Please contact support.");
     }
 
+    const roles = user.roles || [user.role];
+    const activeRole = user.active_role || user.role;
+
     const token = generateToken({
       userId: user.id,
       email: user.email || user.phone || "",
-      role: user.role,
+      roles: roles,
+      activeRole: activeRole,
       isVerified: user.is_verified,
     });
 
@@ -107,7 +115,9 @@ export const login = api<LoginRequest, LoginResponse>(
         lastName: user.last_name,
         email: user.email,
         phone: user.phone,
-        role: user.role,
+        role: activeRole,
+        roles: roles,
+        activeRole: activeRole,
         isVerified: user.is_verified,
       },
     };

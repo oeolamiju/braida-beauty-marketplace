@@ -11,7 +11,7 @@ export interface RegisterRequest {
   email?: string;
   phone?: string;
   password: string;
-  role: "CLIENT" | "FREELANCER";
+  role?: "CLIENT" | "FREELANCER";
 }
 
 export interface RegisterResponse {
@@ -52,7 +52,8 @@ export const register = api<RegisterRequest, RegisterResponse>(
       throw APIError.invalidArgument("first name and last name are required");
     }
 
-    if (req.role !== "CLIENT" && req.role !== "FREELANCER") {
+    const role = req.role || "CLIENT";
+    if (role !== "CLIENT" && role !== "FREELANCER") {
       throw APIError.invalidArgument("role must be CLIENT or FREELANCER");
     }
 
@@ -68,13 +69,14 @@ export const register = api<RegisterRequest, RegisterResponse>(
 
     const passwordHash = await bcrypt.hash(req.password, 10);
     const userId = `user_${Date.now()}_${Math.random().toString(36).substring(2)}`;
+    const roles = [role];
 
     await db.exec`
-      INSERT INTO users (id, first_name, last_name, email, phone, password_hash, role, is_verified)
-      VALUES (${userId}, ${req.firstName}, ${req.lastName}, ${req.email || null}, ${req.phone || null}, ${passwordHash}, ${req.role}, false)
+      INSERT INTO users (id, first_name, last_name, email, phone, password_hash, role, roles, active_role, is_verified)
+      VALUES (${userId}, ${req.firstName}, ${req.lastName}, ${req.email || null}, ${req.phone || null}, ${passwordHash}, ${role}, ${roles}::TEXT[], ${role}, false)
     `;
 
-    if (req.role === "FREELANCER") {
+    if (role === "FREELANCER") {
       await db.exec`
         INSERT INTO freelancer_profiles (
           user_id, display_name, location_area, postcode, travel_radius_miles, categories
@@ -128,7 +130,7 @@ export const register = api<RegisterRequest, RegisterResponse>(
       }
     }
 
-    await trackEvent(userId, "signup_completed", { role: req.role });
+    await trackEvent(userId, "signup_completed", { role: role });
 
     return {
       userId,

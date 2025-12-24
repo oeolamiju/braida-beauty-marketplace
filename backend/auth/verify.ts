@@ -54,9 +54,11 @@ export const verify = api<VerifyRequest, VerifyResponse>(
       last_name: string;
       email: string | null;
       role: string;
+      roles: string[];
+      active_role: string;
       is_verified: boolean;
     }>`
-      SELECT id, first_name, last_name, email, role, is_verified
+      SELECT id, first_name, last_name, email, role, roles, active_role, is_verified
       FROM users
       WHERE id = ${tokenRecord.user_id}
     `;
@@ -81,10 +83,14 @@ export const verify = api<VerifyRequest, VerifyResponse>(
       WHERE id = ${tokenRecord.id}
     `;
 
+    const roles = user.roles || [user.role];
+    const activeRole = user.active_role || user.role;
+
     const authToken = generateToken({
       userId: user.id,
       email: user.email || "",
-      role: user.role,
+      roles: roles,
+      activeRole: activeRole,
       isVerified: true,
     });
 

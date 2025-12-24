@@ -1,6 +1,8 @@
 import { api } from "encore.dev/api";
 import { requireAdminPermission } from "./rbac";
-import { queryAuditLogs, AuditEventType } from "../shared/audit_logger";
+import { queryAuditLogs, AuditEventType, logAuditEvent } from "../shared/audit_logger";
+
+export { logAuditEvent };
 
 export interface QueryAuditLogsRequest {
   eventType?: AuditEventType;

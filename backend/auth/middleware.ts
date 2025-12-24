@@ -30,9 +30,26 @@ export function requireRole(...allowedRoles: string[]): void {
     throw APIError.unauthenticated("authentication required");
   }
 
-  if (!allowedRoles.includes(auth.role)) {
+  const hasRole = auth.roles?.some(r => allowedRoles.includes(r)) ?? allowedRoles.includes(auth.role);
+  
+  if (!hasRole) {
     throw APIError.permissionDenied(
       `access denied. Required roles: ${allowedRoles.join(", ")}`
+    );
+  }
+}
+
+export function requireActiveRole(...allowedRoles: string[]): void {
+  const auth = getAuthData() as AuthData | null;
+
+  if (!auth) {
+    throw APIError.unauthenticated("authentication required");
+  }
+
+  const activeRole = auth.activeRole || auth.role;
+  if (!allowedRoles.includes(activeRole)) {
+    throw APIError.permissionDenied(
+      `access denied. This action requires active role: ${allowedRoles.join(" or ")}. Current active role: ${activeRole}`
     );
   }
 }

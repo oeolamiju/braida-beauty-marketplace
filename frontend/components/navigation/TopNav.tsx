@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
 import GlobalSearch from "@/components/GlobalSearch";
 import { BraidaLogoLight, BRAND_COLORS } from "@/components/BraidaLogo";
+import { RoleSwitcher } from "@/components/RoleSwitcher";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -185,6 +186,15 @@ export default function TopNav({ role }: TopNavProps) {
             )}
             {role && (
               <>
+                <RoleSwitcher 
+                  currentRole={user?.activeRole || user?.role || 'CLIENT'}
+                  availableRoles={user?.roles || [user?.role || 'CLIENT']}
+                  onRoleChange={(newRole) => {
+                    const updatedUser = { ...user, activeRole: newRole, role: newRole };
+                    localStorage.setItem("user", JSON.stringify(updatedUser));
+                    window.location.href = `/${newRole.toLowerCase()}`;
+                  }}
+                />
                 <NotificationBell />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
