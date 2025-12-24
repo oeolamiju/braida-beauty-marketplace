@@ -1,43 +1,29 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Heart } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import backend from "@/lib/backend";
 
 interface FavoriteButtonProps {
   freelancerId: string;
-  size?: "sm" | "md" | "lg";
-  variant?: "icon" | "button";
+  initialFavorited?: boolean;
+  size?: "sm" | "default" | "lg";
+  variant?: "icon" | "text";
   className?: string;
 }
 
-export default function FavoriteButton({
+export function FavoriteButton({
   freelancerId,
-  size = "md",
+  initialFavorited = false,
+  size = "default",
   variant = "icon",
   className = "",
 }: FavoriteButtonProps) {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(initialFavorited);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    checkFavoriteStatus();
-  }, [freelancerId]);
-
-  const checkFavoriteStatus = async () => {
-    try {
-      const token = localStorage.getItem("authToken");
-      if (!token) return;
-
-      const response = await backend.favorites.checkFavorite({ freelancerId });
-      setIsFavorite(response.isFavorite);
-    } catch (error) {
-      // Silently fail for non-authenticated users
-    }
-  };
-
-  const toggleFavorite = async (e: React.MouseEvent) => {
+  const handleToggle = async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
 
@@ -45,7 +31,7 @@ export default function FavoriteButton({
     if (!token) {
       toast({
         title: "Sign in required",
-        description: "Please sign in to save favorites",
+        description: "Please sign in to save freelancers to your favorites",
         variant: "destructive",
       });
       return;
@@ -53,12 +39,9 @@ export default function FavoriteButton({
 
     setLoading(true);
     try {
-      const response = await backend.favorites.toggleFavoriteFreelancer({ freelancerId });
-      setIsFavorite(response.isFavorite);
-      toast({
-        title: response.isFavorite ? "Added to favorites" : "Removed from favorites",
-        description: response.message,
-      });
+      const result = await backend.favorites.toggleFavoriteFreelancer({ freelancerId });
+      setIsFavorited(result.isFavorite);
+      toast({ title: result.message });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -70,46 +53,40 @@ export default function FavoriteButton({
     }
   };
 
-  const sizeClasses = {
-    sm: "h-8 w-8",
-    md: "h-10 w-10",
-    lg: "h-12 w-12",
-  };
-
-  const iconSizes = {
-    sm: "h-4 w-4",
-    md: "h-5 w-5",
-    lg: "h-6 w-6",
-  };
-
-  if (variant === "button") {
+  if (variant === "icon") {
     return (
       <Button
-        variant="outline"
-        onClick={toggleFavorite}
+        variant="ghost"
+        size={size}
+        onClick={handleToggle}
         disabled={loading}
-        className={`gap-2 ${isFavorite ? "text-[#E91E63] border-[#E91E63]" : ""} ${className}`}
+        className={`p-2 hover:bg-transparent ${className}`}
       >
-        <Heart className={`${iconSizes[size]} ${isFavorite ? "fill-[#E91E63]" : ""}`} />
-        {isFavorite ? "Saved" : "Save"}
+        <Heart
+          className={`h-5 w-5 transition-colors ${
+            isFavorited
+              ? "fill-red-500 text-red-500"
+              : "text-gray-400 hover:text-red-400"
+          }`}
+        />
       </Button>
     );
   }
 
   return (
     <Button
-      variant="ghost"
-      size="icon"
-      onClick={toggleFavorite}
+      variant="outline"
+      size={size}
+      onClick={handleToggle}
       disabled={loading}
-      className={`${sizeClasses[size]} rounded-full bg-white/80 hover:bg-white ${className}`}
+      className={className}
     >
       <Heart
-        className={`${iconSizes[size]} transition-colors ${
-          isFavorite ? "fill-[#E91E63] text-[#E91E63]" : "text-gray-600"
+        className={`h-4 w-4 mr-2 ${
+          isFavorited ? "fill-red-500 text-red-500" : ""
         }`}
       />
+      {isFavorited ? "Saved" : "Save"}
     </Button>
   );
 }
-
