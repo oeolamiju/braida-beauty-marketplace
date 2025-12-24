@@ -464,6 +464,7 @@ import { register as api_auth_register_register } from "~backend/auth/register";
 import { resendVerification as api_auth_resend_verification_resendVerification } from "~backend/auth/resend_verification";
 import { resetPassword as api_auth_reset_password_resetPassword } from "~backend/auth/reset_password";
 import { switchRole as api_auth_switch_role_switchRole } from "~backend/auth/switch_role";
+import { updateProfile as api_auth_update_profile_updateProfile } from "~backend/auth/update_profile";
 import { verify as api_auth_verify_verify } from "~backend/auth/verify";
 
 export namespace auth {
@@ -483,6 +484,7 @@ export namespace auth {
             this.resendVerification = this.resendVerification.bind(this)
             this.resetPassword = this.resetPassword.bind(this)
             this.switchRole = this.switchRole.bind(this)
+            this.updateProfile = this.updateProfile.bind(this)
             this.verify = this.verify.bind(this)
         }
 
@@ -544,6 +546,12 @@ export namespace auth {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/auth/switch-role`, {method: "POST", body: JSON.stringify(params)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_auth_switch_role_switchRole>
+        }
+
+        public async updateProfile(params: RequestType<typeof api_auth_update_profile_updateProfile>): Promise<ResponseType<typeof api_auth_update_profile_updateProfile>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/auth/profile`, {method: "PUT", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_auth_update_profile_updateProfile>
         }
 
         public async verify(params: RequestType<typeof api_auth_verify_verify>): Promise<ResponseType<typeof api_auth_verify_verify>> {

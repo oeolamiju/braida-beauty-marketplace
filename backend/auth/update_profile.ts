@@ -1,6 +1,7 @@
 import { api, APIError } from "encore.dev/api";
-import { db } from "../db/database";
-import { authHandler, getCurrentUser } from "./auth";
+import { getAuthData } from "~encore/auth";
+import db from "../db";
+import type { AuthData } from "./auth";
 
 interface UpdateProfileRequest {
   firstName?: string;
@@ -30,10 +31,7 @@ export const updateProfile = api(
     auth: true,
   },
   async (req: UpdateProfileRequest): Promise<UpdateProfileResponse> => {
-    const user = getCurrentUser();
-    if (!user) {
-      throw APIError.unauthenticated("You must be logged in to update your profile");
-    }
+    const auth = getAuthData()! as AuthData;
 
     // Validate inputs
     if (req.firstName !== undefined && req.firstName.trim().length === 0) {
@@ -43,38 +41,10 @@ export const updateProfile = api(
       throw APIError.invalidArgument("Last name cannot be empty");
     }
 
-    // Build update query dynamically
-    const updates: string[] = [];
-    const values: any[] = [];
-    let paramIndex = 1;
-
-    if (req.firstName !== undefined) {
-      updates.push(`first_name = $${paramIndex}`);
-      values.push(req.firstName.trim());
-      paramIndex++;
-    }
-    if (req.lastName !== undefined) {
-      updates.push(`last_name = $${paramIndex}`);
-      values.push(req.lastName.trim());
-      paramIndex++;
-    }
-    if (req.phone !== undefined) {
-      updates.push(`phone = $${paramIndex}`);
-      values.push(req.phone.trim() || null);
-      paramIndex++;
-    }
-
-    if (updates.length === 0) {
+    if (req.firstName === undefined && req.lastName === undefined && req.phone === undefined) {
       throw APIError.invalidArgument("No fields to update");
     }
 
-    // Add updated_at timestamp
-    updates.push(`updated_at = NOW()`);
-
-    // Add user ID for WHERE clause
-    values.push(user.id);
-
-    // Execute update
     const updatedUser = await db.queryRow<{
       id: string;
       email: string;
@@ -85,8 +55,12 @@ export const updateProfile = api(
       is_verified: boolean;
     }>`
       UPDATE users
-      SET ${db.dangerouslyInjectRaw(updates.join(", "))}
-      WHERE id = $${paramIndex}
+      SET 
+        first_name = COALESCE(${req.firstName?.trim() || null}, first_name),
+        last_name = COALESCE(${req.lastName?.trim() || null}, last_name),
+        phone = CASE WHEN ${req.phone !== undefined} THEN ${req.phone?.trim() || null} ELSE phone END,
+        updated_at = NOW()
+      WHERE id = ${auth.userID}
       RETURNING id, email, first_name, last_name, phone, role, is_verified
     `;
 
