@@ -68,7 +68,7 @@ export default function BecomeFreelancerPage() {
 
     setLoading(true);
     try {
-      const response = await backend.auth.startFreelancerOnboarding({
+      const response = await backend.auth.becomeFreelancer({
         displayName: formData.displayName.trim(),
         bio: formData.bio.trim() || undefined,
         locationArea: formData.locationArea.trim(),

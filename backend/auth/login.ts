@@ -88,7 +88,8 @@ export const login = api<LoginRequest, LoginResponse>(
     const token = generateToken({
       userId: user.id,
       email: user.email || user.phone || "",
-      role: activeRole,
+      roles: userRoles,
+      activeRole: activeRole,
       isVerified: user.is_verified,
     });
 

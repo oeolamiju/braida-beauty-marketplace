@@ -49,7 +49,7 @@ export default function RoleSwitcher({ currentRole, roles, onRoleSwitch }: RoleS
 
       toast({
         title: "Role Switched",
-        description: response.message,
+        description: `Switched to ${response.activeRole} role`,
       });
 
       // Notify parent component
