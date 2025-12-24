@@ -8,6 +8,8 @@ const getFreelancerSchema = z.object({
   id: z.string().min(1, "Freelancer ID is required"),
 });
 
+type GetFreelancerInput = z.infer<typeof getFreelancerSchema>;
+
 interface GetFreelancerParams {
   id: string;
 }
@@ -28,7 +30,7 @@ interface FreelancerProfile {
 export const get = api<GetFreelancerParams, FreelancerProfile>(
   { expose: true, method: "GET", path: "/freelancers/:id" },
   async (params): Promise<FreelancerProfile> => {
-    const { id } = validateSchema(getFreelancerSchema, params);
+    const { id } = validateSchema<GetFreelancerInput>(getFreelancerSchema, params);
 
     const row = await db.queryRow<{
       user_id: string;
@@ -50,7 +52,7 @@ export const get = api<GetFreelancerParams, FreelancerProfile>(
     `;
 
     if (!row) {
-      ErrorHandler.notFound("Freelancer", id);
+      throw ErrorHandler.notFound("Freelancer", id);
     }
 
     return {

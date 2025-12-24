@@ -9,6 +9,8 @@ const listServicesSchema = z.object({
   includeInactive: z.boolean().optional(),
 });
 
+type ListServicesInput = z.infer<typeof listServicesSchema>;
+
 interface ListServicesParams {
   freelancerId?: Query<string>;
   category?: Query<string>;
@@ -42,7 +44,7 @@ export const list = api<ListServicesParams, ListServicesResponse>(
   { expose: true, method: "GET", path: "/services" },
   async (params): Promise<ListServicesResponse> => {
     try {
-    const { freelancerId, category, includeInactive } = validateSchema(listServicesSchema, params);
+    const { freelancerId, category, includeInactive } = validateSchema<ListServicesInput>(listServicesSchema, params);
     let query = `
       SELECT 
         id, freelancer_id, title, category, subcategory,

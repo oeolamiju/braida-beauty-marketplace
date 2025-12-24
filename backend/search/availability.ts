@@ -8,6 +8,8 @@ const checkAvailabilitySchema = z.object({
   date: z.string(),
 });
 
+type CheckAvailabilityInput = z.infer<typeof checkAvailabilitySchema>;
+
 interface CheckAvailabilityParams {
   freelancerId: Query<string>;
   date: Query<string>;
@@ -26,7 +28,7 @@ interface CheckAvailabilityResponse {
 export const checkAvailability = api<CheckAvailabilityParams, CheckAvailabilityResponse>(
   { expose: true, method: "GET", path: "/search/availability" },
   async (params): Promise<CheckAvailabilityResponse> => {
-    const { freelancerId, date } = validateSchema(checkAvailabilitySchema, params);
+    const { freelancerId, date } = validateSchema<CheckAvailabilityInput>(checkAvailabilitySchema, params);
 
     const targetDate = new Date(date);
     const dayOfWeek = targetDate.getDay();

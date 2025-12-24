@@ -26,6 +26,8 @@ const searchSchema = z.object({
   experienceLevel: z.enum(['beginner', 'intermediate', 'expert']).optional(),
 });
 
+type SearchInput = z.infer<typeof searchSchema>;
+
 interface SearchParams {
   location?: Query<string>;
   keyword?: Query<string>;
@@ -87,7 +89,7 @@ interface SearchResponse {
 export const search = api<SearchParams, SearchResponse>(
   { expose: true, method: "GET", path: "/search" },
   async (params): Promise<SearchResponse> => {
-    const validated = validateSchema(searchSchema, params);
+    const validated = validateSchema<SearchInput>(searchSchema, params);
     const page = validated.page || 1;
     const limit = validated.limit || 20;
     const offset = (page - 1) * limit;

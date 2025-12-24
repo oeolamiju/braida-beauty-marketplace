@@ -17,6 +17,8 @@ const searchByStyleSchema = z.object({
   limit: z.number().min(1).max(50).optional(),
 });
 
+type SearchByStyleInput = z.infer<typeof searchByStyleSchema>;
+
 interface SearchByStyleParams {
   styleId: number;
   location?: Query<string>;
@@ -72,7 +74,7 @@ interface SearchByStyleResponse {
 export const searchByStyle = api<SearchByStyleParams, SearchByStyleResponse>(
   { expose: true, method: "GET", path: "/styles/:styleId/search" },
   async (params): Promise<SearchByStyleResponse> => {
-    const validated = validateSchema(searchByStyleSchema, params);
+    const validated = validateSchema<SearchByStyleInput>(searchByStyleSchema, params);
     const page = validated.page || 1;
     const limit = validated.limit || 20;
     const offset = (page - 1) * limit;

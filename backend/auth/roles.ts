@@ -70,6 +70,8 @@ export const legacySwitchRole = api<SwitchRoleRequest, SwitchRoleResponse>(
       userId: user.id,
       email: user.email || user.phone || "",
       role: req.targetRole,
+      roles: userRoles,
+      activeRole: req.targetRole,
       isVerified: user.is_verified,
     });
 
@@ -207,6 +209,8 @@ export const startFreelancerOnboarding = api<StartFreelancerOnboardingRequest, S
       userId: user.id,
       email: user.email || user.phone || "",
       role: "FREELANCER",
+      roles: newRoles,
+      activeRole: "FREELANCER",
       isVerified: user.is_verified,
     });
 

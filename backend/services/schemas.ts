@@ -23,7 +23,11 @@ export const createServiceRequestSchema = z.object({
   durationMinutes: positiveIntSchema,
   locationTypes: z.array(locationTypeSchema).min(1),
 }).refine(
-  (data) => {
+  (data: {
+    locationTypes: string[];
+    studioPricePence?: number;
+    mobilePricePence?: number;
+  }) => {
     const hasStudio = data.locationTypes.includes('client_travels_to_freelancer');
     const hasMobile = data.locationTypes.includes('freelancer_travels_to_client');
     if (hasStudio && !data.studioPricePence) return false;

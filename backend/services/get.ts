@@ -8,6 +8,8 @@ const getServiceSchema = z.object({
   id: z.number().int().positive("Service ID must be a positive integer"),
 });
 
+type GetServiceInput = z.infer<typeof getServiceSchema>;
+
 interface GetServiceParams {
   id: number;
 }
@@ -37,7 +39,7 @@ interface ServiceDetail {
 export const get = api<GetServiceParams, ServiceDetail>(
   { expose: true, method: "GET", path: "/services/:id" },
   async (params): Promise<ServiceDetail> => {
-    const { id } = validateSchema(getServiceSchema, params);
+    const { id } = validateSchema<GetServiceInput>(getServiceSchema, params);
 
     const row = await db.queryRow<{
       id: number;
