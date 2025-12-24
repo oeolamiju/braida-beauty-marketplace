@@ -41,9 +41,10 @@ export const me = api<void, UserInfo>(
       SELECT 
         u.first_name, u.last_name, u.email, u.phone, u.role, 
         u.roles, u.active_role, u.is_verified, u.status,
-        u.freelancer_onboarding_status,
-        EXISTS(SELECT 1 FROM freelancer_profiles fp WHERE fp.user_id = u.id) as has_freelancer_profile
+        fp.onboarding_status as freelancer_onboarding_status,
+        EXISTS(SELECT 1 FROM freelancer_profiles fp2 WHERE fp2.user_id = u.id) as has_freelancer_profile
       FROM users u
+      LEFT JOIN freelancer_profiles fp ON fp.user_id = u.id
       WHERE u.id = ${auth.userID}
     `;
 
