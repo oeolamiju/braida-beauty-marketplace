@@ -455,6 +455,7 @@ export namespace analytics {
  * Import the endpoint handlers to derive the types for the client.
  */
 import { adminVerifyUser as api_auth_admin_verify_user_adminVerifyUser } from "~backend/auth/admin_verify_user";
+import { becomeFreelancer as api_auth_become_freelancer_becomeFreelancer } from "~backend/auth/become_freelancer";
 import { forgotPassword as api_auth_forgot_password_forgotPassword } from "~backend/auth/forgot_password";
 import { login as api_auth_login_login } from "~backend/auth/login";
 import { logout as api_auth_logout_logout } from "~backend/auth/logout";
@@ -462,6 +463,7 @@ import { me as api_auth_me_me } from "~backend/auth/me";
 import { register as api_auth_register_register } from "~backend/auth/register";
 import { resendVerification as api_auth_resend_verification_resendVerification } from "~backend/auth/resend_verification";
 import { resetPassword as api_auth_reset_password_resetPassword } from "~backend/auth/reset_password";
+import { switchRole as api_auth_switch_role_switchRole } from "~backend/auth/switch_role";
 import { verify as api_auth_verify_verify } from "~backend/auth/verify";
 
 export namespace auth {
@@ -472,6 +474,7 @@ export namespace auth {
         constructor(baseClient: BaseClient) {
             this.baseClient = baseClient
             this.adminVerifyUser = this.adminVerifyUser.bind(this)
+            this.becomeFreelancer = this.becomeFreelancer.bind(this)
             this.forgotPassword = this.forgotPassword.bind(this)
             this.login = this.login.bind(this)
             this.logout = this.logout.bind(this)
@@ -479,6 +482,7 @@ export namespace auth {
             this.register = this.register.bind(this)
             this.resendVerification = this.resendVerification.bind(this)
             this.resetPassword = this.resetPassword.bind(this)
+            this.switchRole = this.switchRole.bind(this)
             this.verify = this.verify.bind(this)
         }
 
@@ -486,6 +490,12 @@ export namespace auth {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/auth/admin/verify-user`, {method: "POST", body: JSON.stringify(params)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_auth_admin_verify_user_adminVerifyUser>
+        }
+
+        public async becomeFreelancer(params: RequestType<typeof api_auth_become_freelancer_becomeFreelancer>): Promise<ResponseType<typeof api_auth_become_freelancer_becomeFreelancer>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/auth/become-freelancer`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_auth_become_freelancer_becomeFreelancer>
         }
 
         public async forgotPassword(params: RequestType<typeof api_auth_forgot_password_forgotPassword>): Promise<ResponseType<typeof api_auth_forgot_password_forgotPassword>> {
@@ -528,6 +538,12 @@ export namespace auth {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/auth/reset-password`, {method: "POST", body: JSON.stringify(params)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_auth_reset_password_resetPassword>
+        }
+
+        public async switchRole(params: RequestType<typeof api_auth_switch_role_switchRole>): Promise<ResponseType<typeof api_auth_switch_role_switchRole>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/auth/switch-role`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_auth_switch_role_switchRole>
         }
 
         public async verify(params: RequestType<typeof api_auth_verify_verify>): Promise<ResponseType<typeof api_auth_verify_verify>> {

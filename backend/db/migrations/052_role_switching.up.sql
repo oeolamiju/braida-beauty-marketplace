@@ -7,6 +7,7 @@ ALTER TABLE users ADD COLUMN active_role TEXT DEFAULT 'CLIENT';
 
 -- Migrate existing data: convert single role to array
 UPDATE users SET roles = ARRAY[role::TEXT]::TEXT[];
+UPDATE users SET active_role = role;
 
 -- Add constraints
 ALTER TABLE users ADD CONSTRAINT check_active_role_in_roles 
