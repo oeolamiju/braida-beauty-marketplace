@@ -3,6 +3,7 @@ import React from "react";
 interface BraidaLogoProps {
   size?: "sm" | "md" | "lg" | "xl";
   showText?: boolean;
+  variant?: "light" | "dark" | "colored";
   className?: string;
 }
 
@@ -13,70 +14,72 @@ export const BRAND_COLORS = {
   gold: "#F4B942",
   darkTeal: "#0D4F5F",
   cream: "#F5E6D3",
+  darkBlue: "#1B4B5A",
 };
 
-export function BraidaLogo({ size = "md", showText = true, className = "" }: BraidaLogoProps) {
+// Unified Braida Logo matching the brand identity
+export function BraidaLogo({ size = "md", showText = true, variant = "colored", className = "" }: BraidaLogoProps) {
   const sizes = {
-    sm: { icon: 32, text: "text-lg" },
-    md: { icon: 40, text: "text-xl" },
-    lg: { icon: 48, text: "text-2xl" },
-    xl: { icon: 64, text: "text-3xl" },
+    sm: { icon: 28, text: "text-lg", gap: "gap-1.5" },
+    md: { icon: 36, text: "text-xl", gap: "gap-2" },
+    lg: { icon: 44, text: "text-2xl", gap: "gap-2" },
+    xl: { icon: 56, text: "text-3xl", gap: "gap-3" },
   };
 
-  const { icon, text } = sizes[size];
+  const { icon, text, gap } = sizes[size];
+  
+  const textColor = variant === "dark" 
+    ? "text-white" 
+    : variant === "light" 
+    ? "text-gray-900" 
+    : "text-[#1ABC9C]"; // Teal for colored variant
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
+    <div className={`flex items-center ${gap} ${className}`}>
       <svg
         width={icon}
         height={icon}
-        viewBox="0 0 64 64"
+        viewBox="0 0 48 48"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="flex-shrink-0"
       >
-        {/* Braid strands interweaving */}
-        {/* Teal strand */}
+        {/* Braid strands forming a flowing pattern */}
+        {/* Teal strand (left) */}
         <path
-          d="M22 8 Q18 16 22 24 Q26 32 20 40 Q14 48 22 56"
+          d="M16 6 C12 12, 14 18, 18 24 C22 30, 14 36, 18 44"
           stroke={BRAND_COLORS.teal}
-          strokeWidth="6"
+          strokeWidth="4"
           strokeLinecap="round"
           fill="none"
         />
-        {/* Pink/Magenta strand (center) */}
+        {/* Pink/Magenta strand (center, prominent) */}
         <path
-          d="M32 4 Q40 14 28 24 Q16 34 32 44 Q48 54 32 62"
+          d="M24 4 C30 10, 18 16, 24 22 C30 28, 18 34, 24 42"
           stroke={BRAND_COLORS.pink}
-          strokeWidth="7"
-          strokeLinecap="round"
-          fill="none"
-        />
-        {/* Gold strand */}
-        <path
-          d="M38 10 Q46 18 38 28 Q30 38 42 48 Q54 58 42 62"
-          stroke={BRAND_COLORS.gold}
           strokeWidth="5"
           strokeLinecap="round"
           fill="none"
         />
-        {/* Flowing accent */}
+        {/* Gold strand (right) */}
         <path
-          d="M32 60 Q44 58 52 62"
+          d="M30 8 C36 14, 28 20, 32 26 C36 32, 30 38, 34 44"
+          stroke={BRAND_COLORS.gold}
+          strokeWidth="4"
+          strokeLinecap="round"
+          fill="none"
+        />
+        {/* Flowing underline accent */}
+        <path
+          d="M18 44 Q28 42, 38 46"
           stroke={BRAND_COLORS.pink}
-          strokeWidth="3"
+          strokeWidth="2.5"
           strokeLinecap="round"
           fill="none"
         />
       </svg>
       {showText && (
-        <span
-          className={`font-serif font-semibold ${text}`}
-          style={{
-            color: BRAND_COLORS.cream,
-            textShadow: "0 1px 2px rgba(0,0,0,0.1)",
-          }}
-        >
+        <span className={`font-serif italic font-medium ${text} ${textColor}`}>
           Braida
         </span>
       )}
@@ -84,69 +87,14 @@ export function BraidaLogo({ size = "md", showText = true, className = "" }: Bra
   );
 }
 
-export function BraidaLogoLight({ size = "md", showText = true, className = "" }: BraidaLogoProps) {
-  const sizes = {
-    sm: { icon: 32, text: "text-lg" },
-    md: { icon: 40, text: "text-xl" },
-    lg: { icon: 48, text: "text-2xl" },
-    xl: { icon: 64, text: "text-3xl" },
-  };
+// Light version for light backgrounds
+export function BraidaLogoLight({ size = "md", showText = true, className = "" }: Omit<BraidaLogoProps, "variant">) {
+  return <BraidaLogo size={size} showText={showText} variant="colored" className={className} />;
+}
 
-  const { icon, text } = sizes[size];
-
-  return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <svg
-        width={icon}
-        height={icon}
-        viewBox="0 0 64 64"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="flex-shrink-0"
-      >
-        {/* Teal strand */}
-        <path
-          d="M22 8 Q18 16 22 24 Q26 32 20 40 Q14 48 22 56"
-          stroke={BRAND_COLORS.teal}
-          strokeWidth="6"
-          strokeLinecap="round"
-          fill="none"
-        />
-        {/* Pink/Magenta strand */}
-        <path
-          d="M32 4 Q40 14 28 24 Q16 34 32 44 Q48 54 32 62"
-          stroke={BRAND_COLORS.pink}
-          strokeWidth="7"
-          strokeLinecap="round"
-          fill="none"
-        />
-        {/* Gold strand */}
-        <path
-          d="M38 10 Q46 18 38 28 Q30 38 42 48 Q54 58 42 62"
-          stroke={BRAND_COLORS.gold}
-          strokeWidth="5"
-          strokeLinecap="round"
-          fill="none"
-        />
-        {/* Flowing accent */}
-        <path
-          d="M32 60 Q44 58 52 62"
-          stroke={BRAND_COLORS.pink}
-          strokeWidth="3"
-          strokeLinecap="round"
-          fill="none"
-        />
-      </svg>
-      {showText && (
-        <span
-          className={`font-serif font-semibold ${text} bg-gradient-to-r from-[#E91E63] via-[#F4B942] to-[#1ABC9C] bg-clip-text text-transparent`}
-        >
-          Braida
-        </span>
-      )}
-    </div>
-  );
+// Dark version for dark backgrounds (like footer)
+export function BraidaLogoDark({ size = "md", showText = true, className = "" }: Omit<BraidaLogoProps, "variant">) {
+  return <BraidaLogo size={size} showText={showText} variant="dark" className={className} />;
 }
 
 export default BraidaLogo;
-

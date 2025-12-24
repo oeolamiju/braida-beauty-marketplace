@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Calendar, Shield, Star, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { BraidaLogoLight } from "@/components/BraidaLogo";
 
 export default function RegisterClientPage() {
   const navigate = useNavigate();

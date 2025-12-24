@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { AlertTriangle, Loader2, Mail, RefreshCw, ArrowRight } from "lucide-react";
+import { BraidaLogoLight } from "@/components/BraidaLogo";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -118,11 +119,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50/50 via-background to-amber-50/30 p-4">
       <Card className="w-full max-w-md border-2">
         <CardHeader className="text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-600 to-amber-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">B</span>
-            </div>
-            <span className="font-bold text-2xl">Braida</span>
+          <div className="flex items-center justify-center mb-2">
+            <BraidaLogoLight size="lg" />
           </div>
           <CardTitle className="text-xl">Welcome Back</CardTitle>
           <CardDescription>Sign in to your account to continue</CardDescription>

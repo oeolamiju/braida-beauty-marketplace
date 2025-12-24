@@ -7,6 +7,7 @@ import {
   Search, MapPin, Star, ChevronLeft, ChevronRight, 
   ShieldCheck, CreditCard, MessageSquare, Instagram, Twitter
 } from "lucide-react";
+import { BraidaLogoLight } from "@/components/BraidaLogo";
 
 // Category data with placeholder images
 const CATEGORIES = [
@@ -154,9 +155,8 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-8">
-              <Link to="/" className="flex items-center gap-2">
-                <MapPin className="h-6 w-6 text-orange-500" />
-                <span className="font-bold text-xl">Braida</span>
+              <Link to="/" className="flex items-center">
+                <BraidaLogoLight size="md" />
               </Link>
               <nav className="hidden md:flex items-center gap-6">
                 <Link to="/discover" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors">
@@ -476,9 +476,8 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-5 gap-8 mb-12">
             {/* Logo & Description */}
             <div className="md:col-span-2">
-              <Link to="/" className="flex items-center gap-2 mb-4">
-                <MapPin className="h-6 w-6 text-orange-500" />
-                <span className="font-bold text-xl">Braida</span>
+              <Link to="/" className="mb-4 inline-block">
+                <BraidaLogoLight size="md" />
               </Link>
               <p className="text-sm text-gray-500 mb-4 max-w-xs">
                 The trusted marketplace for Afro & Caribbean beauty. Connecting you with the best talent in your area.

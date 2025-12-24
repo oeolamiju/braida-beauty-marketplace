@@ -78,20 +78,22 @@ export default function BecomeFreelancerPage() {
       });
 
       // Update stored auth data
-      localStorage.setItem("authToken", response.token);
+      if (response.token) {
+        localStorage.setItem("authToken", response.token);
+      }
       const storedUser = localStorage.getItem("user");
       if (storedUser) {
         const user = JSON.parse(storedUser);
-        user.roles = response.roles;
-        user.activeRole = response.activeRole;
-        user.role = response.activeRole;
+        user.roles = response.roles || [...(user.roles || []), "FREELANCER"];
+        user.activeRole = response.activeRole || "FREELANCER";
+        user.role = response.activeRole || "FREELANCER";
         user.hasFreelancerProfile = true;
         localStorage.setItem("user", JSON.stringify(user));
       }
 
       toast({
         title: "🎉 Welcome, Freelancer!",
-        description: response.message,
+        description: response.message || "Your freelancer profile has been created!",
       });
 
       // Navigate to freelancer dashboard
@@ -156,78 +158,91 @@ export default function BecomeFreelancerPage() {
     </div>
   );
 
-  const renderStep2 = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-pink-500 to-amber-400 mb-4">
-          <MapPin className="h-8 w-8 text-white" />
-        </div>
-        <h2 className="text-2xl font-bold text-gray-900">Where do you work?</h2>
-        <p className="text-gray-600 mt-2">Help clients find you based on location</p>
-      </div>
-
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Area / City *
-          </label>
-          <Input
-            placeholder="e.g., Peckham, South London"
-            value={formData.locationArea}
-            onChange={(e) => setFormData(prev => ({ ...prev, locationArea: e.target.value }))}
-            className="h-12"
-          />
+  const renderStep2 = () => {
+    const canContinue = formData.postcode.trim().length >= 5;
+    
+    return (
+      <div className="space-y-6">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-pink-500 to-amber-400 mb-4">
+            <MapPin className="h-8 w-8 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">Where do you work?</h2>
+          <p className="text-gray-600 mt-2">Help clients find you based on location</p>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Postcode *
-          </label>
-          <Input
-            placeholder="e.g., SE15 4QZ"
-            value={formData.postcode}
-            onChange={(e) => setFormData(prev => ({ ...prev, postcode: e.target.value.toUpperCase() }))}
-            className="h-12"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            How far will you travel? (miles)
-          </label>
-          <div className="flex items-center gap-4">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Postcode *
+            </label>
             <Input
-              type="number"
-              min={1}
-              max={50}
-              value={formData.travelRadiusMiles}
-              onChange={(e) => setFormData(prev => ({ ...prev, travelRadiusMiles: parseInt(e.target.value) || 10 }))}
-              className="h-12 w-24"
+              placeholder="e.g., M29 8GQ"
+              value={formData.postcode}
+              onChange={(e) => {
+                const value = e.target.value.toUpperCase();
+                setFormData(prev => ({ 
+                  ...prev, 
+                  postcode: value,
+                  // Auto-set location area from postcode region
+                  locationArea: prev.locationArea || (value.length >= 2 ? value.slice(0, 2) + " Area" : "")
+                }));
+              }}
+              className="h-12 text-lg"
             />
-            <span className="text-sm text-gray-500">miles from your postcode</span>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              How far will you travel? (miles)
+            </label>
+            <div className="flex items-center gap-4">
+              <Input
+                type="number"
+                min={1}
+                max={50}
+                value={formData.travelRadiusMiles}
+                onChange={(e) => setFormData(prev => ({ ...prev, travelRadiusMiles: parseInt(e.target.value) || 10 }))}
+                className="h-12 w-24 text-lg"
+              />
+              <span className="text-sm text-gray-500">miles from your postcode</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex gap-3">
-        <Button 
-          variant="outline" 
-          onClick={() => setStep(1)}
-          className="flex-1 h-12"
-        >
-          Back
-        </Button>
-        <Button 
-          onClick={() => setStep(3)} 
-          disabled={!formData.locationArea.trim() || !formData.postcode.trim()}
-          className="flex-1 h-12 bg-gradient-to-r from-pink-500 to-amber-400 hover:from-pink-600 hover:to-amber-500"
-        >
-          Continue
-          <ChevronRight className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="flex gap-3">
+          <Button 
+            variant="outline" 
+            onClick={() => setStep(1)}
+            className="flex-1 h-12"
+            type="button"
+          >
+            Back
+          </Button>
+          <Button 
+            onClick={() => {
+              console.log("[BecomeFreelancer] Continue clicked, postcode:", formData.postcode);
+              if (canContinue) {
+                // Ensure locationArea has a value
+                if (!formData.locationArea.trim()) {
+                  setFormData(prev => ({ ...prev, locationArea: formData.postcode.slice(0, 2) + " Area" }));
+                }
+                setStep(3);
+              }
+            }} 
+            disabled={!canContinue}
+            className={`flex-1 h-12 ${canContinue 
+              ? "bg-gradient-to-r from-pink-500 to-amber-400 hover:from-pink-600 hover:to-amber-500" 
+              : "bg-gray-300 cursor-not-allowed"}`}
+            type="button"
+          >
+            Continue
+            <ChevronRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderStep3 = () => (
     <div className="space-y-6">
