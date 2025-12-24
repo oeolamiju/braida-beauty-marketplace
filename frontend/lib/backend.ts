@@ -7,7 +7,10 @@ const backend = new Client(API_URL, {
   requestInit: { credentials: "include" },
   auth: () => {
     const token = localStorage.getItem("authToken");
-    console.log("[BACKEND CLIENT] Auth called, token exists:", !!token, "length:", token?.length);
+    console.log("[BACKEND CLIENT] Auth function called");
+    console.log("[BACKEND CLIENT] Token exists:", !!token);
+    console.log("[BACKEND CLIENT] Token length:", token?.length);
+    console.log("[BACKEND CLIENT] Token preview:", token ? `${token.substring(0, 20)}...` : "null");
     if (token) {
       return { authorization: `Bearer ${token}` };
     }
