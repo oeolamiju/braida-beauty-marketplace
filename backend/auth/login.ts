@@ -99,7 +99,7 @@ export const login = api<LoginRequest, LoginResponse>(
         httpOnly: true,
         secure: true,
         sameSite: "None",
-        domain: ".braida.uk",
+        domain: ".lp.dev",
       },
       user: {
         id: user.id,
