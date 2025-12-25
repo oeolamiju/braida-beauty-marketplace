@@ -60,8 +60,12 @@ All test users can log in with the following password:
 
 You can create your own client account by registering at `/auth/register/client`.
 
-For testing, a verified client account exists:
+For testing, verified client accounts exist:
 - Email: `testlogin99@example.com`
+- Password: `TestPassword123!`
+
+- Phone: `+447700900000`
+- Email: `testphone_uk@example.com`
 - Password: `TestPassword123!`
 
 ## Admin Accounts
