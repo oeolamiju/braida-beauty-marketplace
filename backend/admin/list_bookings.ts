@@ -46,7 +46,7 @@ export const listBookings = api(
     if (req.status) {
       countQuery += ` AND b.status = $${params.length + 1}`;
       selectQuery += ` AND b.status = $${params.length + 1}`;
-      params.push(req.status);
+      params.push(req.status.toLowerCase());
     }
 
     if (req.freelancerId) {

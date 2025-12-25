@@ -11,7 +11,7 @@ export const listServices = api(
     const limit = req.limit || 50;
     const offset = req.offset || 0;
 
-    let countQuery = `SELECT COUNT(*) as count FROM services s JOIN users u ON s.freelancer_id = u.id WHERE 1=1`;
+    let countQuery = `SELECT COUNT(*) as count FROM services s JOIN users u ON s.stylist_id = u.id WHERE 1=1`;
     let selectQuery = `
       SELECT 
         s.id,

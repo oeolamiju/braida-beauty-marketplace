@@ -2,6 +2,7 @@ import { api } from "encore.dev/api";
 import { getAuthData } from "~encore/auth";
 import db from "../db";
 import type { Report, ReportStatus, ReportIssueType } from "./types";
+import { requireAdmin } from "../admin/middleware";
 
 export interface AdminListReportsRequest {
   status?: ReportStatus;
@@ -18,15 +19,8 @@ export interface AdminListReportsResponse {
 export const adminList = api(
   { method: "POST", path: "/admin/reports/list", expose: true, auth: true },
   async (req: AdminListReportsRequest): Promise<AdminListReportsResponse> => {
+    await requireAdmin();
     const auth = getAuthData()!;
-
-    const user = await db.queryRow<{ role: string }>`
-      SELECT role FROM users WHERE id = ${auth.userID}
-    `;
-
-    if (!user || user.role !== "admin") {
-      throw new Error("Admin access required");
-    }
 
     const limit = req.limit || 50;
     const offset = req.offset || 0;

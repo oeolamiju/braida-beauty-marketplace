@@ -62,15 +62,15 @@ export const adminList = api(
         d.status,
         d.created_at,
         d.updated_at,
-        u.name as raised_by_name,
-        c.name as client_name,
-        f.name as freelancer_name,
-        s.name as service_name
+        CONCAT(u.first_name, ' ', u.last_name) as raised_by_name,
+        CONCAT(c.first_name, ' ', c.last_name) as client_name,
+        CONCAT(f.first_name, ' ', f.last_name) as freelancer_name,
+        s.title as service_name
        FROM disputes d
-       JOIN users u ON d.raised_by = u.id
+       JOIN users u ON d.raised_by_id = u.id
        JOIN bookings b ON d.booking_id = b.id
        JOIN users c ON b.client_id = c.id
-       JOIN users f ON b.freelancer_id = f.id
+       JOIN users f ON b.stylist_id = f.id
        JOIN services s ON b.service_id = s.id
        ${whereClause}
        ORDER BY d.created_at DESC

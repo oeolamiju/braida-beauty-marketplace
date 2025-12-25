@@ -44,7 +44,7 @@ export const adminListAll = api(
           r.removed_at AS "removedAt",
           r.removed_by AS "removedBy",
           r.removal_reason AS "removalReason",
-          u.name AS "clientName",
+          CONCAT(u.first_name, ' ', u.last_name) AS "clientName",
           u.photo_url AS "clientPhotoUrl"
         FROM reviews r
         JOIN users u ON r.client_id = u.id
@@ -73,7 +73,7 @@ export const adminListAll = api(
           r.removed_at AS "removedAt",
           r.removed_by AS "removedBy",
           r.removal_reason AS "removalReason",
-          u.name AS "clientName",
+          CONCAT(u.first_name, ' ', u.last_name) AS "clientName",
           u.photo_url AS "clientPhotoUrl"
         FROM reviews r
         JOIN users u ON r.client_id = u.id
