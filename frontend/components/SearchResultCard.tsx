@@ -103,7 +103,7 @@ export default function SearchResultCard({ result, onClick, variant = "light", c
 
     try {
       const result = await backend.favorites.checkFavorite({ freelancerId });
-      setIsFavorited(result.isFavorited);
+      setIsFavorited(result.isFavorite);
     } catch (error) {
       // Silently fail - user might not be logged in
       console.debug("Could not check favorite status:", error);
@@ -125,8 +125,8 @@ export default function SearchResultCard({ result, onClick, variant = "light", c
     
     setFavoriteLoading(true);
     try {
-      const result = await backend.favorites.toggleFreelancer({ freelancerId });
-      setIsFavorited(result.isFavorited);
+      const result = await backend.favorites.toggleFavoriteFreelancer({ freelancerId });
+      setIsFavorited(result.isFavorite);
     } catch (error) {
       console.error("Failed to toggle favorite:", error);
     } finally {

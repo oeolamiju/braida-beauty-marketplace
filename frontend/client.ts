@@ -463,6 +463,11 @@ import { me as api_auth_me_me } from "~backend/auth/me";
 import { register as api_auth_register_register } from "~backend/auth/register";
 import { resendVerification as api_auth_resend_verification_resendVerification } from "~backend/auth/resend_verification";
 import { resetPassword as api_auth_reset_password_resetPassword } from "~backend/auth/reset_password";
+import {
+    getRoles as api_auth_roles_getRoles,
+    legacySwitchRole as api_auth_roles_legacySwitchRole,
+    startFreelancerOnboarding as api_auth_roles_startFreelancerOnboarding
+} from "~backend/auth/roles";
 import { switchRole as api_auth_switch_role_switchRole } from "~backend/auth/switch_role";
 import { updateProfile as api_auth_update_profile_updateProfile } from "~backend/auth/update_profile";
 import { verify as api_auth_verify_verify } from "~backend/auth/verify";
@@ -477,12 +482,15 @@ export namespace auth {
             this.adminVerifyUser = this.adminVerifyUser.bind(this)
             this.becomeFreelancer = this.becomeFreelancer.bind(this)
             this.forgotPassword = this.forgotPassword.bind(this)
+            this.getRoles = this.getRoles.bind(this)
+            this.legacySwitchRole = this.legacySwitchRole.bind(this)
             this.login = this.login.bind(this)
             this.logout = this.logout.bind(this)
             this.me = this.me.bind(this)
             this.register = this.register.bind(this)
             this.resendVerification = this.resendVerification.bind(this)
             this.resetPassword = this.resetPassword.bind(this)
+            this.startFreelancerOnboarding = this.startFreelancerOnboarding.bind(this)
             this.switchRole = this.switchRole.bind(this)
             this.updateProfile = this.updateProfile.bind(this)
             this.verify = this.verify.bind(this)
@@ -504,6 +512,22 @@ export namespace auth {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/auth/forgot-password`, {method: "POST", body: JSON.stringify(params)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_auth_forgot_password_forgotPassword>
+        }
+
+        public async getRoles(): Promise<ResponseType<typeof api_auth_roles_getRoles>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/auth/roles`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_auth_roles_getRoles>
+        }
+
+        /**
+         * NOTE: Deprecated - use switch_role.ts instead
+         * Keeping for backward compatibility
+         */
+        public async legacySwitchRole(params: RequestType<typeof api_auth_roles_legacySwitchRole>): Promise<ResponseType<typeof api_auth_roles_legacySwitchRole>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/auth/legacy-switch-role`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_auth_roles_legacySwitchRole>
         }
 
         public async login(params: RequestType<typeof api_auth_login_login>): Promise<ResponseType<typeof api_auth_login_login>> {
@@ -540,6 +564,12 @@ export namespace auth {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/auth/reset-password`, {method: "POST", body: JSON.stringify(params)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_auth_reset_password_resetPassword>
+        }
+
+        public async startFreelancerOnboarding(params: RequestType<typeof api_auth_roles_startFreelancerOnboarding>): Promise<ResponseType<typeof api_auth_roles_startFreelancerOnboarding>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/auth/start-freelancer-onboarding`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_auth_roles_startFreelancerOnboarding>
         }
 
         public async switchRole(params: RequestType<typeof api_auth_switch_role_switchRole>): Promise<ResponseType<typeof api_auth_switch_role_switchRole>> {
