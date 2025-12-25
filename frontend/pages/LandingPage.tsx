@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { 
   Search, MapPin, Star, ChevronLeft, ChevronRight, 
-  ShieldCheck, CreditCard, MessageSquare, Instagram, Twitter
+  ShieldCheck, CreditCard, MessageSquare, Instagram, Twitter, Menu, X
 } from "lucide-react";
 import { BraidaLogoLight } from "@/components/BraidaLogo";
 
@@ -112,6 +112,7 @@ export default function LandingPage() {
   const [service, setService] = useState("");
   const [location, setLocation] = useState("");
   const [proScrollPosition, setProScrollPosition] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const userStr = localStorage.getItem("user");
@@ -154,28 +155,72 @@ export default function LandingPage() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="md:hidden"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </Button>
               <Link to="/" className="flex items-center">
                 <BraidaLogoLight size="md" />
               </Link>
-              <nav className="hidden md:flex items-center gap-6">
-                <Link to="/discover" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors">
-                  Find a Stylist
-                </Link>
-                <Link to="/auth/register/freelancer" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors">
-                  Become a Pro
-                </Link>
-              </nav>
             </div>
+            <nav className="hidden md:flex items-center gap-6">
+              <Link to="/discover" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors">
+                Find a Stylist
+              </Link>
+              <Link to="/auth/register/freelancer" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors">
+                Become a Pro
+              </Link>
+            </nav>
             <div className="flex items-center gap-3">
-              <Button variant="ghost" asChild className="hidden sm:flex">
+              <Button variant="ghost" asChild className="hidden md:inline-flex">
                 <Link to="/auth/login">Log In</Link>
               </Button>
-              <Button asChild className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6">
+              <Button asChild className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6 hidden md:inline-flex">
                 <Link to="/auth/register/client">Sign Up</Link>
               </Button>
             </div>
           </div>
+
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden border-t bg-white shadow-lg">
+              <div className="py-2">
+                <Link 
+                  to="/auth/login" 
+                  className="block px-4 py-3 font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Log In
+                </Link>
+                <Link 
+                  to="/auth/register/client" 
+                  className="block px-4 py-3 font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+                <Link 
+                  to="/discover" 
+                  className="block px-4 py-3 font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Find a Stylist
+                </Link>
+                <Link 
+                  to="/auth/register/freelancer" 
+                  className="block px-4 py-3 font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Become a Pro
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
