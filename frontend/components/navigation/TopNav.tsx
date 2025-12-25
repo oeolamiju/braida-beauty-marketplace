@@ -270,7 +270,7 @@ export default function TopNav({ role }: TopNavProps) {
               </Link>
             </div>
           </div>
-        )
+        )}
       </div>
     </nav>
   );
