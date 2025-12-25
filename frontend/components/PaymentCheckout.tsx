@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { STRIPE_PUBLISHABLE_KEY } from "../config";
 
-const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
+const stripePromise = STRIPE_PUBLISHABLE_KEY ? loadStripe(STRIPE_PUBLISHABLE_KEY) : null;
 
 interface PaymentCheckoutProps {
   clientSecret: string;
@@ -134,6 +134,22 @@ function CheckoutForm({
 }
 
 export function PaymentCheckout(props: PaymentCheckoutProps) {
+  if (!STRIPE_PUBLISHABLE_KEY) {
+    return (
+      <div className="max-w-md mx-auto">
+        <Card className="p-6 text-center">
+          <p className="text-red-500 mb-4">Payment system is not configured.</p>
+          <p className="text-sm text-muted-foreground">
+            Please contact support or set up Stripe in Settings.
+          </p>
+          <Button onClick={props.onCancel} className="mt-4">
+            Go Back
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
   const options = {
     clientSecret: props.clientSecret,
     appearance: {
