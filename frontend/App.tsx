@@ -88,6 +88,8 @@ import ContentManagement from "./pages/admin/ContentManagement";
 import ContentEditor from "./pages/admin/ContentEditor";
 import FAQManagement from "./pages/admin/FAQManagement";
 import SafetyResourcesManagement from "./pages/admin/SafetyResourcesManagement";
+import PlatformSettings from "./pages/admin/PlatformSettings";
+import AdminPortal from "./pages/admin/AdminPortal";
 
 export default function App() {
   return (
@@ -169,7 +171,8 @@ export default function App() {
           </Route>
 
           <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Navigate to="/admin/dashboard" replace />} />
+            <Route index element={<Navigate to="/admin/portal" replace />} />
+            <Route path="portal" element={<AdminPortal />} />
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="kpis" element={<KPIDashboard />} />
             <Route path="users" element={<AdminUsers />} />
@@ -188,7 +191,7 @@ export default function App() {
             <Route path="styles" element={<AdminStyles />} />
             <Route path="payouts" element={<AdminPayouts />} />
             <Route path="payouts/:id" element={<AdminPayoutDetail />} />
-            <Route path="settings" element={<AdminSettings />} />
+            <Route path="settings" element={<PlatformSettings />} />
             <Route path="settings/policies" element={<PolicySettings />} />
             <Route path="settings/payments" element={<AdminPaymentSettings />} />
             <Route path="analytics/cities" element={<CityAnalytics />} />
