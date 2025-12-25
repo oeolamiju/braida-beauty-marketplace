@@ -32,11 +32,17 @@ export default function Bookings() {
       setBookings(response.bookings);
       setTotal(response.total);
     } catch (error: any) {
+      console.error("Failed to load bookings:", error);
+      const errorMessage = error?.message || "Failed to load bookings";
       toast({
         title: "Error loading bookings",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
+      
+      if (error?.message?.includes("unauthenticated") || error?.message?.includes("credentials")) {
+        navigate("/auth/login");
+      }
     } finally {
       setLoading(false);
     }

@@ -44,11 +44,17 @@ export default function AdminDashboard() {
         openDisputes: disputes.total,
       });
     } catch (error: any) {
+      console.error("Failed to load statistics:", error);
+      const errorMessage = error?.message || "Failed to load statistics";
       toast({
         title: "Error loading statistics",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
+      
+      if (error?.message?.includes("unauthenticated") || error?.message?.includes("credentials")) {
+        navigate("/auth/login");
+      }
     } finally {
       setLoading(false);
     }

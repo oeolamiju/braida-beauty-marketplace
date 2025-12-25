@@ -23,11 +23,17 @@ export default function Settings() {
       const response = await backend.admin.getSettings();
       setSettings(response);
     } catch (error: any) {
+      console.error("Failed to load settings:", error);
+      const errorMessage = error?.message || "Failed to load settings";
       toast({
         title: "Error loading settings",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
+      
+      if (error?.message?.includes("unauthenticated") || error?.message?.includes("credentials")) {
+        window.location.href = "/auth/login";
+      }
     } finally {
       setLoading(false);
     }
