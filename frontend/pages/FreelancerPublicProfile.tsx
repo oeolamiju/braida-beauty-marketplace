@@ -202,44 +202,44 @@ export default function FreelancerPublicProfile() {
               <Card className="p-6 bg-[#2a2a2a] border-[#3a3a3a]">
                 <div className="flex flex-col items-center text-center">
                   <div className="relative mb-4">
-                    {profile.profilePhotoUrl ? (
-                      <img
-                        src={profile.profilePhotoUrl}
-                        alt={profile.displayName}
+              {profile.profilePhotoUrl ? (
+                <img
+                  src={profile.profilePhotoUrl}
+                  alt={profile.displayName}
                         className="w-28 h-28 rounded-full object-cover border-4 border-[#3a3a3a]"
-                      />
-                    ) : (
+                />
+              ) : (
                       <div className="w-28 h-28 rounded-full bg-[#3a3a3a] flex items-center justify-center">
                         <span className="text-3xl font-bold text-gray-400">
-                          {profile.displayName.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                    )}
+                    {profile.displayName.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
                     {profile.verificationStatus === "verified" && (
                       <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-4 border-[#2a2a2a]">
                         <CheckCircle2 className="h-4 w-4 text-white" />
-                      </div>
-                    )}
-                  </div>
+            </div>
+                )}
+              </div>
 
                   <h1 className="text-xl font-bold text-white mb-1">{profile.displayName}</h1>
                   
                   <div className="flex items-center gap-1 text-gray-400 text-sm mb-4">
-                    <MapPin className="h-4 w-4" />
-                    <span>{profile.locationArea}</span>
+                <MapPin className="h-4 w-4" />
+                <span>{profile.locationArea}</span>
                   </div>
 
                   <div className="flex flex-wrap justify-center gap-2 mb-4">
-                    {profile.categories.map((category) => (
+                {profile.categories.map((category) => (
                       <Badge 
                         key={category} 
                         variant="secondary" 
                         className="bg-[#3a3a3a] text-gray-300 hover:bg-[#4a4a4a]"
                       >
-                        {CATEGORY_LABELS[category] || category}
-                      </Badge>
-                    ))}
-                  </div>
+                    {CATEGORY_LABELS[category] || category}
+                  </Badge>
+                ))}
+              </div>
 
                   <Button 
                     onClick={() => navigate(`/services?freelancer=${userId}`)}
@@ -288,8 +288,8 @@ export default function FreelancerPublicProfile() {
                         {profile.totalReviews} reviews
                       </span>
                     </div>
-                  )}
-                </div>
+              )}
+            </div>
               </Card>
 
               {/* Details Card */}
@@ -325,7 +325,7 @@ export default function FreelancerPublicProfile() {
                 </div>
               </Card>
 
-              {isAuthenticated && (
+            {isAuthenticated && (
                 <Button 
                   variant="ghost" 
                   size="sm" 

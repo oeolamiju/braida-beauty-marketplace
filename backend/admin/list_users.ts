@@ -16,32 +16,32 @@ export const listUsers = api(
       SELECT 
         u.id,
         u.email,
-        u.full_name,
+        CONCAT(u.first_name, ' ', u.last_name) as full_name,
         u.role,
-        u.suspended,
+        COALESCE(u.suspended, false) as suspended,
         u.suspension_reason,
         u.suspended_at,
         u.created_at,
         u.last_login_at,
-        v.status as verification_status,
+        fp.verification_status as verification_status,
         COALESCE(bc.count, 0) as total_bookings_client,
         COALESCE(bf.count, 0) as total_bookings_freelancer,
         COALESCE(r.count, 0) as total_reports,
         COALESCE(d.count, 0) as total_disputes
       FROM users u
-      LEFT JOIN verifications v ON u.id = v.user_id
+      LEFT JOIN freelancer_profiles fp ON u.id = fp.user_id
       LEFT JOIN (SELECT client_id, COUNT(*) as count FROM bookings GROUP BY client_id) bc ON u.id = bc.client_id
-      LEFT JOIN (SELECT freelancer_id, COUNT(*) as count FROM bookings GROUP BY freelancer_id) bf ON u.id = bf.freelancer_id
+      LEFT JOIN (SELECT stylist_id, COUNT(*) as count FROM bookings GROUP BY stylist_id) bf ON u.id = bf.stylist_id
       LEFT JOIN (SELECT reported_user_id, COUNT(*) as count FROM reports GROUP BY reported_user_id) r ON u.id = r.reported_user_id
       LEFT JOIN (SELECT b.client_id as user_id, COUNT(DISTINCT dp.id) as count 
                  FROM disputes dp 
                  JOIN bookings b ON dp.booking_id = b.id 
                  GROUP BY b.client_id
                  UNION ALL
-                 SELECT b.freelancer_id as user_id, COUNT(DISTINCT dp.id) as count 
+                 SELECT b.stylist_id as user_id, COUNT(DISTINCT dp.id) as count 
                  FROM disputes dp 
                  JOIN bookings b ON dp.booking_id = b.id 
-                 GROUP BY b.freelancer_id) d ON u.id = d.user_id
+                 GROUP BY b.stylist_id) d ON u.id = d.user_id
       WHERE 1=1
     `;
 

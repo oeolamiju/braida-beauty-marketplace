@@ -233,9 +233,9 @@ export default function LandingPage() {
               <div className="space-y-6 z-10">
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium leading-tight text-gray-900">
                   Beauty that understands
-                  <br />
+                <br />
                   <span className="italic">your roots</span>.
-                </h1>
+              </h1>
                 <p className="text-lg text-gray-700 max-w-md">
                   Find and book trusted Afro & Caribbean beauty
                   professionals near you. Verified, secure, and made for you.
@@ -319,7 +319,7 @@ export default function LandingPage() {
           <h2 className="text-2xl md:text-3xl font-bold mb-8">Browse by Category</h2>
           <div className="flex gap-6 md:gap-10 overflow-x-auto pb-4 scrollbar-hide">
             {CATEGORIES.map((category) => (
-              <Link
+                <Link 
                 key={category.slug}
                 to={`/discover?category=${category.slug}`}
                 className="flex flex-col items-center gap-3 min-w-[80px] group"
@@ -330,12 +330,12 @@ export default function LandingPage() {
                     alt={category.name}
                     className="w-full h-full object-cover"
                   />
-                </div>
+                      </div>
                 <span className="text-sm font-medium text-center text-gray-700 group-hover:text-orange-500 transition-colors">
                   {category.name}
                 </span>
-              </Link>
-            ))}
+                </Link>
+              ))}
           </div>
         </div>
       </section>
@@ -392,7 +392,7 @@ export default function LandingPage() {
               <div className="absolute bottom-0 left-0 p-4 text-white">
                 <h3 className="text-lg font-bold">{TRENDING_STYLES[2].name}</h3>
               </div>
-            </div>
+              </div>
 
             {/* Wide Card */}
             <div className="md:col-span-2 relative rounded-2xl overflow-hidden group cursor-pointer">
@@ -406,7 +406,7 @@ export default function LandingPage() {
                 <h3 className="text-lg font-bold">{TRENDING_STYLES[3].name}</h3>
                 <p className="text-sm text-white/80">{TRENDING_STYLES[3].subtitle}</p>
               </div>
-            </div>
+              </div>
           </div>
         </div>
       </section>
@@ -435,7 +435,7 @@ export default function LandingPage() {
                 onClick={() => scrollPros("right")}
               >
                 <ChevronRight className="h-4 w-4" />
-              </Button>
+            </Button>
             </div>
           </div>
 
@@ -445,12 +445,12 @@ export default function LandingPage() {
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {TOP_PROS.map((pro) => (
-              <Card
+              <Card 
                 key={pro.id}
                 className="min-w-[240px] md:min-w-[280px] snap-start border-0 shadow-sm hover:shadow-lg transition-shadow bg-white overflow-hidden"
               >
                 <div className="relative aspect-[3/4]">
-                  <img
+                  <img 
                     src={pro.image}
                     alt={pro.name}
                     className="w-full h-full object-cover"

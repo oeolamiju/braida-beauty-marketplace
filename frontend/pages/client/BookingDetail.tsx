@@ -268,9 +268,9 @@ export default function ClientBookingDetail() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6 print:hidden">
         <Button variant="ghost" onClick={() => navigate("/client/bookings")}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Bookings
-        </Button>
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Back to Bookings
+      </Button>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handlePrintReceipt}>
             <Printer className="h-4 w-4 mr-2" />
@@ -287,9 +287,9 @@ export default function ClientBookingDetail() {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Status Header */}
-          <Card className="p-6">
+        <Card className="p-6">
             <div className="flex items-center gap-4 mb-6">
-              {getStatusBadge(booking.status)}
+                {getStatusBadge(booking.status)}
               <span className="text-sm text-muted-foreground">{bookingRef}</span>
             </div>
             
@@ -396,7 +396,7 @@ export default function ClientBookingDetail() {
             </div>
 
             {/* Booking Policies */}
-            <div className="space-y-3">
+              <div className="space-y-3">
               <h3 className="font-semibold">Booking Policies</h3>
               
               <details className="border rounded-lg">
@@ -407,7 +407,7 @@ export default function ClientBookingDetail() {
                   <p>• Free cancellation up to 48 hours before your appointment</p>
                   <p>• 50% refund for cancellations within 24-48 hours</p>
                   <p>• No refund for cancellations within 24 hours</p>
-                </div>
+                  </div>
               </details>
 
               <details className="border rounded-lg">
@@ -438,10 +438,10 @@ export default function ClientBookingDetail() {
                         {log.action === "declined" && "Booking declined by freelancer"}
                         {log.action === "cancelled" && "Booking cancelled"}
                         {log.action === "auto_expired" && "Booking automatically expired"}
-                      </div>
+                    </div>
                       <div className="text-muted-foreground">
                         {log.userName} · {formatDateTime(log.createdAt)}
-                      </div>
+                  </div>
                     </div>
                   </div>
                 ))}
@@ -512,8 +512,8 @@ export default function ClientBookingDetail() {
                         <p className="font-medium">
                           {showPhone ? booking.freelancerPhone : maskValue(booking.freelancerPhone, "phone")}
                         </p>
-                      </div>
-                    </div>
+            </div>
+          </div>
                     <Button
                       variant="link"
                       size="sm"
@@ -522,9 +522,9 @@ export default function ClientBookingDetail() {
                     >
                       {showPhone ? <EyeOff className="h-4 w-4 mr-1" /> : <Eye className="h-4 w-4 mr-1" />}
                       {showPhone ? "Hide" : "Reveal"}
-                    </Button>
-                  </div>
-                )}
+              </Button>
+            </div>
+          )}
 
                 {booking.freelancerEmail && (
                   <div className="flex items-center justify-between">
@@ -588,9 +588,9 @@ export default function ClientBookingDetail() {
                 <Star className="h-4 w-4 mr-2" />
                 Write a Review
               </Button>
-            )}
+          )}
 
-            {(booking.status === "confirmed" || booking.status === "completed") && (
+          {(booking.status === "confirmed" || booking.status === "completed") && (
               <Button 
                 variant="outline" 
                 onClick={() => setDisputeModalOpen(true)} 
@@ -599,8 +599,8 @@ export default function ClientBookingDetail() {
                 <AlertCircle className="h-4 w-4 mr-2" />
                 Raise a Dispute
               </Button>
-            )}
-          </Card>
+          )}
+        </Card>
 
           {/* Safety Panel */}
           {(booking.status === "confirmed" || booking.status === "pending") && (
@@ -610,28 +610,28 @@ export default function ClientBookingDetail() {
       </div>
 
       {/* Modals */}
-      <ReviewModal
-        open={reviewModalOpen}
-        onClose={() => setReviewModalOpen(false)}
-        bookingId={parseInt(id!)}
-        onSuccess={loadReviewStatus}
-      />
+        <ReviewModal
+          open={reviewModalOpen}
+          onClose={() => setReviewModalOpen(false)}
+          bookingId={parseInt(id!)}
+          onSuccess={loadReviewStatus}
+        />
 
-      <ReportModal
-        open={reportModalOpen}
-        onClose={() => setReportModalOpen(false)}
-        reportedUserId={booking.freelancerId}
-        bookingId={booking.id.toString()}
-        context="Booking"
-      />
+        <ReportModal
+          open={reportModalOpen}
+          onClose={() => setReportModalOpen(false)}
+          reportedUserId={booking.freelancerId}
+          bookingId={booking.id.toString()}
+          context="Booking"
+        />
 
-      <DisputeModal
-        open={disputeModalOpen}
-        onClose={() => setDisputeModalOpen(false)}
-        bookingId={booking.id.toString()}
-        scheduledEnd={new Date(booking.endDatetime)}
-        onSuccess={loadBooking}
-      />
+        <DisputeModal
+          open={disputeModalOpen}
+          onClose={() => setDisputeModalOpen(false)}
+          bookingId={booking.id.toString()}
+          scheduledEnd={new Date(booking.endDatetime)}
+          onSuccess={loadBooking}
+        />
     </div>
   );
 }
