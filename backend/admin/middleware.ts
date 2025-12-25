@@ -7,7 +7,7 @@ export async function requireAdmin(): Promise<void> {
     throw APIError.unauthenticated("Authentication required");
   }
 
-  if (auth.role !== "ADMIN") {
+  if (auth.role !== "admin" && auth.activeRole !== "admin") {
     throw APIError.permissionDenied("Admin access required");
   }
 }
