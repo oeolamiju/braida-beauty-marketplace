@@ -4,6 +4,7 @@ import db from "../db";
 import { APIError } from "encore.dev/api";
 import { DisputeStatus } from "./types";
 import { sendNotification } from "../notifications/send";
+import { requireAdmin } from "../admin/middleware";
 
 export interface DisputeDashboardStats {
   total: number;
@@ -51,16 +52,7 @@ export interface DisputeWithDetails {
 export const getDashboardStats = api(
   { method: "GET", path: "/admin/disputes/stats", expose: true, auth: true },
   async (): Promise<DisputeDashboardStats> => {
-    const auth = getAuthData()!;
-
-    const userRole = await db.rawQueryRow<{ role: string }>(
-      `SELECT role FROM users WHERE id = $1`,
-      auth.userID
-    );
-
-    if (userRole?.role !== "admin") {
-      throw APIError.permissionDenied("Admin access required");
-    }
+    await requireAdmin();
 
     const stats = await db.queryRow<{
       total: number;
@@ -96,16 +88,7 @@ export const getDashboardStats = api(
 export const getDisputeDetails = api(
   { method: "GET", path: "/admin/disputes/:id/details", expose: true, auth: true },
   async (req: { id: string }): Promise<DisputeWithDetails> => {
-    const auth = getAuthData()!;
-
-    const userRole = await db.rawQueryRow<{ role: string }>(
-      `SELECT role FROM users WHERE id = $1`,
-      auth.userID
-    );
-
-    if (userRole?.role !== "admin") {
-      throw APIError.permissionDenied("Admin access required");
-    }
+    await requireAdmin();
 
     const dispute = await db.queryRow<{
       id: string;

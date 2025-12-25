@@ -2,6 +2,7 @@ import { api } from "encore.dev/api";
 import { getAuthData } from "~encore/auth";
 import db from "../db";
 import { APIError } from "encore.dev/api";
+import { requireAdmin } from "../admin/middleware";
 
 export interface AdminAddNoteRequest {
   dispute_id: string;
@@ -15,16 +16,8 @@ export interface AdminAddNoteResponse {
 export const adminAddNote = api(
   { method: "POST", path: "/admin/disputes/:dispute_id/notes", auth: true, expose: true },
   async (req: AdminAddNoteRequest): Promise<AdminAddNoteResponse> => {
+    await requireAdmin();
     const auth = getAuthData()!;
-
-    const userRole = await db.rawQueryRow<{ role: string }>(
-      `SELECT role FROM users WHERE id = $1`,
-      auth.userID
-    );
-
-    if (userRole?.role !== "admin") {
-      throw APIError.permissionDenied("Admin access required");
-    }
 
     const dispute = await db.rawQueryRow<{ id: string }>(
       `SELECT id FROM disputes WHERE id = $1`,

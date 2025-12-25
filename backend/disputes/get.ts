@@ -39,13 +39,12 @@ export const get = api(
       dispute.booking_id
     );
 
-    const userRole = await db.rawQueryRow<{ role: string }>(
-      `SELECT role FROM users WHERE id = $1`,
-      auth.userID
-    );
+    const roleUpper = auth.role?.toUpperCase();
+    const activeRoleUpper = auth.activeRole?.toUpperCase();
+    const isAdmin = roleUpper === "ADMIN" || activeRoleUpper === "ADMIN";
 
     if (
-      userRole?.role !== "admin" &&
+      !isAdmin &&
       auth.userID !== booking?.client_id &&
       auth.userID !== booking?.freelancer_id
     ) {

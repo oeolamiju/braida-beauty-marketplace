@@ -3,6 +3,7 @@ import { getAuthData } from "~encore/auth";
 import db from "../db";
 import { APIError } from "encore.dev/api";
 import { DisputeBookingTimeline, DisputeWithDetails, DisputeAttachment, DisputeNote } from "./types";
+import { requireAdmin } from "../admin/middleware";
 
 export interface AdminGetDisputeRequest {
   dispute_id: string;
@@ -23,16 +24,8 @@ export interface AdminGetDisputeResponse {
 export const adminGet = api(
   { method: "GET", path: "/admin/disputes/:dispute_id", auth: true, expose: true },
   async (req: AdminGetDisputeRequest): Promise<AdminGetDisputeResponse> => {
+    await requireAdmin();
     const auth = getAuthData()!;
-
-    const userRole = await db.rawQueryRow<{ role: string }>(
-      `SELECT role FROM users WHERE id = $1`,
-      auth.userID
-    );
-
-    if (userRole?.role !== "admin") {
-      throw APIError.permissionDenied("Admin access required");
-    }
 
     const dispute = await db.rawQueryRow<DisputeWithDetails>(
       `SELECT 

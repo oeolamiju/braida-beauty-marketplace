@@ -6,6 +6,7 @@ import { ResolutionType } from "./types";
 import { refundPayment } from "../payments/stripe_service";
 import { sendNotification } from "../notifications/send";
 import { createPayoutRecord, calculatePayoutAmounts } from "../payouts/payout_service";
+import { requireAdmin } from "../admin/middleware";
 
 export interface AdminResolveDisputeRequest {
   dispute_id: string;
@@ -35,16 +36,8 @@ async function logAudit(
 export const adminResolve = api(
   { method: "POST", path: "/admin/disputes/:dispute_id/resolve", auth: true, expose: true },
   async (req: AdminResolveDisputeRequest): Promise<AdminResolveDisputeResponse> => {
+    await requireAdmin();
     const auth = getAuthData()!;
-
-    const userRole = await db.rawQueryRow<{ role: string }>(
-      `SELECT role FROM users WHERE id = $1`,
-      auth.userID
-    );
-
-    if (userRole?.role !== "admin") {
-      throw APIError.permissionDenied("Admin access required");
-    }
 
     const dispute = await db.rawQueryRow<{ id: string; booking_id: string; raised_by: string }>(
       `SELECT id, booking_id, raised_by FROM disputes WHERE id = $1`,
