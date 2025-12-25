@@ -164,6 +164,7 @@ import {
     updateServiceStatus as api_admin_services_enhanced_updateServiceStatus
 } from "~backend/admin/services_enhanced";
 import {
+    getPublicPolicies as api_admin_settings_enhanced_getPublicPolicies,
     getSettings as api_admin_settings_enhanced_getSettings,
     updateSettings as api_admin_settings_enhanced_updateSettings
 } from "~backend/admin/settings_enhanced";
@@ -185,6 +186,7 @@ export namespace admin {
             this.deactivateService = this.deactivateService.bind(this)
             this.getBooking = this.getBooking.bind(this)
             this.getMyPermissions = this.getMyPermissions.bind(this)
+            this.getPublicPolicies = this.getPublicPolicies.bind(this)
             this.getSettings = this.getSettings.bind(this)
             this.getUser = this.getUser.bind(this)
             this.getUserDetail = this.getUserDetail.bind(this)
@@ -226,6 +228,15 @@ export namespace admin {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/admin/permissions`, {method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_rbac_getMyPermissions>
+        }
+
+        /**
+         * Public endpoint for clients to view policies
+         */
+        public async getPublicPolicies(): Promise<ResponseType<typeof api_admin_settings_enhanced_getPublicPolicies>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/settings/policies`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_settings_enhanced_getPublicPolicies>
         }
 
         public async getSettings(): Promise<ResponseType<typeof api_admin_settings_enhanced_getSettings>> {
