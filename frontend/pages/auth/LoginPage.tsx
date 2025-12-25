@@ -53,10 +53,9 @@ export default function LoginPage() {
             ? "/admin/dashboard" 
             : "/";
       
-      // Use window.location for guaranteed redirect (more reliable than React Router navigate)
-      // Don't return - let finally block run but we'll navigate away
-      window.location.href = targetPath;
-      return; // Exit early - no need to reset loading since we're navigating
+      // Use React Router navigate for client-side navigation
+      navigate(targetPath);
+      return;
     } catch (error: any) {
       console.error("Login error:", error);
       setLoading(false);
