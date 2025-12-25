@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS discount_coupons (
   valid_until TIMESTAMP WITH TIME ZONE NOT NULL,
   is_active BOOLEAN DEFAULT TRUE,
   applicable_to VARCHAR(20) DEFAULT 'ALL' CHECK (applicable_to IN ('ALL', 'NEW_USERS', 'SPECIFIC_SERVICES')),
-  created_by UUID REFERENCES users(id),
+  created_by TEXT REFERENCES users(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   notes TEXT
@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS discount_coupons (
 CREATE TABLE IF NOT EXISTS coupon_usage (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   coupon_id UUID NOT NULL REFERENCES discount_coupons(id) ON DELETE CASCADE,
-  user_id UUID NOT NULL REFERENCES users(id),
-  booking_id UUID REFERENCES bookings(id),
+  user_id TEXT NOT NULL REFERENCES users(id),
+  booking_id BIGINT REFERENCES bookings(id),
   discount_amount DECIMAL(10, 2) NOT NULL,
   used_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

@@ -38,6 +38,7 @@ export class Client {
     public readonly auth: auth.ServiceClient
     public readonly availability: availability.ServiceClient
     public readonly bookings: bookings.ServiceClient
+    public readonly coupons: coupons.ServiceClient
     public readonly disputes: disputes.ServiceClient
     public readonly favorites: favorites.ServiceClient
     public readonly freelancers: freelancers.ServiceClient
@@ -77,6 +78,7 @@ export class Client {
         this.auth = new auth.ServiceClient(base)
         this.availability = new availability.ServiceClient(base)
         this.bookings = new bookings.ServiceClient(base)
+        this.coupons = new coupons.ServiceClient(base)
         this.disputes = new disputes.ServiceClient(base)
         this.favorites = new favorites.ServiceClient(base)
         this.freelancers = new freelancers.ServiceClient(base)
@@ -931,6 +933,68 @@ export namespace bookings {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/bookings/${encodeURIComponent(params.bookingId)}/share`, {method: "POST", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_bookings_share_shareBooking>
+        }
+    }
+}
+
+/**
+ * Import the endpoint handlers to derive the types for the client.
+ */
+import { create as api_coupons_create_create } from "~backend/coupons/create";
+import { list as api_coupons_list_list } from "~backend/coupons/list";
+import { update as api_coupons_update_update } from "~backend/coupons/update";
+import { validate as api_coupons_validate_validate } from "~backend/coupons/validate";
+
+export namespace coupons {
+
+    export class ServiceClient {
+        private baseClient: BaseClient
+
+        constructor(baseClient: BaseClient) {
+            this.baseClient = baseClient
+            this.create = this.create.bind(this)
+            this.list = this.list.bind(this)
+            this.update = this.update.bind(this)
+            this.validate = this.validate.bind(this)
+        }
+
+        public async create(params: RequestType<typeof api_coupons_create_create>): Promise<ResponseType<typeof api_coupons_create_create>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/coupons`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_coupons_create_create>
+        }
+
+        public async list(params: RequestType<typeof api_coupons_list_list>): Promise<ResponseType<typeof api_coupons_list_list>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                isActive: params.isActive === undefined ? undefined : String(params.isActive),
+                limit:    params.limit === undefined ? undefined : String(params.limit),
+                page:     params.page === undefined ? undefined : String(params.page),
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/coupons`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_coupons_list_list>
+        }
+
+        public async update(params: RequestType<typeof api_coupons_update_update>): Promise<ResponseType<typeof api_coupons_update_update>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                isActive:   params.isActive,
+                notes:      params.notes,
+                usageLimit: params.usageLimit,
+                validUntil: params.validUntil,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/coupons/${encodeURIComponent(params.id)}`, {method: "PATCH", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_coupons_update_update>
+        }
+
+        public async validate(params: RequestType<typeof api_coupons_validate_validate>): Promise<ResponseType<typeof api_coupons_validate_validate>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/coupons/validate`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_coupons_validate_validate>
         }
     }
 }
