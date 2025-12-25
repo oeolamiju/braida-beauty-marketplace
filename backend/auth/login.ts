@@ -27,10 +27,37 @@ export interface LoginResponse {
   };
 }
 
+/**
+ * Normalize phone number to E.164 format for lookup
+ */
+function normalizePhoneForLookup(input: string): string {
+  // If it looks like an email, return as-is
+  if (input.includes('@')) return input;
+  
+  // Remove all spaces, dashes, and parentheses
+  let normalized = input.replace(/[\s\-\(\)]/g, '');
+  
+  // If starts with 0, replace with +44
+  if (normalized.startsWith('0')) {
+    normalized = '+44' + normalized.substring(1);
+  }
+  
+  // If starts with 44 (without +), add +
+  if (normalized.startsWith('44') && !normalized.startsWith('+44')) {
+    normalized = '+' + normalized;
+  }
+  
+  return normalized;
+}
+
 export const login = api<LoginRequest, LoginResponse>(
   { expose: true, method: "POST", path: "/auth/login" },
   async (req) => {
     await applyRateLimit(req.emailOrPhone, RATE_LIMITS.login);
+    
+    // Normalize phone number for lookup
+    const normalizedInput = normalizePhoneForLookup(req.emailOrPhone);
+    
     const user = await db.queryRow<{
       id: string;
       first_name: string;
@@ -50,7 +77,7 @@ export const login = api<LoginRequest, LoginResponse>(
         u.role, u.roles, u.active_role, u.is_verified, u.status,
         EXISTS(SELECT 1 FROM freelancer_profiles fp WHERE fp.user_id = u.id) as has_freelancer_profile
       FROM users u
-      WHERE LOWER(u.email) = LOWER(${req.emailOrPhone}) OR u.phone = ${req.emailOrPhone}
+      WHERE LOWER(u.email) = LOWER(${normalizedInput}) OR u.phone = ${normalizedInput}
     `;
 
     if (!user || !user.password_hash) {
@@ -112,8 +139,9 @@ export const login = api<LoginRequest, LoginResponse>(
         expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         httpOnly: true,
         secure: true,
-        sameSite: "None",
-        domain: ".lp.dev",
+        sameSite: "Lax",
+        // Note: Domain is omitted to allow the browser to use the current domain
+        // This ensures cookies work correctly across all deployment environments
       },
       user: {
         id: user.id,

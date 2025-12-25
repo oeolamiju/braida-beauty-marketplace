@@ -39,17 +39,22 @@ export interface CreateBookingResponse {
 export const create = api<CreateBookingRequest, CreateBookingResponse>(
   { auth: true, expose: true, method: "POST", path: "/bookings" },
   async (req) => {
-    requireVerifiedClient();
+    // Ensure user is a verified client (email/phone verified)
+    await requireVerifiedClient();
 
     const auth = getAuthData()! as AuthData;
 
-    const user = await db.queryRow<{ verification_status: string }>`
-      SELECT verification_status FROM freelancer_profiles WHERE user_id = ${auth.userID}
+    // Check that the client's account is verified (email or phone verified)
+    const client = await db.queryRow<{ is_verified: boolean; status: string }>`
+      SELECT is_verified, status FROM users WHERE id = ${auth.userID}
     `;
 
-    const clientVerified = user?.verification_status === 'verified';
-    if (!clientVerified) {
-      throw APIError.permissionDenied("You must be verified to create a booking");
+    if (!client || !client.is_verified) {
+      throw APIError.permissionDenied("Please verify your email address before making a booking");
+    }
+
+    if (client.status !== 'active') {
+      throw APIError.permissionDenied("Your account is not active. Please contact support.");
     }
 
     if (req.locationType === 'freelancer_travels_to_client' && 

@@ -22,6 +22,41 @@ export interface RegisterResponse {
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_MIN_LENGTH = 8;
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]/;
+// UK phone number regex - accepts various formats
+const UK_PHONE_REGEX = /^(?:(?:\+44)|(?:0))(?:\d{10}|\d{4}\s?\d{6}|\d{3}\s?\d{3}\s?\d{4})$/;
+
+/**
+ * Normalize phone number to E.164 format for UK numbers
+ * Examples:
+ *   07123456789 -> +447123456789
+ *   +447123456789 -> +447123456789
+ *   07123 456 789 -> +447123456789
+ */
+function normalizePhoneNumber(phone: string): string {
+  // Remove all spaces, dashes, and parentheses
+  let normalized = phone.replace(/[\s\-\(\)]/g, '');
+  
+  // If starts with 0, replace with +44
+  if (normalized.startsWith('0')) {
+    normalized = '+44' + normalized.substring(1);
+  }
+  
+  // If starts with 44 (without +), add +
+  if (normalized.startsWith('44') && !normalized.startsWith('+44')) {
+    normalized = '+' + normalized;
+  }
+  
+  return normalized;
+}
+
+/**
+ * Validate phone number format
+ */
+function isValidPhoneNumber(phone: string): boolean {
+  // Check UK format after removing spaces
+  const cleaned = phone.replace(/[\s\-]/g, '');
+  return UK_PHONE_REGEX.test(cleaned);
+}
 
 export const register = api<RegisterRequest, RegisterResponse>(
   { expose: true, method: "POST", path: "/auth/register" },
@@ -34,6 +69,15 @@ export const register = api<RegisterRequest, RegisterResponse>(
 
     if (req.email && !EMAIL_REGEX.test(req.email)) {
       throw APIError.invalidArgument("invalid email format");
+    }
+
+    // Validate and normalize phone number
+    let normalizedPhone: string | null = null;
+    if (req.phone) {
+      if (!isValidPhoneNumber(req.phone)) {
+        throw APIError.invalidArgument("invalid UK phone number format. Please use format: 07123456789 or +447123456789");
+      }
+      normalizedPhone = normalizePhoneNumber(req.phone);
     }
 
     if (req.password.length < PASSWORD_MIN_LENGTH) {
@@ -57,10 +101,11 @@ export const register = api<RegisterRequest, RegisterResponse>(
       throw APIError.invalidArgument("role must be CLIENT or FREELANCER");
     }
 
+    // Check for existing accounts with email OR normalized phone
     const existing = await db.queryRow<{ id: string }>`
       SELECT id FROM users 
       WHERE LOWER(email) = LOWER(${req.email || null})
-         OR phone = ${req.phone || null}
+         OR phone = ${normalizedPhone}
     `;
 
     if (existing) {
@@ -78,7 +123,7 @@ export const register = api<RegisterRequest, RegisterResponse>(
     
     await db.exec`
       INSERT INTO users (id, first_name, last_name, email, phone, password_hash, role, roles, active_role, is_verified)
-      VALUES (${userId}, ${req.firstName}, ${req.lastName}, ${req.email || null}, ${req.phone || null}, ${passwordHash}, ${role}, ${initialRoles}::jsonb, ${role}, false)
+      VALUES (${userId}, ${req.firstName}, ${req.lastName}, ${req.email || null}, ${normalizedPhone}, ${passwordHash}, ${role}, ${initialRoles}::jsonb, ${role}, false)
     `;
 
     if (role === "FREELANCER") {

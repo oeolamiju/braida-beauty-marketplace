@@ -71,6 +71,7 @@ export default function SearchResultCard({ result, onClick, variant = "light", c
 
   const [serviceImage, setServiceImage] = useState<string | null>(null);
   const [isFavorited, setIsFavorited] = useState(false);
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
 
   const isDark = variant === "dark";
   const priceLevel = getPriceLevel(pricePence);
@@ -81,7 +82,8 @@ export default function SearchResultCard({ result, onClick, variant = "light", c
 
   useEffect(() => {
     loadServiceImage();
-  }, [id]);
+    checkFavoriteStatus();
+  }, [id, freelancerId]);
 
   async function loadServiceImage() {
     try {
@@ -94,10 +96,42 @@ export default function SearchResultCard({ result, onClick, variant = "light", c
     }
   }
 
-  const handleFavoriteClick = (e: React.MouseEvent) => {
+  async function checkFavoriteStatus() {
+    // Only check if user is logged in
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+
+    try {
+      const result = await backend.favorites.checkFavorite({ freelancerId });
+      setIsFavorited(result.isFavorited);
+    } catch (error) {
+      // Silently fail - user might not be logged in
+      console.debug("Could not check favorite status:", error);
+    }
+  }
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsFavorited(!isFavorited);
-    // TODO: Call API to toggle favorite
+    
+    // Check if user is logged in
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      // Redirect to login or show message
+      window.location.href = "/auth/login";
+      return;
+    }
+
+    if (favoriteLoading) return;
+    
+    setFavoriteLoading(true);
+    try {
+      const result = await backend.favorites.toggleFreelancer({ freelancerId });
+      setIsFavorited(result.isFavorited);
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error);
+    } finally {
+      setFavoriteLoading(false);
+    }
   };
 
   // Compact card variant for grid view (like in mockup image 2)
