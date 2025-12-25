@@ -43,7 +43,7 @@ export const get = api<GetServiceParams, ServiceDetail>(
 
     const row = await db.queryRow<{
       id: number;
-      freelancer_id: string;
+      stylist_id: string;
       display_name: string;
       title: string;
       category: string;
@@ -61,14 +61,14 @@ export const get = api<GetServiceParams, ServiceDetail>(
       is_active: boolean;
     }>`
       SELECT 
-        s.id, s.freelancer_id, fp.display_name, s.title,
+        s.id, s.stylist_id, fp.display_name, s.title,
         s.category, s.subcategory, s.description,
         s.base_price_pence, s.studio_price_pence, s.mobile_price_pence,
         s.duration_minutes, s.materials_policy,
         s.materials_fee_pence, s.materials_description, s.location_types, s.travel_fee_pence,
         s.is_active
       FROM services s
-      JOIN freelancer_profiles fp ON s.freelancer_id = fp.user_id
+      JOIN freelancer_profiles fp ON s.stylist_id = fp.user_id
       WHERE s.id = ${id}
     `;
 
@@ -86,9 +86,22 @@ export const get = api<GetServiceParams, ServiceDetail>(
       WHERE ss.service_id = ${id}
     `;
 
+    // Parse location_types - handle both JSON string and native array from JSONB
+    let locationTypes: string[] = [];
+    try {
+      if (typeof row.location_types === 'string') {
+        locationTypes = JSON.parse(row.location_types);
+      } else if (Array.isArray(row.location_types)) {
+        locationTypes = row.location_types;
+      }
+    } catch (e) {
+      console.error('Failed to parse location_types:', row.location_types, e);
+      locationTypes = [];
+    }
+
     return {
       id: row.id,
-      freelancerId: row.freelancer_id,
+      freelancerId: row.stylist_id,
       freelancerName: row.display_name,
       title: row.title,
       category: row.category,
@@ -101,7 +114,7 @@ export const get = api<GetServiceParams, ServiceDetail>(
       materialsPolicy: row.materials_policy,
       materialsFee: row.materials_fee_pence,
       materialsDescription: row.materials_description,
-      locationTypes: JSON.parse(row.location_types),
+      locationTypes: locationTypes,
       travelFeePence: row.travel_fee_pence,
       isActive: row.is_active,
       styles: styleRows.map(s => ({ id: s.id, name: s.name })),

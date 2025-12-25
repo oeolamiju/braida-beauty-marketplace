@@ -19,15 +19,15 @@ export const deactivate = api<DeactivateServiceRequest, DeactivateServiceRespons
 
     const auth = getAuthData()! as AuthData;
 
-    const existing = await db.queryRow<{ freelancer_id: string; is_active: boolean }>`
-      SELECT freelancer_id, is_active FROM services WHERE id = ${req.id}
+    const existing = await db.queryRow<{ stylist_id: string; is_active: boolean }>`
+      SELECT stylist_id, is_active FROM services WHERE id = ${req.id}
     `;
 
     if (!existing) {
       throw APIError.notFound("Service not found");
     }
 
-    if (existing.freelancer_id !== auth.userID) {
+    if (existing.stylist_id !== auth.userID) {
       throw APIError.permissionDenied("You can only deactivate your own services");
     }
 

@@ -139,7 +139,7 @@ export const searchByStyle = api<SearchByStyleParams, SearchByStyleResponse>(
     const baseQuery = `
       SELECT 
         s.id,
-        s.freelancer_id,
+        s.stylist_id as freelancer_id,
         s.title,
         s.category,
         s.subcategory,
@@ -159,11 +159,11 @@ export const searchByStyle = api<SearchByStyleParams, SearchByStyleResponse>(
         COUNT(r.id) as review_count
       FROM services s
       INNER JOIN service_styles ss ON s.id = ss.service_id
-      INNER JOIN freelancer_profiles fp ON s.freelancer_id = fp.user_id
+      INNER JOIN freelancer_profiles fp ON s.stylist_id = fp.user_id
       LEFT JOIN bookings b ON s.id = b.service_id
       LEFT JOIN reviews r ON b.id = r.booking_id
       WHERE ${whereConditions.join(' AND ')}
-      GROUP BY s.id, s.freelancer_id, s.title, s.category, s.subcategory, s.description,
+      GROUP BY s.id, s.stylist_id, s.title, s.category, s.subcategory, s.description,
                s.base_price_pence, s.duration_minutes, s.location_types,
                fp.display_name, fp.profile_photo_url, fp.verification_status,
                fp.postcode, fp.location_area, fp.categories,
@@ -226,7 +226,7 @@ export const searchByStyle = api<SearchByStyleParams, SearchByStyleResponse>(
       SELECT COUNT(DISTINCT s.id) as total
       FROM services s
       INNER JOIN service_styles ss ON s.id = ss.service_id
-      INNER JOIN freelancer_profiles fp ON s.freelancer_id = fp.user_id
+      INNER JOIN freelancer_profiles fp ON s.stylist_id = fp.user_id
       LEFT JOIN bookings b ON s.id = b.service_id
       LEFT JOIN reviews r ON b.id = r.booking_id
       WHERE ${whereConditions.join(' AND ')}

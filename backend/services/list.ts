@@ -47,7 +47,7 @@ export const list = api<ListServicesParams, ListServicesResponse>(
     const { freelancerId, category, includeInactive } = validateSchema<ListServicesInput>(listServicesSchema, params);
     let query = `
       SELECT 
-        id, freelancer_id, title, category, subcategory,
+        id, stylist_id, title, category, subcategory,
         description, base_price_pence, duration_minutes,
         materials_policy, materials_fee_pence, materials_description, location_types,
         travel_fee_pence, is_active
@@ -63,7 +63,7 @@ export const list = api<ListServicesParams, ListServicesResponse>(
     let paramIndex = 1;
 
     if (freelancerId) {
-      query += ` AND freelancer_id = $${paramIndex}`;
+      query += ` AND stylist_id = $${paramIndex}`;
       queryParams.push(freelancerId);
       paramIndex++;
     }
@@ -78,7 +78,7 @@ export const list = api<ListServicesParams, ListServicesResponse>(
 
     const rows = await db.rawQueryAll<{
       id: number;
-      freelancer_id: string;
+      stylist_id: string;
       title: string;
       category: string;
       subcategory: string | null;
@@ -105,9 +105,22 @@ export const list = api<ListServicesParams, ListServicesResponse>(
           WHERE ss.service_id = ${row.id}
         `;
 
+        // Parse location_types - handle both JSON string and native array from JSONB
+        let locationTypes: string[] = [];
+        try {
+          if (typeof row.location_types === 'string') {
+            locationTypes = JSON.parse(row.location_types);
+          } else if (Array.isArray(row.location_types)) {
+            locationTypes = row.location_types;
+          }
+        } catch (e) {
+          console.error('Failed to parse location_types:', row.location_types, e);
+          locationTypes = [];
+        }
+
         return {
           id: row.id,
-          freelancerId: row.freelancer_id,
+          freelancerId: row.stylist_id,
           title: row.title,
           category: row.category,
           subcategory: row.subcategory,
@@ -117,7 +130,7 @@ export const list = api<ListServicesParams, ListServicesResponse>(
           materialsPolicy: row.materials_policy,
           materialsFee: row.materials_fee_pence,
           materialsDescription: row.materials_description,
-          locationTypes: typeof row.location_types === 'string' ? JSON.parse(row.location_types) : row.location_types,
+          locationTypes: locationTypes,
           travelFeePence: row.travel_fee_pence,
           isActive: row.is_active,
           styles: styleRows.map(s => ({ id: s.id, name: s.name })),

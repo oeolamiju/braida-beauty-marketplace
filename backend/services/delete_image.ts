@@ -17,8 +17,8 @@ export const deleteImage = api(
       throw APIError.unauthenticated("Authentication required");
     }
 
-    const result = await db.queryRow<{ image_url: string; freelancer_id: string }>`
-      SELECT si.image_url, s.freelancer_id
+    const result = await db.queryRow<{ image_url: string; stylist_id: string }>`
+      SELECT si.image_url, s.stylist_id
       FROM service_images si
       JOIN services s ON s.id = si.service_id
       WHERE si.id = ${imageId} AND si.service_id = ${serviceId}
@@ -28,7 +28,7 @@ export const deleteImage = api(
       throw APIError.notFound("Service image not found");
     }
 
-    if (result.freelancer_id !== auth.userID) {
+    if (result.stylist_id !== auth.userID) {
       throw APIError.permissionDenied("Not authorized to delete this image");
     }
 

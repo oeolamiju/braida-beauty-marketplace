@@ -25,15 +25,15 @@ export const uploadImage = api(
       throw APIError.unauthenticated("Authentication required");
     }
 
-    const service = await db.queryRow<{ freelancer_id: string }>`
-      SELECT freelancer_id FROM services WHERE id = ${serviceId}
+    const service = await db.queryRow<{ stylist_id: string }>`
+      SELECT stylist_id FROM services WHERE id = ${serviceId}
     `;
 
     if (!service) {
       throw APIError.notFound("Service not found");
     }
 
-    if (service.freelancer_id !== auth.userID) {
+    if (service.stylist_id !== auth.userID) {
       throw APIError.permissionDenied("Not authorized to modify this service");
     }
 

@@ -61,15 +61,15 @@ export const update = api<UpdateServiceRequest, UpdateServiceResponse>(
       throw APIError.invalidArgument("At least one location type must be selected");
     }
 
-    const existing = await db.queryRow<{ freelancer_id: string }>`
-      SELECT freelancer_id FROM services WHERE id = ${req.id}
+    const existing = await db.queryRow<{ stylist_id: string }>`
+      SELECT stylist_id FROM services WHERE id = ${req.id}
     `;
 
     if (!existing) {
       throw APIError.notFound("Service not found");
     }
 
-    if (existing.freelancer_id !== auth.userID) {
+    if (existing.stylist_id !== auth.userID) {
       throw APIError.permissionDenied("You can only update your own services");
     }
 

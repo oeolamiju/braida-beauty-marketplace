@@ -53,7 +53,7 @@ export const createMultiServiceBooking = api<MultiServiceBookingRequest, MultiSe
     // Get all services and verify they belong to the same freelancer
     const servicesGen = db.query<{
       id: number;
-      freelancer_id: string;
+      stylist_id: string;
       title: string;
       duration_minutes: number;
       studio_price_pence: number | null;
@@ -64,7 +64,7 @@ export const createMultiServiceBooking = api<MultiServiceBookingRequest, MultiSe
       is_active: boolean;
     }>`
       SELECT 
-        id, freelancer_id, title, duration_minutes,
+        id, stylist_id, title, duration_minutes,
         studio_price_pence, mobile_price_pence,
         materials_fee_pence, travel_fee_pence,
         location_types, is_active
@@ -83,7 +83,7 @@ export const createMultiServiceBooking = api<MultiServiceBookingRequest, MultiSe
     }
 
     // Verify all services belong to the same freelancer
-    const freelancerIds = [...new Set(services.map((s) => s.freelancer_id))];
+    const freelancerIds = [...new Set(services.map((s) => s.stylist_id))];
     if (freelancerIds.length > 1) {
       throw APIError.invalidArgument("All services must be from the same freelancer");
     }

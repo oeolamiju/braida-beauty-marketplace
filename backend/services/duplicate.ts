@@ -23,7 +23,7 @@ export const duplicate = api<DuplicateServiceRequest, DuplicateServiceResponse>(
     // Get original service
     const original = await db.queryRow<{
       id: number;
-      freelancer_id: string;
+      stylist_id: string;
       title: string;
       category: string;
       subcategory: string | null;
@@ -39,7 +39,7 @@ export const duplicate = api<DuplicateServiceRequest, DuplicateServiceResponse>(
       travel_fee_pence: number;
     }>`
       SELECT 
-        id, freelancer_id, title, category, subcategory, description,
+        id, stylist_id, title, category, subcategory, description,
         base_price_pence, studio_price_pence, mobile_price_pence,
         duration_minutes, materials_policy, materials_fee_pence,
         materials_description, location_types, travel_fee_pence
@@ -51,7 +51,7 @@ export const duplicate = api<DuplicateServiceRequest, DuplicateServiceResponse>(
       throw APIError.notFound("Service not found");
     }
 
-    if (original.freelancer_id !== auth.userID) {
+    if (original.stylist_id !== auth.userID) {
       throw APIError.permissionDenied("You can only duplicate your own services");
     }
 
@@ -60,7 +60,7 @@ export const duplicate = api<DuplicateServiceRequest, DuplicateServiceResponse>(
 
     const newService = await db.queryRow<{ id: number }>`
       INSERT INTO services (
-        freelancer_id, title, category, subcategory, description,
+        stylist_id, title, category, subcategory, description,
         base_price_pence, studio_price_pence, mobile_price_pence,
         duration_minutes, materials_policy, materials_fee_pence,
         materials_description, location_types, travel_fee_pence,

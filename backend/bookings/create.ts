@@ -64,7 +64,7 @@ export const create = api<CreateBookingRequest, CreateBookingResponse>(
 
     const service = await db.queryRow<{
       id: number;
-      freelancer_id: string;
+      stylist_id: string;
       base_price_pence: number;
       materials_fee_pence: number;
       materials_policy: string;
@@ -72,7 +72,7 @@ export const create = api<CreateBookingRequest, CreateBookingResponse>(
       duration_minutes: number;
       location_types: string;
     }>`
-      SELECT id, freelancer_id, base_price_pence, materials_fee_pence, 
+      SELECT id, stylist_id, base_price_pence, materials_fee_pence, 
              materials_policy, travel_fee_pence, duration_minutes, location_types
       FROM services
       WHERE id = ${req.serviceId} AND is_active = true
@@ -103,14 +103,14 @@ export const create = api<CreateBookingRequest, CreateBookingResponse>(
     }>`
       SELECT min_lead_time_hours, max_bookings_per_day
       FROM freelancer_availability_settings
-      WHERE freelancer_id = ${service.freelancer_id}
+      WHERE freelancer_id = ${service.stylist_id}
     `;
 
     const minLeadTimeHours = settings?.min_lead_time_hours || 0;
     const maxBookingsPerDay = settings?.max_bookings_per_day || null;
 
     const availabilityResult = await generateAvailableSlots({
-      freelancerId: service.freelancer_id,
+      freelancerId: service.stylist_id,
       date: requestDate,
       durationMinutes: service.duration_minutes,
       minLeadTimeHours,
@@ -142,7 +142,7 @@ export const create = api<CreateBookingRequest, CreateBookingResponse>(
 
     const result = await db.queryRow<{ id: number }>`
       INSERT INTO bookings (
-        client_id, freelancer_id, service_id,
+        client_id, stylist_id, service_id,
         start_datetime, end_datetime, location_type,
         client_address_line1, client_postcode, client_city,
         notes, price_base_pence, price_materials_pence,
@@ -150,7 +150,7 @@ export const create = api<CreateBookingRequest, CreateBookingResponse>(
         payment_status
       )
       VALUES (
-        ${auth.userID}, ${service.freelancer_id}, ${req.serviceId},
+        ${auth.userID}, ${service.stylist_id}, ${req.serviceId},
         ${startDate.toISOString()}, ${endDate.toISOString()}, ${req.locationType},
         ${req.clientAddressLine1 || null}, ${req.clientPostcode || null}, ${req.clientCity || null},
         ${req.notes || null}, ${service.base_price_pence}, ${materialsFee},
@@ -170,7 +170,7 @@ export const create = api<CreateBookingRequest, CreateBookingResponse>(
 
     logBookingEvent("created", result!.id, {
       clientId: auth.userID,
-      freelancerId: service.freelancer_id,
+      freelancerId: service.stylist_id,
       serviceId: req.serviceId,
       totalPricePence,
       status: "pending",
@@ -184,7 +184,7 @@ export const create = api<CreateBookingRequest, CreateBookingResponse>(
       travelPricePence: priceBreakdown.travelPricePence,
       currency: 'gbp',
       metadata: {
-        freelancerId: service.freelancer_id,
+        freelancerId: service.stylist_id,
         clientId: auth.userID,
       },
     });
@@ -199,7 +199,7 @@ export const create = api<CreateBookingRequest, CreateBookingResponse>(
         ${result!.id}, 'stripe', ${paymentIntentId},
         'initiated', 'held', ${totalPricePence}, 'GBP',
         ${platformFeePence}, ${totalPricePence - platformFeePence},
-        ${JSON.stringify({ clientId: auth.userID, freelancerId: service.freelancer_id })}
+        ${JSON.stringify({ clientId: auth.userID, freelancerId: service.stylist_id })}
       )
     `;
 

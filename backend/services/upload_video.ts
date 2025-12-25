@@ -35,15 +35,15 @@ export const uploadVideo = api<UploadVideoRequest, UploadVideoResponse>(
     const auth = getAuthData()!;
 
     // Verify service ownership
-    const service = await db.queryRow<{ freelancer_id: string }>`
-      SELECT freelancer_id FROM services WHERE id = ${req.serviceId}
+    const service = await db.queryRow<{ stylist_id: string }>`
+      SELECT stylist_id FROM services WHERE id = ${req.serviceId}
     `;
 
     if (!service) {
       throw APIError.notFound("Service not found");
     }
 
-    if (service.freelancer_id !== auth.userID) {
+    if (service.stylist_id !== auth.userID) {
       throw APIError.permissionDenied("You can only upload videos to your own services");
     }
 
@@ -153,15 +153,15 @@ export const deleteVideo = api(
     const auth = getAuthData()!;
 
     // Verify service ownership
-    const service = await db.queryRow<{ freelancer_id: string }>`
-      SELECT freelancer_id FROM services WHERE id = ${req.serviceId}
+    const service = await db.queryRow<{ stylist_id: string }>`
+      SELECT stylist_id FROM services WHERE id = ${req.serviceId}
     `;
 
     if (!service) {
       throw APIError.notFound("Service not found");
     }
 
-    if (service.freelancer_id !== auth.userID) {
+    if (service.stylist_id !== auth.userID) {
       throw APIError.permissionDenied("You can only delete videos from your own services");
     }
 

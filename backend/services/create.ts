@@ -63,7 +63,7 @@ export const create = api<CreateServiceRequest, CreateServiceResponse>(
 
     const result = await db.queryRow<{ id: number }>`
       INSERT INTO services (
-        freelancer_id, title, category, subcategory, description,
+        stylist_id, title, category, subcategory, description,
         base_price_pence, studio_price_pence, mobile_price_pence,
         duration_minutes, materials_policy,
         materials_fee_pence, materials_description, location_types, travel_fee_pence
