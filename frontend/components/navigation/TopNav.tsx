@@ -71,15 +71,15 @@ export default function TopNav({ role }: TopNavProps) {
                       isActive('/discover') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
                     }`}
                   >
-                    Find Talent
+                    Find a Stylist
                   </Link>
                   <Link 
-                    to="/auth/register" 
+                    to="/become-freelancer" 
                     className={`font-medium transition-colors ${
-                      isActive('/auth/register') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
+                      isActive('/become-freelancer') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
                     }`}
                   >
-                    Offer Service
+                    Become a Pro
                   </Link>
                   <Link 
                     to="/styles/catalogue" 
@@ -245,51 +245,32 @@ export default function TopNav({ role }: TopNavProps) {
         </div>
 
         {!role && mobileMenuOpen && (
-          <div className="lg:hidden border-t bg-white">
-            <div className="py-4 space-y-3">
+          <div className="lg:hidden border-t bg-white shadow-lg">
+            <div className="py-2">
+              <Link 
+                to="/auth/login" 
+                className="block px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Login
+              </Link>
               <Link 
                 to="/discover" 
-                className="block px-4 py-2 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                className="block px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Find Talent
+                Find a Stylist
               </Link>
               <Link 
-                to="/auth/register" 
-                className="block px-4 py-2 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                to="/become-freelancer" 
+                className="block px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Offer Service
+                Become a Pro
               </Link>
-              <Link 
-                to="/styles/catalogue" 
-                className="block px-4 py-2 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Styles
-              </Link>
-              <div className="px-4 pt-2 border-t space-y-2">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  asChild 
-                  className="w-full justify-start font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <Link to="/auth/login">Log In</Link>
-                </Button>
-                <Button 
-                  size="sm" 
-                  asChild 
-                  className="w-full bg-gradient-to-r from-[#E91E63] to-[#F4B942] hover:from-[#C2185B] hover:to-[#D4A03A] font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <Link to="/auth/register">Sign Up</Link>
-                </Button>
-              </div>
             </div>
           </div>
-        )}
+        )
       </div>
     </nav>
   );
