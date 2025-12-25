@@ -15,7 +15,7 @@ export const listBookings = api(
       SELECT COUNT(*) as count
       FROM bookings b
       JOIN services s ON b.service_id = s.id
-      JOIN users uf ON b.freelancer_id = uf.id
+      JOIN users uf ON b.stylist_id = uf.id
       JOIN users uc ON b.client_id = uc.id
       WHERE 1=1
     `;

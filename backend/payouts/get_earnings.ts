@@ -19,11 +19,11 @@ export const getEarnings = api(
     `;
     
     const pendingInEscrow = await db.queryRow`
-      SELECT COALESCE(SUM(pe.amount), 0) as total
-      FROM payment_escrow pe
-      JOIN bookings b ON b.id = pe.booking_id
-      WHERE b.freelancer_id = ${auth.userID} 
-        AND pe.status = 'held'
+      SELECT COALESCE(SUM(p.freelancer_payout_pence / 100.0), 0) as total
+      FROM payments p
+      JOIN bookings b ON b.id = p.booking_id
+      WHERE b.stylist_id = ${auth.userID} 
+        AND p.escrow_status = 'held'
         AND b.status = 'confirmed'
     `;
     
