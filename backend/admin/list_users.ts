@@ -4,7 +4,7 @@ import { ListUsersRequest, ListUsersResponse, UserListItem } from "./types";
 import db from "../db";
 
 export const listUsers = api(
-  { method: "POST", path: "/admin/users/list", expose: true },
+  { method: "POST", path: "/admin/users/list", expose: true, auth: true },
   async (req: ListUsersRequest): Promise<ListUsersResponse> => {
     await requireAdmin();
 
@@ -60,8 +60,8 @@ export const listUsers = api(
     }
 
     if (req.search) {
-      countQuery += ` AND (u.email ILIKE $${params.length + 1} OR u.full_name ILIKE $${params.length + 1})`;
-      selectQuery += ` AND (u.email ILIKE $${params.length + 1} OR u.full_name ILIKE $${params.length + 1})`;
+      countQuery += ` AND (u.email ILIKE $${params.length + 1} OR CONCAT(u.first_name, ' ', u.last_name) ILIKE $${params.length + 1})`;
+      selectQuery += ` AND (u.email ILIKE $${params.length + 1} OR CONCAT(u.first_name, ' ', u.last_name) ILIKE $${params.length + 1})`;
       params.push(`%${req.search}%`);
     }
 

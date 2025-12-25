@@ -3,6 +3,7 @@ import { getAuthData } from "~encore/auth";
 import db from "../db";
 import { APIError } from "encore.dev/api";
 import type { Review } from "./types";
+import { requireAdmin } from "../admin/middleware";
 
 interface AdminListAllRequest {
   includeRemoved?: boolean;
@@ -18,15 +19,8 @@ interface AdminListAllResponse {
 export const adminListAll = api(
   { method: "GET", path: "/admin/reviews", expose: true, auth: true },
   async (req: AdminListAllRequest): Promise<AdminListAllResponse> => {
+    await requireAdmin();
     const auth = getAuthData()!;
-
-    const user = await db.queryRow<{ role: string }>`
-      SELECT role FROM users WHERE id = ${auth.userID}
-    `;
-
-    if (!user || user.role !== "admin") {
-      throw APIError.permissionDenied("Admin access required");
-    }
 
     const limit = req.limit || 50;
     const offset = req.offset || 0;

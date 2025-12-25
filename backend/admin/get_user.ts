@@ -8,7 +8,7 @@ export interface GetUserRequest {
 }
 
 export const getUser = api(
-  { method: "GET", path: "/admin/users/:userId", expose: true },
+  { method: "GET", path: "/admin/users/:userId", expose: true, auth: true },
   async ({ userId }: GetUserRequest): Promise<UserDetailResponse> => {
     await requireAdmin();
 
@@ -16,27 +16,27 @@ export const getUser = api(
       SELECT 
         u.id,
         u.email,
-        u.full_name,
+        CONCAT(u.first_name, ' ', u.last_name) as full_name,
         u.role,
         u.suspended,
         u.suspension_reason,
         u.suspended_at,
         u.created_at,
         u.last_login_at,
-        v.status as verification_status,
+        fp.verification_status as verification_status,
         COALESCE(bc.count, 0) as total_bookings_client,
         COALESCE(bf.count, 0) as total_bookings_freelancer,
         COALESCE(r.count, 0) as total_reports,
         COALESCE(d.count, 0) as total_disputes
       FROM users u
-      LEFT JOIN verifications v ON u.id = v.user_id
+      LEFT JOIN freelancer_profiles fp ON u.id = fp.user_id
       LEFT JOIN (SELECT client_id, COUNT(*) as count FROM bookings WHERE client_id = ${userId} GROUP BY client_id) bc ON u.id = bc.client_id
-      LEFT JOIN (SELECT freelancer_id, COUNT(*) as count FROM bookings WHERE freelancer_id = ${userId} GROUP BY freelancer_id) bf ON u.id = bf.freelancer_id
+      LEFT JOIN (SELECT stylist_id, COUNT(*) as count FROM bookings WHERE stylist_id = ${userId} GROUP BY stylist_id) bf ON u.id = bf.stylist_id
       LEFT JOIN (SELECT reported_user_id, COUNT(*) as count FROM reports WHERE reported_user_id = ${userId} GROUP BY reported_user_id) r ON u.id = r.reported_user_id
       LEFT JOIN (SELECT user_id, COUNT(*) as count FROM (
                    SELECT b.client_id as user_id FROM disputes dp JOIN bookings b ON dp.booking_id = b.id WHERE b.client_id = ${userId}
                    UNION ALL
-                   SELECT b.freelancer_id as user_id FROM disputes dp JOIN bookings b ON dp.booking_id = b.id WHERE b.freelancer_id = ${userId}
+                   SELECT b.stylist_id as user_id FROM disputes dp JOIN bookings b ON dp.booking_id = b.id WHERE b.stylist_id = ${userId}
                  ) subq GROUP BY user_id) d ON u.id = d.user_id
       WHERE u.id = ${userId}
     `;
@@ -80,9 +80,9 @@ export const getUser = api(
     `;
 
     const recentBookings = await db.queryAll<any>`
-      SELECT id, status, scheduled_for, total_price, created_at
+      SELECT id, status, start_datetime as scheduled_for, total_price_pence as total_price, created_at
       FROM bookings
-      WHERE client_id = ${userId} OR freelancer_id = ${userId}
+      WHERE client_id = ${userId} OR stylist_id = ${userId}
       ORDER BY created_at DESC
       LIMIT 10
     `;

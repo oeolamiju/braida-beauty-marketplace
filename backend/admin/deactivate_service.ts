@@ -5,7 +5,7 @@ import db from "../db";
 import { getAuthData } from "~encore/auth";
 
 export const deactivateService = api(
-  { method: "POST", path: "/admin/services/:serviceId/deactivate", expose: true },
+  { method: "POST", path: "/admin/services/:serviceId/deactivate", expose: true, auth: true },
   async (req: DeactivateServiceRequest, ip?: Header<"x-forwarded-for">): Promise<void> => {
     await requireAdmin();
 

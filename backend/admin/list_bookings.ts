@@ -4,7 +4,7 @@ import { ListBookingsAdminRequest, ListBookingsAdminResponse, BookingListItem } 
 import db from "../db";
 
 export const listBookings = api(
-  { method: "POST", path: "/admin/bookings/list", expose: true },
+  { method: "POST", path: "/admin/bookings/list", expose: true, auth: true },
   async (req: ListBookingsAdminRequest): Promise<ListBookingsAdminResponse> => {
     await requireAdmin();
 
@@ -24,18 +24,18 @@ export const listBookings = api(
         b.id,
         b.service_id,
         s.title as service_title,
-        b.freelancer_id,
-        uf.full_name as freelancer_name,
+        b.stylist_id as freelancer_id,
+        CONCAT(uf.first_name, ' ', uf.last_name) as freelancer_name,
         b.client_id,
-        uc.full_name as client_name,
+        CONCAT(uc.first_name, ' ', uc.last_name) as client_name,
         b.status,
-        b.scheduled_for,
-        b.total_price,
+        b.start_datetime as scheduled_for,
+        b.total_price_pence as total_price,
         p.status as payment_status,
         b.created_at
       FROM bookings b
       JOIN services s ON b.service_id = s.id
-      JOIN users uf ON b.freelancer_id = uf.id
+      JOIN users uf ON b.stylist_id = uf.id
       JOIN users uc ON b.client_id = uc.id
       LEFT JOIN payments p ON b.id = p.booking_id
       WHERE 1=1
@@ -50,8 +50,8 @@ export const listBookings = api(
     }
 
     if (req.freelancerId) {
-      countQuery += ` AND b.freelancer_id = $${params.length + 1}`;
-      selectQuery += ` AND b.freelancer_id = $${params.length + 1}`;
+      countQuery += ` AND b.stylist_id = $${params.length + 1}`;
+      selectQuery += ` AND b.stylist_id = $${params.length + 1}`;
       params.push(req.freelancerId);
     }
 
@@ -62,14 +62,14 @@ export const listBookings = api(
     }
 
     if (req.startDate) {
-      countQuery += ` AND b.scheduled_for >= $${params.length + 1}`;
-      selectQuery += ` AND b.scheduled_for >= $${params.length + 1}`;
+      countQuery += ` AND b.start_datetime >= $${params.length + 1}`;
+      selectQuery += ` AND b.start_datetime >= $${params.length + 1}`;
       params.push(req.startDate);
     }
 
     if (req.endDate) {
-      countQuery += ` AND b.scheduled_for <= $${params.length + 1}`;
-      selectQuery += ` AND b.scheduled_for <= $${params.length + 1}`;
+      countQuery += ` AND b.start_datetime <= $${params.length + 1}`;
+      selectQuery += ` AND b.start_datetime <= $${params.length + 1}`;
       params.push(req.endDate);
     }
 

@@ -2,6 +2,7 @@ import { api, APIError } from "encore.dev/api";
 import { getAuthData } from "~encore/auth";
 import db from "../db";
 import { Payout, PayoutAuditLog } from "./types";
+import { requireAdmin } from "../admin/middleware";
 
 export interface AdminGetPayoutResponse {
   payout: Payout;
@@ -13,15 +14,8 @@ export interface AdminGetPayoutResponse {
 export const adminGetPayout = api(
   { method: "GET", path: "/admin/payouts/:id", expose: true, auth: true },
   async ({ id }: { id: number }): Promise<AdminGetPayoutResponse> => {
+    await requireAdmin();
     const auth = getAuthData()!;
-    
-    const user = await db.queryRow`
-      SELECT user_type FROM users WHERE id = ${auth.userID}
-    `;
-    
-    if (!user || user.user_type !== "admin") {
-      throw APIError.permissionDenied("Admin access required");
-    }
     
     const payout = await db.queryRow`
       SELECT 

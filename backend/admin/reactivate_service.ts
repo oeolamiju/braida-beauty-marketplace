@@ -4,7 +4,7 @@ import { ReactivateServiceRequest } from "./types";
 import db from "../db";
 
 export const reactivateService = api(
-  { method: "POST", path: "/admin/services/:serviceId/reactivate", expose: true },
+  { method: "POST", path: "/admin/services/:serviceId/reactivate", expose: true, auth: true },
   async (req: ReactivateServiceRequest, ip?: Header<"x-forwarded-for">): Promise<void> => {
     await requireAdmin();
 

@@ -4,7 +4,7 @@ import { ListServicesRequest, ListServicesResponse, ServiceListItem } from "./ty
 import db from "../db";
 
 export const listServices = api(
-  { method: "POST", path: "/admin/services/list", expose: true },
+  { method: "POST", path: "/admin/services/list", expose: true, auth: true },
   async (req: ListServicesRequest): Promise<ListServicesResponse> => {
     await requireAdmin();
 
@@ -15,20 +15,20 @@ export const listServices = api(
     let selectQuery = `
       SELECT 
         s.id,
-        s.freelancer_id,
-        u.full_name as freelancer_name,
+        s.stylist_id as freelancer_id,
+        CONCAT(u.first_name, ' ', u.last_name) as freelancer_name,
         u.email as freelancer_email,
         s.title,
         s.category,
         s.active,
         s.deactivation_reason,
         s.deactivated_at,
-        s.base_price,
+        s.base_price_pence as base_price,
         s.created_at,
         COALESCE(b.count, 0) as total_bookings,
         COALESCE(r.avg_rating, 0) as average_rating
       FROM services s
-      JOIN users u ON s.freelancer_id = u.id
+      JOIN users u ON s.stylist_id = u.id
       LEFT JOIN (SELECT service_id, COUNT(*) as count FROM bookings GROUP BY service_id) b ON s.id = b.service_id
       LEFT JOIN (SELECT service_id, AVG(rating) as avg_rating FROM reviews GROUP BY service_id) r ON s.id = r.service_id
       WHERE 1=1

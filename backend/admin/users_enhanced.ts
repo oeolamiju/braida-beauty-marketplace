@@ -220,7 +220,7 @@ export const getUserDetail = api(
         b.created_at as "createdAt"
       FROM bookings b
       JOIN services s ON b.service_id = s.id
-      WHERE b.client_id = ${req.userId} OR b.freelancer_id = ${req.userId}
+      WHERE b.client_id = ${req.userId} OR b.stylist_id = ${req.userId}
       ORDER BY b.created_at DESC
       LIMIT 20
     `;

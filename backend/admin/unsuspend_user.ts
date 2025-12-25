@@ -2,9 +2,10 @@ import { api, Header } from "encore.dev/api";
 import { requireAdmin, logAdminAction } from "./middleware";
 import { UnsuspendUserRequest } from "./types";
 import db from "../db";
+import { getAuthData } from "~encore/auth";
 
 export const unsuspendUser = api(
-  { method: "POST", path: "/admin/users/:userId/unsuspend", expose: true },
+  { method: "POST", path: "/admin/users/:userId/unsuspend", expose: true, auth: true },
   async (req: UnsuspendUserRequest, ip?: Header<"x-forwarded-for">): Promise<void> => {
     await requireAdmin();
 

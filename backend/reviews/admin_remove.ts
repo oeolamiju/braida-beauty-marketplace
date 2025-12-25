@@ -3,6 +3,7 @@ import { getAuthData } from "~encore/auth";
 import db from "../db";
 import { APIError } from "encore.dev/api";
 import type { RemoveReviewRequest } from "./types";
+import { requireAdmin } from "../admin/middleware";
 
 interface RemoveReviewResponse {
   success: boolean;
@@ -11,15 +12,8 @@ interface RemoveReviewResponse {
 export const adminRemove = api(
   { method: "POST", path: "/admin/reviews/:reviewId/remove", expose: true, auth: true },
   async (req: RemoveReviewRequest): Promise<RemoveReviewResponse> => {
+    await requireAdmin();
     const auth = getAuthData()!;
-
-    const user = await db.queryRow<{ role: string }>`
-      SELECT role FROM users WHERE id = ${auth.userID}
-    `;
-
-    if (!user || user.role !== "admin") {
-      throw APIError.permissionDenied("Admin access required");
-    }
 
     if (!req.reason || req.reason.trim().length === 0) {
       throw APIError.invalidArgument("Removal reason is required");

@@ -2,12 +2,14 @@ import { api, Header } from "encore.dev/api";
 import { requireAdmin, logAdminAction } from "./middleware";
 import { SuspendUserRequest } from "./types";
 import db from "../db";
+import { getAuthData } from "~encore/auth";
 
 export const suspendUser = api(
-  { method: "POST", path: "/admin/users/:userId/suspend", expose: true },
+  { method: "POST", path: "/admin/users/:userId/suspend", expose: true, auth: true },
   async (req: SuspendUserRequest, ip?: Header<"x-forwarded-for">): Promise<void> => {
     await requireAdmin();
 
+    const auth = getAuthData();
     const { userId, reason } = req;
 
     await db.exec`
@@ -15,7 +17,7 @@ export const suspendUser = api(
       SET suspended = true, 
           suspension_reason = ${reason},
           suspended_at = NOW(),
-          suspended_by = (SELECT user_id FROM sessions WHERE token = current_setting('encore.auth.token', true))
+          suspended_by = ${auth?.userID}
       WHERE id = ${userId}
     `;
 

@@ -8,7 +8,7 @@ export interface GetBookingAdminRequest {
 }
 
 export const getBooking = api(
-  { method: "GET", path: "/admin/bookings/:bookingId", expose: true },
+  { method: "GET", path: "/admin/bookings/:bookingId", expose: true, auth: true },
   async ({ bookingId }: GetBookingAdminRequest): Promise<BookingDetailAdminResponse> => {
     await requireAdmin();
 
@@ -17,14 +17,14 @@ export const getBooking = api(
         b.id,
         b.service_id,
         s.title as service_title,
-        b.freelancer_id,
-        uf.full_name as freelancer_name,
+        b.stylist_id as freelancer_id,
+        CONCAT(uf.first_name, ' ', uf.last_name) as freelancer_name,
         b.client_id,
-        uc.full_name as client_name,
+        CONCAT(uc.first_name, ' ', uc.last_name) as client_name,
         b.status,
-        b.scheduled_for,
-        b.total_price,
-        b.address,
+        b.start_datetime as scheduled_for,
+        b.total_price_pence as total_price,
+        COALESCE(b.client_address_line1, '') as address,
         b.notes,
         b.cancelled_at,
         b.cancellation_reason,
@@ -34,7 +34,7 @@ export const getBooking = api(
         p.status as payment_status
       FROM bookings b
       JOIN services s ON b.service_id = s.id
-      JOIN users uf ON b.freelancer_id = uf.id
+      JOIN users uf ON b.stylist_id = uf.id
       JOIN users uc ON b.client_id = uc.id
       LEFT JOIN payments p ON b.id = p.booking_id
       WHERE b.id = ${bookingId}
