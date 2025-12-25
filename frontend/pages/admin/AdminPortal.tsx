@@ -143,6 +143,16 @@ const ADMIN_MODULES: AdminModule[] = [
     action: "view",
     color: "bg-gray-600",
   },
+  {
+    id: "content",
+    name: "Content",
+    description: "Manage pages, FAQs, and safety resources",
+    icon: <FileText className="h-6 w-6" />,
+    path: "/admin/content",
+    permission: "settings",
+    action: "edit",
+    color: "bg-cyan-500",
+  },
 ];
 
 export default function AdminPortal() {

@@ -84,6 +84,10 @@ import BusinessTools from "./pages/BusinessTools";
 import SuccessStories from "./pages/SuccessStories";
 import Community from "./pages/Community";
 import AdminCoupons from "./pages/admin/Coupons";
+import ContentManagement from "./pages/admin/ContentManagement";
+import ContentEditor from "./pages/admin/ContentEditor";
+import FAQManagement from "./pages/admin/FAQManagement";
+import SafetyResourcesManagement from "./pages/admin/SafetyResourcesManagement";
 
 export default function App() {
   return (
@@ -189,6 +193,11 @@ export default function App() {
             <Route path="settings/payments" element={<AdminPaymentSettings />} />
             <Route path="analytics/cities" element={<CityAnalytics />} />
             <Route path="coupons" element={<AdminCoupons />} />
+            <Route path="content" element={<ContentManagement />} />
+            <Route path="content/new" element={<ContentEditor />} />
+            <Route path="content/:id/edit" element={<ContentEditor />} />
+            <Route path="faqs" element={<FAQManagement />} />
+            <Route path="safety-resources" element={<SafetyResourcesManagement />} />
           </Route>
         </Routes>
       </BrowserRouter>
