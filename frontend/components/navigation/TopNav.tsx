@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, User, LogOut, Settings, X, Home } from "lucide-react";
+import { Menu, User, LogOut, Settings, X, Home, Bell, Heart, Calendar, MessageCircle, Briefcase, LayoutDashboard, Users, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
 import GlobalSearch from "@/components/GlobalSearch";
@@ -39,23 +39,21 @@ export default function TopNav({ role }: TopNavProps) {
     navigate("/");
   };
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/98 backdrop-blur-md border-b border-gray-200 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           <div className="flex items-center gap-2">
-            {!role && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="lg:hidden"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
-            )}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="lg:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
             <Link to={role ? `/${role}` : "/"} className="flex items-center group">
               <BraidaLogoLight size="md" />
             </Link>
@@ -244,30 +242,278 @@ export default function TopNav({ role }: TopNavProps) {
           </div>
         </div>
 
-        {!role && mobileMenuOpen && (
+        {mobileMenuOpen && (
           <div className="lg:hidden border-t bg-white shadow-lg">
             <div className="py-2">
-              <Link 
-                to="/auth/login" 
-                className="block px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Login
-              </Link>
-              <Link 
-                to="/discover" 
-                className="block px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Find a Stylist
-              </Link>
-              <Link 
-                to="/become-freelancer" 
-                className="block px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Become a Pro
-              </Link>
+              {!role && (
+                <>
+                  <Link 
+                    to="/auth/login" 
+                    className="block px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <Link 
+                    to="/discover" 
+                    className="block px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Find a Stylist
+                  </Link>
+                  <Link 
+                    to="/become-freelancer" 
+                    className="block px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Become a Pro
+                  </Link>
+                </>
+              )}
+              {role === 'client' && (
+                <>
+                  <Link 
+                    to="/client/discover" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Search className="h-5 w-5" />
+                    Discover
+                  </Link>
+                  <Link 
+                    to="/client/styles" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Briefcase className="h-5 w-5" />
+                    Styles
+                  </Link>
+                  <Link 
+                    to="/client/bookings" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Calendar className="h-5 w-5" />
+                    Bookings
+                  </Link>
+                  <Link 
+                    to="/client/messages" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    Messages
+                  </Link>
+                  <Link 
+                    to="/client/favorites" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Heart className="h-5 w-5" />
+                    Favorites
+                  </Link>
+                  <Link 
+                    to="/client/loyalty" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Settings className="h-5 w-5" />
+                    Loyalty
+                  </Link>
+                  <Link 
+                    to="/client/referrals" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Users className="h-5 w-5" />
+                    Referrals
+                  </Link>
+                </>
+              )}
+              {role === 'freelancer' && (
+                <>
+                  <Link 
+                    to="/freelancer/dashboard" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <LayoutDashboard className="h-5 w-5" />
+                    Dashboard
+                  </Link>
+                  <Link 
+                    to="/freelancer/calendar" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Calendar className="h-5 w-5" />
+                    Calendar
+                  </Link>
+                  <Link 
+                    to="/freelancer/bookings" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Calendar className="h-5 w-5" />
+                    Bookings
+                  </Link>
+                  <Link 
+                    to="/freelancer/services" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Briefcase className="h-5 w-5" />
+                    Services
+                  </Link>
+                  <Link 
+                    to="/freelancer/messages" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    Messages
+                  </Link>
+                  <Link 
+                    to="/freelancer/availability" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Calendar className="h-5 w-5" />
+                    Availability
+                  </Link>
+                  <Link 
+                    to="/freelancer/earnings" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Settings className="h-5 w-5" />
+                    Earnings
+                  </Link>
+                  <Link 
+                    to="/freelancer/packages" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Briefcase className="h-5 w-5" />
+                    Packages
+                  </Link>
+                  <Link 
+                    to="/freelancer/verification" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Settings className="h-5 w-5" />
+                    Verification
+                  </Link>
+                </>
+              )}
+              {role === 'admin' && (
+                <>
+                  <Link 
+                    to="/admin/dashboard" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <LayoutDashboard className="h-5 w-5" />
+                    Dashboard
+                  </Link>
+                  <Link 
+                    to="/admin/users" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Users className="h-5 w-5" />
+                    Users
+                  </Link>
+                  <Link 
+                    to="/admin/bookings" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Calendar className="h-5 w-5" />
+                    Bookings
+                  </Link>
+                  <Link 
+                    to="/admin/listings" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Briefcase className="h-5 w-5" />
+                    Listings
+                  </Link>
+                  <Link 
+                    to="/admin/verifications" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Settings className="h-5 w-5" />
+                    Verifications
+                  </Link>
+                  <Link 
+                    to="/admin/disputes" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Settings className="h-5 w-5" />
+                    Disputes
+                  </Link>
+                  <Link 
+                    to="/admin/reports" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Settings className="h-5 w-5" />
+                    Reports
+                  </Link>
+                  <Link 
+                    to="/admin/payouts" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Settings className="h-5 w-5" />
+                    Payouts
+                  </Link>
+                  <Link 
+                    to="/admin/reviews" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Settings className="h-5 w-5" />
+                    Reviews
+                  </Link>
+                  <Link 
+                    to="/admin/styles" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Briefcase className="h-5 w-5" />
+                    Styles
+                  </Link>
+                  <Link 
+                    to="/admin/kpi" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <LayoutDashboard className="h-5 w-5" />
+                    KPI Dashboard
+                  </Link>
+                  <Link 
+                    to="/admin/city-analytics" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <LayoutDashboard className="h-5 w-5" />
+                    City Analytics
+                  </Link>
+                  <Link 
+                    to="/admin/settings" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Settings className="h-5 w-5" />
+                    Settings
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}
