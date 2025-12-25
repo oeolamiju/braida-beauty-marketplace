@@ -59,7 +59,7 @@ export const listRescheduleRequests = api<void, ListRescheduleRequestsResponse>(
         rr.responded_by::int,
         rr.response_note,
         s.id as service_id,
-        s.name as service_name,
+        s.title as service_name,
         b.start_datetime as current_start_time,
         b.end_datetime as current_end_time
       FROM reschedule_requests rr

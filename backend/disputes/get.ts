@@ -20,9 +20,9 @@ export const get = api(
     const dispute = await db.rawQueryRow<DisputeWithDetails>(
       `SELECT 
         d.*,
-        u.name as raised_by_name,
+        CONCAT(u.first_name, ' ', u.last_name) as raised_by_name,
         u.email as raised_by_email,
-        ra.name as resolved_by_name
+        CONCAT(ra.first_name, ' ', ra.last_name) as resolved_by_name
        FROM disputes d
        JOIN users u ON d.raised_by = u.id
        LEFT JOIN users ra ON d.resolved_by = ra.id

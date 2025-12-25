@@ -55,7 +55,7 @@ export const getCalendar = api<GetCalendarRequest, GetCalendarResponse>(
       SELECT 
         b.id,
         s.title as service_title,
-        u.name as client_name,
+        CONCAT(u.first_name, ' ', u.last_name) as client_name,
         b.start_datetime,
         b.end_datetime,
         b.status

@@ -58,7 +58,7 @@ export const adminListPayouts = api(
           p.admin_notes,
           p.created_at,
           p.updated_at,
-          u.name as freelancer_name,
+          CONCAT(u.first_name, ' ', u.last_name) as freelancer_name,
           u.email as freelancer_email
         FROM payouts p
         JOIN users u ON u.id = p.freelancer_id
@@ -90,7 +90,7 @@ export const adminListPayouts = api(
           p.admin_notes,
           p.created_at,
           p.updated_at,
-          u.name as freelancer_name,
+          CONCAT(u.first_name, ' ', u.last_name) as freelancer_name,
           u.email as freelancer_email
         FROM payouts p
         JOIN users u ON u.id = p.freelancer_id
@@ -122,7 +122,7 @@ export const adminListPayouts = api(
           p.admin_notes,
           p.created_at,
           p.updated_at,
-          u.name as freelancer_name,
+          CONCAT(u.first_name, ' ', u.last_name) as freelancer_name,
           u.email as freelancer_email
         FROM payouts p
         JOIN users u ON u.id = p.freelancer_id
@@ -153,7 +153,7 @@ export const adminListPayouts = api(
           p.admin_notes,
           p.created_at,
           p.updated_at,
-          u.name as freelancer_name,
+          CONCAT(u.first_name, ' ', u.last_name) as freelancer_name,
           u.email as freelancer_email
         FROM payouts p
         JOIN users u ON u.id = p.freelancer_id

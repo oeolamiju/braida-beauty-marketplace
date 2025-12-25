@@ -52,8 +52,8 @@ export const adminGet = api(
         r.updated_at,
         reporter.email as reporter_email,
         reported.email as reported_user_email,
-        reporter.full_name as reporter_name,
-        reported.full_name as reported_user_name
+        CONCAT(reporter.first_name, ' ', reporter.last_name) as reporter_name,
+        CONCAT(reported.first_name, ' ', reported.last_name) as reported_user_name
       FROM reports r
       JOIN users reporter ON r.reporter_id = reporter.id
       JOIN users reported ON r.reported_user_id = reported.id

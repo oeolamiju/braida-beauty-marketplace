@@ -30,9 +30,9 @@ export const adminGet = api(
     const dispute = await db.rawQueryRow<DisputeWithDetails>(
       `SELECT 
         d.*,
-        u.name as raised_by_name,
+        CONCAT(u.first_name, ' ', u.last_name) as raised_by_name,
         u.email as raised_by_email,
-        ra.name as resolved_by_name
+        CONCAT(ra.first_name, ' ', ra.last_name) as resolved_by_name
        FROM disputes d
        JOIN users u ON d.raised_by = u.id
        LEFT JOIN users ra ON d.resolved_by = ra.id
@@ -75,17 +75,17 @@ export const adminGet = api(
     }
 
     const client = await db.rawQueryRow<{ name: string }>(
-      `SELECT name FROM users WHERE id = $1`,
+      `SELECT CONCAT(first_name, ' ', last_name) as name FROM users WHERE id = $1`,
       booking.client_id
     );
 
     const freelancer = await db.rawQueryRow<{ name: string }>(
-      `SELECT name FROM users WHERE id = $1`,
+      `SELECT CONCAT(first_name, ' ', last_name) as name FROM users WHERE id = $1`,
       booking.freelancer_id
     );
 
     const service = await db.rawQueryRow<{ name: string }>(
-      `SELECT name FROM services WHERE id = $1`,
+      `SELECT title as name FROM services WHERE id = $1`,
       booking.service_id
     );
 
@@ -119,7 +119,7 @@ export const adminGet = api(
         dal.id,
         dal.action,
         dal.performed_by,
-        u.name as performed_by_name,
+        CONCAT(u.first_name, ' ', u.last_name) as performed_by_name,
         dal.details,
         dal.created_at
        FROM dispute_audit_logs dal

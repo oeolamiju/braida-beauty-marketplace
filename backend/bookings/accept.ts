@@ -71,11 +71,11 @@ export const accept = api<AcceptBookingRequest, AcceptBookingResponse>(
     `;
 
     const freelancerUser = await db.queryRow<{ name: string }>`
-      SELECT name FROM users WHERE id = ${booking.freelancer_id}
+      SELECT CONCAT(first_name, ' ', last_name) as name FROM users WHERE id = ${booking.freelancer_id}
     `;
 
     const clientUser = await db.queryRow<{ name: string; email: string }>`
-      SELECT name, email FROM users WHERE id = ${booking.client_id}
+      SELECT CONCAT(first_name, ' ', last_name) as name, email FROM users WHERE id = ${booking.client_id}
     `;
 
     if (freelancerUser && clientUser && serviceDetails) {

@@ -137,15 +137,14 @@ export const getSharedBooking = api<GetSharedBookingRequest, SharedBookingInfo>(
     }>`
       SELECT 
         s.title as service_title,
-        f.display_name as freelancer_name,
-        c.name as client_name,
+        fp.display_name as freelancer_name,
+        CONCAT(c.first_name, ' ', c.last_name) as client_name,
         b.start_datetime,
         b.end_datetime,
-        fp.area as freelancer_area,
+        fp.location_area as freelancer_area,
         b.status
       FROM bookings b
       JOIN services s ON b.service_id = s.id
-      JOIN users f ON b.freelancer_id = f.id
       JOIN users c ON b.client_id = c.id
       JOIN freelancer_profiles fp ON b.freelancer_id = fp.user_id
       WHERE b.id = ${share.booking_id}

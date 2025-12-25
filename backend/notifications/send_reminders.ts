@@ -39,10 +39,10 @@ export const send24HourReminders = api(
         b.client_id, 
         b.freelancer_id, 
         b.start_datetime,
-        s.name as service_name,
-        cu.name as client_name,
+        s.title as service_name,
+        CONCAT(cu.first_name, ' ', cu.last_name) as client_name,
         cu.email as client_email,
-        fu.name as freelancer_name,
+        CONCAT(fu.first_name, ' ', fu.last_name) as freelancer_name,
         fu.email as freelancer_email
       FROM bookings b
       JOIN services s ON b.service_id = s.id

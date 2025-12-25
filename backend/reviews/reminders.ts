@@ -24,8 +24,8 @@ async function sendReviewReminders(): Promise<{ sent: number }> {
       b.id as booking_id,
       b.client_id,
       u.email as client_email,
-      u.name as client_name,
-      f.name as freelancer_name,
+      CONCAT(u.first_name, ' ', u.last_name) as client_name,
+      CONCAT(f.first_name, ' ', f.last_name) as freelancer_name,
       s.title as service_title
     FROM bookings b
     JOIN users u ON b.client_id = u.id

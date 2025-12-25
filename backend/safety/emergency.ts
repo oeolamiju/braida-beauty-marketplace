@@ -70,8 +70,8 @@ export const triggerEmergencyAlert = api<EmergencyContactRequest, EmergencyConta
       SELECT 
         b.id, b.client_id, b.freelancer_id, b.status, b.start_datetime,
         s.title as service_title,
-        f.name as freelancer_name,
-        c.name as client_name
+        CONCAT(f.first_name, ' ', f.last_name) as freelancer_name,
+        CONCAT(c.first_name, ' ', c.last_name) as client_name
       FROM bookings b
       JOIN services s ON b.service_id = s.id
       JOIN users f ON b.freelancer_id = f.id
