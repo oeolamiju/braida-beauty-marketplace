@@ -5,8 +5,7 @@ nixPkgs = ["nodejs-20_x", "openssl", "curl"]
 
 [phases.install]
 cmds = [
-    "npm install -g encore.dev@latest",
-    "npm install"
+    "npm install -g encore.dev@latest"
 ]
 
 [phases.build]
