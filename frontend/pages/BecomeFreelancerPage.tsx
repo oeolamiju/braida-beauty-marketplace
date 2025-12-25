@@ -85,19 +85,19 @@ export default function BecomeFreelancerPage() {
       if (storedUser) {
         const user = JSON.parse(storedUser);
         user.roles = response.roles || [...(user.roles || []), "FREELANCER"];
-        user.activeRole = response.activeRole || "FREELANCER";
-        user.role = response.activeRole || "FREELANCER";
+        user.activeRole = response.activeRole;
+        user.role = response.activeRole;
         user.hasFreelancerProfile = true;
         localStorage.setItem("user", JSON.stringify(user));
       }
 
       toast({
-        title: "🎉 Welcome, Freelancer!",
-        description: response.message || "Your freelancer profile has been created!",
+        title: "🎉 Profile Created!",
+        description: response.message || "Your freelancer profile has been created and is pending verification!",
       });
 
-      // Navigate to freelancer dashboard
-      navigate("/freelancer/dashboard");
+      // Navigate to client dashboard (stay as client until verified)
+      navigate("/client/discover");
     } catch (error: any) {
       console.error("Failed to create freelancer profile:", error);
       toast({

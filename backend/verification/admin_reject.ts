@@ -4,6 +4,7 @@ import db from "../db";
 import { APIError } from "encore.dev/api";
 import { getAuthData } from "~encore/auth";
 import type { AuthData } from "../auth/auth";
+import { sendNotification } from "../notifications/send";
 
 export interface AdminRejectRequest {
   freelancerId: string;
@@ -56,6 +57,17 @@ export const adminReject = api<AdminRejectRequest, AdminRejectResponse>(
       INSERT INTO admin_action_logs (admin_id, entity_type, entity_id, action_type, details_json)
       VALUES (${auth.userID}, 'verification', ${req.freelancerId}, 'reject', ${JSON.stringify({ rejectionNote: req.rejectionNote })})
     `;
+
+    await sendNotification({
+      userId: req.freelancerId,
+      type: "verification_rejected",
+      title: "Profile Verification Update",
+      message: `Your freelancer profile verification was not approved. ${req.rejectionNote}`,
+      data: {
+        rejectedAt: new Date().toISOString(),
+        rejectionNote: req.rejectionNote,
+      },
+    });
 
     return { status: 'rejected' };
   }

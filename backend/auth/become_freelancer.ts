@@ -111,14 +111,8 @@ export const becomeFreelancer = api<BecomeFreelancerRequest, BecomeFreelancerRes
     await db.exec`
       UPDATE users
       SET 
-        roles = ${newRoles}::TEXT[],
-        active_role = 'FREELANCER'
+        roles = ${newRoles}::TEXT[]
       WHERE id = ${auth.userID}
-    `;
-
-    await db.exec`
-      INSERT INTO role_changes (user_id, from_role, to_role, changed_by)
-      VALUES (${auth.userID}, ${user.active_role}, 'FREELANCER', ${auth.userID})
     `;
 
     await logAuditEvent({
@@ -137,16 +131,16 @@ export const becomeFreelancer = api<BecomeFreelancerRequest, BecomeFreelancerRes
       userId: auth.userID,
       email: user.email,
       roles: newRoles,
-      activeRole: 'FREELANCER',
+      activeRole: user.active_role,
       isVerified: user.is_verified,
     });
 
     return {
       success: true,
-      message: "Successfully upgraded to freelancer! You can now start adding services.",
+      message: "Freelancer profile created! Your profile will be reviewed by our admin team. You'll be able to switch to freelancer mode once your profile is verified.",
       token: newToken,
       roles: newRoles,
-      activeRole: 'FREELANCER',
+      activeRole: user.active_role,
     };
   }
 );

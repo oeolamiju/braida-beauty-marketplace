@@ -5,6 +5,7 @@ import { APIError } from "encore.dev/api";
 import { getAuthData } from "~encore/auth";
 import type { AuthData } from "../auth/auth";
 import { logVerificationEvent } from "../shared/logger";
+import { sendNotification } from "../notifications/send";
 
 export interface AdminApproveRequest {
   freelancerId: string;
@@ -58,6 +59,17 @@ export const adminApprove = api<AdminApproveRequest, AdminApproveResponse>(
       adminId: auth.userID,
       previousStatus: 'pending',
       newStatus: 'verified',
+    });
+
+    await sendNotification({
+      userId: req.freelancerId,
+      type: "verification_approved",
+      title: "Profile Verified! 🎉",
+      message: "Your freelancer profile has been verified! You can now switch to freelancer mode and start accepting bookings.",
+      data: {
+        verifiedAt: new Date().toISOString(),
+        notes: req.notes,
+      },
     });
 
     return { status: 'verified' };

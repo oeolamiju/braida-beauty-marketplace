@@ -1,0 +1,3 @@
+ALTER TABLE notification_preferences 
+  ADD COLUMN IF NOT EXISTS verification_approved BOOLEAN NOT NULL DEFAULT TRUE,
+  ADD COLUMN IF NOT EXISTS verification_rejected BOOLEAN NOT NULL DEFAULT TRUE;

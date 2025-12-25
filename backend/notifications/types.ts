@@ -19,7 +19,9 @@ export type NotificationType =
   | "dispute_raised"
   | "dispute_needs_review"
   | "dispute_resolved"
-  | "emergency_alert";
+  | "emergency_alert"
+  | "verification_approved"
+  | "verification_rejected";
 
 export interface Notification {
   id: number;

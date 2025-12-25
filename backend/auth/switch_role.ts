@@ -47,6 +47,28 @@ export const switchRole = api<SwitchRoleRequest, SwitchRoleResponse>(
       );
     }
 
+    if (req.targetRole === 'FREELANCER') {
+      const freelancerProfile = await db.queryRow<{
+        verification_status: string;
+      }>`
+        SELECT verification_status
+        FROM freelancer_profiles
+        WHERE user_id = ${auth.userID}
+      `;
+
+      if (!freelancerProfile) {
+        throw APIError.permissionDenied(
+          "freelancer profile not found. Please complete your freelancer profile setup first"
+        );
+      }
+
+      if (freelancerProfile.verification_status !== 'verified') {
+        throw APIError.permissionDenied(
+          `freelancer profile is not verified. Current status: ${freelancerProfile.verification_status}. Your profile must be verified by an admin before you can switch to freelancer mode`
+        );
+      }
+    }
+
     await db.exec`
       UPDATE users
       SET active_role = ${req.targetRole}

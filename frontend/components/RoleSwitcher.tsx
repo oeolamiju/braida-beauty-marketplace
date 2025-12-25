@@ -65,11 +65,21 @@ export default function RoleSwitcher({ currentRole, roles, onRoleSwitch }: RoleS
       }
     } catch (error: any) {
       console.error("Failed to switch role:", error);
-      toast({
-        variant: "destructive",
-        title: "Failed to switch role",
-        description: error.message || "Something went wrong",
-      });
+      const errorMessage = error.message || "Something went wrong";
+      
+      if (errorMessage.includes("not verified") || errorMessage.includes("profile not found")) {
+        toast({
+          variant: "destructive",
+          title: "Verification Required",
+          description: "Your freelancer profile must be verified by an admin before you can switch to freelancer mode.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Failed to switch role",
+          description: errorMessage,
+        });
+      }
     } finally {
       setLoading(false);
     }
