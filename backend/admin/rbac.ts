@@ -97,7 +97,7 @@ export async function requireAdminPermission(
     SELECT role, admin_role FROM users WHERE id = ${auth.userID}
   `;
 
-  if (!user || user.role !== "admin") {
+  if (!user || user.role?.toUpperCase() !== "ADMIN") {
     throw APIError.permissionDenied("Admin access required");
   }
 
@@ -126,7 +126,7 @@ export const getMyPermissions = api(
       SELECT role, admin_role FROM users WHERE id = ${auth.userID}
     `;
 
-    if (!user || user.role !== "admin") {
+    if (!user || user.role?.toUpperCase() !== "ADMIN") {
       throw APIError.permissionDenied("Admin access required");
     }
 
@@ -158,7 +158,7 @@ export const updateAdminRole = api(
       SELECT role FROM users WHERE id = ${req.userId}
     `;
 
-    if (!targetUser || targetUser.role !== "admin") {
+    if (!targetUser || targetUser.role?.toUpperCase() !== "ADMIN") {
       throw APIError.invalidArgument("Target user must be an admin");
     }
 

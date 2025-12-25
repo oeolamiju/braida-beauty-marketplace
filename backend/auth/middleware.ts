@@ -30,7 +30,8 @@ export function requireRole(...allowedRoles: string[]): void {
     throw APIError.unauthenticated("authentication required");
   }
 
-  const hasRole = auth.roles?.some(r => allowedRoles.includes(r)) ?? allowedRoles.includes(auth.role);
+  const allowedRolesUpper = allowedRoles.map(r => r.toUpperCase());
+  const hasRole = auth.roles?.some(r => allowedRolesUpper.includes(r?.toUpperCase())) ?? allowedRolesUpper.includes(auth.role?.toUpperCase());
   
   if (!hasRole) {
     throw APIError.permissionDenied(
@@ -47,7 +48,8 @@ export function requireActiveRole(...allowedRoles: string[]): void {
   }
 
   const activeRole = auth.activeRole || auth.role;
-  if (!allowedRoles.includes(activeRole)) {
+  const allowedRolesUpper = allowedRoles.map(r => r.toUpperCase());
+  if (!allowedRolesUpper.includes(activeRole?.toUpperCase())) {
     throw APIError.permissionDenied(
       `access denied. This action requires active role: ${allowedRoles.join(" or ")}. Current active role: ${activeRole}`
     );
