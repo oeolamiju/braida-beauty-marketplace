@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS content_pages (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   published_at TIMESTAMP WITH TIME ZONE,
-  last_edited_by UUID REFERENCES users(id)
+  last_edited_by TEXT REFERENCES users(id)
 );
 
 CREATE INDEX idx_content_pages_slug ON content_pages(slug);
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS content_versions (
   version INTEGER NOT NULL,
   title VARCHAR(500) NOT NULL,
   content TEXT NOT NULL,
-  edited_by UUID REFERENCES users(id),
+  edited_by TEXT REFERENCES users(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(page_id, version)
 );

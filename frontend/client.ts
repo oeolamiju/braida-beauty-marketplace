@@ -38,6 +38,7 @@ export class Client {
     public readonly auth: auth.ServiceClient
     public readonly availability: availability.ServiceClient
     public readonly bookings: bookings.ServiceClient
+    public readonly content: content.ServiceClient
     public readonly coupons: coupons.ServiceClient
     public readonly disputes: disputes.ServiceClient
     public readonly favorites: favorites.ServiceClient
@@ -78,6 +79,7 @@ export class Client {
         this.auth = new auth.ServiceClient(base)
         this.availability = new availability.ServiceClient(base)
         this.bookings = new bookings.ServiceClient(base)
+        this.content = new content.ServiceClient(base)
         this.coupons = new coupons.ServiceClient(base)
         this.disputes = new disputes.ServiceClient(base)
         this.favorites = new favorites.ServiceClient(base)
@@ -933,6 +935,173 @@ export namespace bookings {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/bookings/${encodeURIComponent(params.bookingId)}/share`, {method: "POST", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_bookings_share_shareBooking>
+        }
+    }
+}
+
+/**
+ * Import the endpoint handlers to derive the types for the client.
+ */
+import { createFAQ as api_content_create_faq_createFAQ } from "~backend/content/create_faq";
+import { createPage as api_content_create_page_createPage } from "~backend/content/create_page";
+import { createSafetyResource as api_content_create_safety_resource_createSafetyResource } from "~backend/content/create_safety_resource";
+import { deleteFAQ as api_content_delete_faq_deleteFAQ } from "~backend/content/delete_faq";
+import { deletePage as api_content_delete_page_deletePage } from "~backend/content/delete_page";
+import { deleteSafetyResource as api_content_delete_safety_resource_deleteSafetyResource } from "~backend/content/delete_safety_resource";
+import { getPage as api_content_get_page_getPage } from "~backend/content/get_page";
+import { listFAQs as api_content_list_faqs_listFAQs } from "~backend/content/list_faqs";
+import { listPages as api_content_list_pages_listPages } from "~backend/content/list_pages";
+import { listSafetyResources as api_content_list_safety_resources_listSafetyResources } from "~backend/content/list_safety_resources";
+import { updateFAQ as api_content_update_faq_updateFAQ } from "~backend/content/update_faq";
+import { updatePage as api_content_update_page_updatePage } from "~backend/content/update_page";
+import { updateSafetyResource as api_content_update_safety_resource_updateSafetyResource } from "~backend/content/update_safety_resource";
+
+export namespace content {
+
+    export class ServiceClient {
+        private baseClient: BaseClient
+
+        constructor(baseClient: BaseClient) {
+            this.baseClient = baseClient
+            this.createFAQ = this.createFAQ.bind(this)
+            this.createPage = this.createPage.bind(this)
+            this.createSafetyResource = this.createSafetyResource.bind(this)
+            this.deleteFAQ = this.deleteFAQ.bind(this)
+            this.deletePage = this.deletePage.bind(this)
+            this.deleteSafetyResource = this.deleteSafetyResource.bind(this)
+            this.getPage = this.getPage.bind(this)
+            this.listFAQs = this.listFAQs.bind(this)
+            this.listPages = this.listPages.bind(this)
+            this.listSafetyResources = this.listSafetyResources.bind(this)
+            this.updateFAQ = this.updateFAQ.bind(this)
+            this.updatePage = this.updatePage.bind(this)
+            this.updateSafetyResource = this.updateSafetyResource.bind(this)
+        }
+
+        public async createFAQ(params: RequestType<typeof api_content_create_faq_createFAQ>): Promise<ResponseType<typeof api_content_create_faq_createFAQ>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/content/faqs`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_content_create_faq_createFAQ>
+        }
+
+        public async createPage(params: RequestType<typeof api_content_create_page_createPage>): Promise<ResponseType<typeof api_content_create_page_createPage>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/content/pages`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_content_create_page_createPage>
+        }
+
+        public async createSafetyResource(params: RequestType<typeof api_content_create_safety_resource_createSafetyResource>): Promise<ResponseType<typeof api_content_create_safety_resource_createSafetyResource>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/content/safety-resources`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_content_create_safety_resource_createSafetyResource>
+        }
+
+        public async deleteFAQ(params: { id: string }): Promise<ResponseType<typeof api_content_delete_faq_deleteFAQ>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/content/faqs/${encodeURIComponent(params.id)}`, {method: "DELETE", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_content_delete_faq_deleteFAQ>
+        }
+
+        public async deletePage(params: { id: string }): Promise<ResponseType<typeof api_content_delete_page_deletePage>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/content/pages/${encodeURIComponent(params.id)}`, {method: "DELETE", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_content_delete_page_deletePage>
+        }
+
+        public async deleteSafetyResource(params: { id: string }): Promise<ResponseType<typeof api_content_delete_safety_resource_deleteSafetyResource>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/content/safety-resources/${encodeURIComponent(params.id)}`, {method: "DELETE", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_content_delete_safety_resource_deleteSafetyResource>
+        }
+
+        public async getPage(params: { slug: string }): Promise<ResponseType<typeof api_content_get_page_getPage>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/content/pages/${encodeURIComponent(params.slug)}`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_content_get_page_getPage>
+        }
+
+        public async listFAQs(params: RequestType<typeof api_content_list_faqs_listFAQs>): Promise<ResponseType<typeof api_content_list_faqs_listFAQs>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                activeOnly: params.activeOnly === undefined ? undefined : String(params.activeOnly),
+                category:   params.category,
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/content/faqs`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_content_list_faqs_listFAQs>
+        }
+
+        public async listPages(params: RequestType<typeof api_content_list_pages_listPages>): Promise<ResponseType<typeof api_content_list_pages_listPages>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                category:      params.category,
+                publishedOnly: params.publishedOnly === undefined ? undefined : String(params.publishedOnly),
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/content/pages`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_content_list_pages_listPages>
+        }
+
+        public async listSafetyResources(params: RequestType<typeof api_content_list_safety_resources_listSafetyResources>): Promise<ResponseType<typeof api_content_list_safety_resources_listSafetyResources>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                activeOnly:   params.activeOnly === undefined ? undefined : String(params.activeOnly),
+                resourceType: params.resourceType,
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/content/safety-resources`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_content_list_safety_resources_listSafetyResources>
+        }
+
+        public async updateFAQ(params: RequestType<typeof api_content_update_faq_updateFAQ>): Promise<ResponseType<typeof api_content_update_faq_updateFAQ>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                answer:       params.answer,
+                category:     params.category,
+                displayOrder: params.displayOrder,
+                isActive:     params.isActive,
+                question:     params.question,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/content/faqs/${encodeURIComponent(params.id)}`, {method: "PATCH", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_content_update_faq_updateFAQ>
+        }
+
+        public async updatePage(params: RequestType<typeof api_content_update_page_updatePage>): Promise<ResponseType<typeof api_content_update_page_updatePage>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                category:        params.category,
+                content:         params.content,
+                isPublished:     params.isPublished,
+                metaDescription: params.metaDescription,
+                title:           params.title,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/content/pages/${encodeURIComponent(params.id)}`, {method: "PATCH", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_content_update_page_updatePage>
+        }
+
+        public async updateSafetyResource(params: RequestType<typeof api_content_update_safety_resource_updateSafetyResource>): Promise<ResponseType<typeof api_content_update_safety_resource_updateSafetyResource>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                description:  params.description,
+                displayOrder: params.displayOrder,
+                isActive:     params.isActive,
+                isEmergency:  params.isEmergency,
+                phoneNumber:  params.phoneNumber,
+                resourceType: params.resourceType,
+                title:        params.title,
+                url:          params.url,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/admin/content/safety-resources/${encodeURIComponent(params.id)}`, {method: "PATCH", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_content_update_safety_resource_updateSafetyResource>
         }
     }
 }
