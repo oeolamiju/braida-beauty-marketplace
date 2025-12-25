@@ -14,7 +14,7 @@ export const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || "
 // App Configuration
 export const APP_NAME = "Braida Beauty Marketplace";
 // APP_URL should match the frontend deployment URL
-export const APP_URL = import.meta.env.VITE_APP_URL || "https://braida-beauty-marketplace-d50ae8k82vjju34hfq70.lp.dev";
+export const APP_URL = import.meta.env.VITE_APP_BASE_URL || "https://app.braida.co.uk";
 
 // Feature Flags
 export const ENABLE_PUSH_NOTIFICATIONS = import.meta.env.VITE_ENABLE_PUSH_NOTIFICATIONS === "true";
