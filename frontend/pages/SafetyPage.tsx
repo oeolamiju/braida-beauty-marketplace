@@ -2,9 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Shield, Lock, Eye, AlertTriangle, CheckCircle, UserCheck, FileText, Scale, Phone, MessageCircle, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { usePlatformSettings } from "@/hooks/usePlatformSettings";
 
 export default function SafetyPage() {
   const navigate = useNavigate();
+  const { settings } = usePlatformSettings();
 
   return (
     <div className="min-h-screen bg-background">
@@ -495,18 +497,18 @@ export default function SafetyPage() {
                 Contact Safety Team
               </Button>
               <Button size="lg" variant="outline">
-                Email: safety@braida.co.uk
+                Email: {settings?.support.email || "safety@braida.co.uk"}
               </Button>
             </div>
             <p className="text-sm text-muted-foreground mt-6">
-              <strong>Emergency?</strong> If you are in immediate physical danger, call 999 (UK emergency services) first, 
+              <strong>Emergency?</strong> If you are in immediate physical danger, call {settings?.emergencyContactPhone || "999 (UK emergency services)"} first, 
               then notify us so we can take appropriate platform action.
             </p>
           </Card>
 
           <div className="text-center py-8 border-t border-border">
             <p className="text-sm text-muted-foreground">
-              Last updated: December 25, 2025 • Questions? Contact <a href="mailto:safety@braida.co.uk" className="text-primary hover:underline">safety@braida.co.uk</a>
+              Last updated: December 25, 2025 • Questions? Contact <a href={`mailto:${settings?.support.email || "safety@braida.co.uk"}`} className="text-primary hover:underline">{settings?.support.email || "safety@braida.co.uk"}</a>
             </p>
           </div>
         </div>

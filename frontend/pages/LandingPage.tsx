@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { usePlatformSettings } from "@/hooks/usePlatformSettings";
+import SocialMediaLinks from "@/components/SocialMediaLinks";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -109,6 +111,7 @@ const TOP_PROS = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { settings } = usePlatformSettings();
   const [service, setService] = useState("");
   const [location, setLocation] = useState("");
   const [proScrollPosition, setProScrollPosition] = useState(0);
@@ -528,18 +531,7 @@ export default function LandingPage() {
                 The trusted marketplace for Afro & Caribbean beauty. Connecting you with the best talent in your area.
               </p>
               <div className="flex gap-3">
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors">
-                  <Instagram className="h-5 w-5" />
-                </a>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors">
-                  <Twitter className="h-5 w-5" />
-                </a>
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors">
-                  <Facebook className="h-5 w-5" />
-                </a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors">
-                  <Linkedin className="h-5 w-5" />
-                </a>
+                <SocialMediaLinks />
               </div>
             </div>
 

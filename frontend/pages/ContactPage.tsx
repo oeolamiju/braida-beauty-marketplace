@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { usePlatformSettings } from "@/hooks/usePlatformSettings";
 
 export default function ContactPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { settings } = usePlatformSettings();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -65,7 +67,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Email</h3>
-                    <p className="text-sm text-muted-foreground">support@braida.com</p>
+                    <p className="text-sm text-muted-foreground">{settings?.support.email || "support@braida.co.uk"}</p>
                   </div>
                 </div>
               </Card>
@@ -77,7 +79,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Phone</h3>
-                    <p className="text-sm text-muted-foreground">+44 20 1234 5678</p>
+                    <p className="text-sm text-muted-foreground">{settings?.support.phone || "Contact via email"}</p>
                   </div>
                 </div>
               </Card>
