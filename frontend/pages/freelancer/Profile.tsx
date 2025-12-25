@@ -98,14 +98,26 @@ export default function FreelancerProfile() {
       setPortfolio(portfolioData.items);
       setAllStyles(stylesData.styles);
       setSelectedStyles(profileData.styleIds || []);
+      
+      // Ensure categories is always an array (Postgres might return it as a string)
+      let categories: string[] = [];
+      const rawCategories = profileData.categories as unknown;
+      if (Array.isArray(rawCategories)) {
+        categories = rawCategories;
+      } else if (typeof rawCategories === 'string') {
+        // Handle Postgres array string format like "{hair,makeup}" or "hair,makeup"
+        const cleanStr = (rawCategories as string).replace(/^\{|\}$/g, '');
+        categories = cleanStr ? cleanStr.split(',').map((s: string) => s.trim()) : [];
+      }
+      
       setFormData({
-        displayName: profileData.displayName,
+        displayName: profileData.displayName || "",
         bio: profileData.bio || "",
         profilePhotoUrl: profileData.profilePhotoUrl || "",
-        locationArea: profileData.locationArea,
-        postcode: profileData.postcode,
-        travelRadiusMiles: profileData.travelRadiusMiles,
-        categories: profileData.categories,
+        locationArea: profileData.locationArea || "",
+        postcode: profileData.postcode || "",
+        travelRadiusMiles: profileData.travelRadiusMiles || 10,
+        categories,
         defaultStudioFeePence: (profileData.defaultStudioFeePence || 0) / 100,
         defaultMobileFeePence: (profileData.defaultMobileFeePence || 0) / 100,
       });
@@ -116,6 +128,17 @@ export default function FreelancerProfile() {
         localStorage.removeItem("authToken");
         localStorage.removeItem("user");
         window.location.href = "/auth/login";
+        return;
+      }
+      
+      // Handle case where user is not a freelancer
+      if (error.code === "invalid_argument" && error.message?.includes("not a freelancer")) {
+        toast({
+          title: "Not a Freelancer",
+          description: "You need to become a freelancer to access this page",
+          variant: "destructive",
+        });
+        navigate("/become-freelancer");
         return;
       }
       
