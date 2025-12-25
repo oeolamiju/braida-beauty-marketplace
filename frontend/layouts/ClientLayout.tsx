@@ -42,9 +42,14 @@ export default function ClientLayout() {
         setUser(userData);
       } catch (error: any) {
         console.error("[ClientLayout] Auth check failed:", error?.message || error);
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("user");
-        navigate("/auth/login");
+        
+        // Don't clear token on network errors - only on actual auth failures
+        const isNetworkError = error?.message?.includes("fetch") || error?.message?.includes("network");
+        if (!isNetworkError) {
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("user");
+          navigate("/auth/login");
+        }
       } finally {
         setLoading(false);
       }

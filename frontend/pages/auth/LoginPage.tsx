@@ -53,9 +53,8 @@ export default function LoginPage() {
             ? "/admin/dashboard" 
             : "/";
       
-      // Navigate and reload to ensure auth state is properly initialized
+      // Navigate using React Router
       navigate(targetPath, { replace: true });
-      window.location.reload();
     } catch (error: any) {
       console.error("Login error:", error);
       setLoading(false);
