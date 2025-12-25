@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, User, LogOut, Settings, X, Home, Bell, Heart, Calendar, MessageCircle, Briefcase, LayoutDashboard, Users, Search } from "lucide-react";
+import { Menu, User, LogOut, Settings, X, Home, Bell, Heart, Calendar, MessageCircle, Briefcase, LayoutDashboard, Users, Search, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
 import GlobalSearch from "@/components/GlobalSearch";
@@ -503,6 +503,14 @@ export default function TopNav({ role }: TopNavProps) {
                   >
                     <LayoutDashboard className="h-5 w-5" />
                     City Analytics
+                  </Link>
+                  <Link 
+                    to="/admin/coupons" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Ticket className="h-5 w-5" />
+                    Coupons
                   </Link>
                   <Link 
                     to="/admin/settings" 

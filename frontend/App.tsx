@@ -80,6 +80,10 @@ import ClientReferrals from "./pages/client/Referrals";
 import ClientLoyalty from "./pages/client/Loyalty";
 import BookPackage from "./pages/client/BookPackage";
 import BecomeFreelancerPage from "./pages/BecomeFreelancerPage";
+import BusinessTools from "./pages/BusinessTools";
+import SuccessStories from "./pages/SuccessStories";
+import Community from "./pages/Community";
+import AdminCoupons from "./pages/admin/Coupons";
 
 export default function App() {
   return (
@@ -96,6 +100,9 @@ export default function App() {
           <Route path="/help" element={<HelpCenterPage />} />
           <Route path="/safety" element={<SafetyPage />} />
           <Route path="/safety/resources" element={<SafetyResources />} />
+          <Route path="/business-tools" element={<BusinessTools />} />
+          <Route path="/success-stories" element={<SuccessStories />} />
+          <Route path="/community" element={<Community />} />
 
           <Route path="/auth/register" element={<RegisterPage />} />
           <Route path="/auth/register/client" element={<RegisterClientPage />} />
@@ -181,6 +188,7 @@ export default function App() {
             <Route path="settings/policies" element={<PolicySettings />} />
             <Route path="settings/payments" element={<AdminPaymentSettings />} />
             <Route path="analytics/cities" element={<CityAnalytics />} />
+            <Route path="coupons" element={<AdminCoupons />} />
           </Route>
         </Routes>
       </BrowserRouter>

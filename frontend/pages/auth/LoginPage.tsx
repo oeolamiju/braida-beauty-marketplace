@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { AlertTriangle, Loader2, Mail, RefreshCw, ArrowRight } from "lucide-react";
+import { AlertTriangle, Loader2, Mail, RefreshCw, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { BraidaLogoLight } from "@/components/BraidaLogo";
 
 export default function LoginPage() {
@@ -16,6 +16,7 @@ export default function LoginPage() {
     emailOrPhone: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   
   // State for unverified user flow
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
@@ -205,15 +206,24 @@ export default function LoginPage() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Password</label>
-                <Input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder="Enter your password"
-                  required
-                  autoComplete="current-password"
-                  className="border-2 focus:border-orange-600"
-                />
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="Enter your password"
+                    required
+                    autoComplete="current-password"
+                    className="border-2 focus:border-orange-600 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
 
               <div className="text-right">

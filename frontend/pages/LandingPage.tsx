@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { 
   Search, MapPin, Star, ChevronLeft, ChevronRight, 
-  ShieldCheck, CreditCard, MessageSquare, Instagram, Twitter, Menu, X
+  ShieldCheck, CreditCard, MessageSquare, Instagram, Twitter, Menu, X, Facebook, Linkedin
 } from "lucide-react";
 import { BraidaLogoLight } from "@/components/BraidaLogo";
 
@@ -528,11 +528,17 @@ export default function LandingPage() {
                 The trusted marketplace for Afro & Caribbean beauty. Connecting you with the best talent in your area.
               </p>
               <div className="flex gap-3">
-                <a href="#" className="text-gray-400 hover:text-orange-500 transition-colors">
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors">
                   <Instagram className="h-5 w-5" />
                 </a>
-                <a href="#" className="text-gray-400 hover:text-orange-500 transition-colors">
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors">
                   <Twitter className="h-5 w-5" />
+                </a>
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors">
+                  <Facebook className="h-5 w-5" />
+                </a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors">
+                  <Linkedin className="h-5 w-5" />
                 </a>
               </div>
             </div>
@@ -543,8 +549,6 @@ export default function LandingPage() {
               <ul className="space-y-3 text-sm text-gray-500">
                 <li><Link to="/discover" className="hover:text-orange-500 transition-colors">Find Stylists</Link></li>
                 <li><Link to="/styles" className="hover:text-orange-500 transition-colors">Browse Styles</Link></li>
-                <li><Link to="#" className="hover:text-orange-500 transition-colors">Gift Cards</Link></li>
-                <li><Link to="#" className="hover:text-orange-500 transition-colors">Cities</Link></li>
               </ul>
             </div>
 
@@ -553,9 +557,9 @@ export default function LandingPage() {
               <h4 className="font-bold mb-4">For Pros</h4>
               <ul className="space-y-3 text-sm text-gray-500">
                 <li><Link to="/auth/register/freelancer" className="hover:text-orange-500 transition-colors">Become a Pro</Link></li>
-                <li><Link to="#" className="hover:text-orange-500 transition-colors">Business Tools</Link></li>
-                <li><Link to="#" className="hover:text-orange-500 transition-colors">Success Stories</Link></li>
-                <li><Link to="#" className="hover:text-orange-500 transition-colors">Community</Link></li>
+                <li><Link to="/business-tools" className="hover:text-orange-500 transition-colors">Business Tools</Link></li>
+                <li><Link to="/success-stories" className="hover:text-orange-500 transition-colors">Success Stories</Link></li>
+                <li><Link to="/community" className="hover:text-orange-500 transition-colors">Community</Link></li>
               </ul>
             </div>
 
@@ -573,7 +577,7 @@ export default function LandingPage() {
 
           <div className="pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-sm text-gray-500">
-              © 2023 Braida. All rights reserved.
+              © 2025 Braida. All rights reserved.
             </div>
             <div className="flex gap-6 text-sm text-gray-500">
               <Link to="/privacy" className="hover:text-orange-500 transition-colors">Privacy</Link>
