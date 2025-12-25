@@ -121,7 +121,7 @@ export const register = api<RegisterRequest, RegisterResponse>(
     
     await db.exec`
       INSERT INTO users (id, first_name, last_name, email, phone, password_hash, role, roles, active_role, is_verified)
-      VALUES (${userId}, ${req.firstName}, ${req.lastName}, ${req.email || null}, ${normalizedPhone}, ${passwordHash}, ${role}, ${initialRoles}, ${role}, false)
+      VALUES (${userId}, ${req.firstName}, ${req.lastName}, ${req.email || null}, ${normalizedPhone}, ${passwordHash}, ${role}, ${initialRoles}::text[], ${role}, false)
     `;
 
     if (role === "FREELANCER") {

@@ -27,7 +27,7 @@ export const forgotPassword = api<ForgotPasswordRequest, ForgotPasswordResponse>
     }>`
       SELECT id, email
       FROM users
-      WHERE email = ${req.email}
+      WHERE LOWER(email) = LOWER(${req.email})
     `;
 
     if (!user || !user.email) {
