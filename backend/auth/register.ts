@@ -115,15 +115,13 @@ export const register = api<RegisterRequest, RegisterResponse>(
     const passwordHash = await bcrypt.hash(req.password, 10);
     const userId = `user_${Date.now()}_${Math.random().toString(36).substring(2)}`;
 
-    // Initialize roles array based on registration role
-    // Freelancers can also book as clients
     const initialRoles = role === "FREELANCER" 
-      ? '["CLIENT", "FREELANCER"]'
-      : '["CLIENT"]';
+      ? ["CLIENT", "FREELANCER"]
+      : ["CLIENT"];
     
     await db.exec`
       INSERT INTO users (id, first_name, last_name, email, phone, password_hash, role, roles, active_role, is_verified)
-      VALUES (${userId}, ${req.firstName}, ${req.lastName}, ${req.email || null}, ${normalizedPhone}, ${passwordHash}, ${role}, ${initialRoles}::jsonb, ${role}, false)
+      VALUES (${userId}, ${req.firstName}, ${req.lastName}, ${req.email || null}, ${normalizedPhone}, ${passwordHash}, ${role}, ${initialRoles}, ${role}, false)
     `;
 
     if (role === "FREELANCER") {
