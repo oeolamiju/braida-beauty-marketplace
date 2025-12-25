@@ -100,6 +100,16 @@ export const getProfile = api(
       }
 
       const row = newRows[0];
+      
+      // Ensure categories is always a proper array
+      let newCategories: string[] = [];
+      if (Array.isArray(row.categories)) {
+        newCategories = row.categories;
+      } else if (typeof row.categories === 'string') {
+        const cleanStr = row.categories.replace(/^\{|\}$/g, '');
+        newCategories = cleanStr ? cleanStr.split(',').map((s: string) => s.trim()) : [];
+      }
+      
       return {
         userId: row.user_id,
         displayName: row.display_name,
@@ -108,7 +118,7 @@ export const getProfile = api(
         locationArea: row.location_area,
         postcode: row.postcode,
         travelRadiusMiles: row.travel_radius_miles,
-        categories: row.categories || [],
+        categories: newCategories,
         styleIds: [],
         verificationStatus: row.verification_status,
         avgRating: null,
@@ -125,6 +135,17 @@ export const getProfile = api(
     `;
 
     const row = rows[0];
+    
+    // Ensure categories is always a proper array
+    let categories: string[] = [];
+    if (Array.isArray(row.categories)) {
+      categories = row.categories;
+    } else if (typeof row.categories === 'string') {
+      // Handle Postgres array string format like "{hair,makeup}"
+      const cleanStr = row.categories.replace(/^\{|\}$/g, '');
+      categories = cleanStr ? cleanStr.split(',').map((s: string) => s.trim()) : [];
+    }
+    
     return {
       userId: row.user_id,
       displayName: row.display_name,
@@ -133,7 +154,7 @@ export const getProfile = api(
       locationArea: row.location_area,
       postcode: row.postcode,
       travelRadiusMiles: row.travel_radius_miles,
-      categories: row.categories || [],
+      categories,
       styleIds: styleRows.map(r => r.style_id),
       verificationStatus: row.verification_status,
       avgRating: row.avg_rating ? parseFloat(row.avg_rating) : null,
