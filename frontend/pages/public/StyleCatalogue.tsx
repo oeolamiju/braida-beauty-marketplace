@@ -85,7 +85,7 @@ export default function StyleCatalogue() {
     try {
       setLoading(true);
       const [stylesRes, categoriesRes] = await Promise.all([
-        backend.styles.listAll(),
+        backend.styles.list(),
         backend.styles.listCategories(),
       ]);
       setStyles(stylesRes.styles as any);
