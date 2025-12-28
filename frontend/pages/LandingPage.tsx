@@ -45,10 +45,9 @@ const CATEGORIES = [
   },
 ];
 
-// Trending styles data
 const TRENDING_STYLES = [
   {
-    id: "goddess-braids",
+    id: 1,
     name: "Goddess Braids",
     bookings: "1,204 bookings this week",
     trending: true,
@@ -56,17 +55,17 @@ const TRENDING_STYLES = [
     image: "https://images.unsplash.com/photo-1763256377422-fec144edeefc?w=600&h=800&fit=crop"
   },
   {
-    id: "skin-fade",
+    id: 2,
     name: "Skin Fade",
     image: "https://images.unsplash.com/photo-1633990700440-30a1f452a95b?w=400&h=300&fit=crop"
   },
   {
-    id: "silk-press",
+    id: 3,
     name: "Silk Press",
     image: "https://images.unsplash.com/photo-1588527962980-72746d95973e?w=400&h=300&fit=crop"
   },
   {
-    id: "kids-braids",
+    id: 4,
     name: "Kids Braids",
     subtitle: "Gentle styling for little ones",
     image: "https://images.unsplash.com/photo-1648010035195-6b0a56e14667?w=600&h=300&fit=crop"
@@ -355,7 +354,10 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Large Featured Card */}
-            <div className="md:row-span-2 relative rounded-2xl overflow-hidden group cursor-pointer">
+            <div 
+              className="md:row-span-2 relative rounded-2xl overflow-hidden group cursor-pointer"
+              onClick={() => navigate(`/styles/${TRENDING_STYLES[0].id}`)}
+            >
               <img
                 src={TRENDING_STYLES[0].image}
                 alt={TRENDING_STYLES[0].name}
@@ -372,7 +374,10 @@ export default function LandingPage() {
             </div>
 
             {/* Small Cards */}
-            <div className="relative rounded-2xl overflow-hidden group cursor-pointer">
+            <div 
+              className="relative rounded-2xl overflow-hidden group cursor-pointer"
+              onClick={() => navigate(`/styles/${TRENDING_STYLES[1].id}`)}
+            >
               <img
                 src={TRENDING_STYLES[1].image}
                 alt={TRENDING_STYLES[1].name}
@@ -384,7 +389,10 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="relative rounded-2xl overflow-hidden group cursor-pointer">
+            <div 
+              className="relative rounded-2xl overflow-hidden group cursor-pointer"
+              onClick={() => navigate(`/styles/${TRENDING_STYLES[2].id}`)}
+            >
               <img
                 src={TRENDING_STYLES[2].image}
                 alt={TRENDING_STYLES[2].name}
@@ -398,7 +406,10 @@ export default function LandingPage() {
               </div>
 
             {/* Wide Card */}
-            <div className="md:col-span-2 relative rounded-2xl overflow-hidden group cursor-pointer">
+            <div 
+              className="md:col-span-2 relative rounded-2xl overflow-hidden group cursor-pointer"
+              onClick={() => navigate(`/styles/${TRENDING_STYLES[3].id}`)}
+            >
               <img
                 src={TRENDING_STYLES[3].image}
                 alt={TRENDING_STYLES[3].name}
@@ -450,7 +461,8 @@ export default function LandingPage() {
             {TOP_PROS.map((pro) => (
               <Card 
                 key={pro.id}
-                className="min-w-[240px] md:min-w-[280px] snap-start border-0 shadow-sm hover:shadow-lg transition-shadow bg-white overflow-hidden"
+                className="min-w-[240px] md:min-w-[280px] snap-start border-0 shadow-sm hover:shadow-lg transition-shadow bg-white overflow-hidden cursor-pointer"
+                onClick={() => navigate(`/freelancers/${pro.id}`)}
               >
                 <div className="relative aspect-[3/4]">
                   <img 
@@ -473,6 +485,10 @@ export default function LandingPage() {
                   <Button
                     variant="outline"
                     className="w-full border-orange-200 text-orange-500 hover:bg-orange-50 hover:border-orange-300"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/freelancers/${pro.id}`);
+                    }}
                   >
                     Book Now
                   </Button>
