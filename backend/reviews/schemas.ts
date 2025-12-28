@@ -4,8 +4,7 @@ import { idSchema, userIdSchema, nonNegativeIntSchema, paginationSchema } from "
 export const createReviewRequestSchema = z.object({
   bookingId: idSchema,
   rating: z.number().int().min(1).max(5),
-  comment: z.string().min(1).max(1000),
-  photoUrls: z.array(z.string().url()).max(5).optional(),
+  reviewText: z.string().min(1).max(1000).optional(),
 });
 
 export const createReviewResponseSchema = z.object({
@@ -18,15 +17,15 @@ export const reviewSchema = z.object({
   bookingId: idSchema,
   clientId: userIdSchema,
   freelancerId: userIdSchema,
-  clientName: z.string(),
   rating: z.number().int().min(1).max(5),
-  comment: z.string(),
-  photoUrls: z.array(z.string()),
+  reviewText: z.string().optional(),
+  photoUrl: z.string().optional(),
   isRemoved: z.boolean(),
   removedAt: z.string().nullable(),
   removedBy: userIdSchema.nullable(),
   removalReason: z.string().nullable(),
   createdAt: z.string(),
+  updatedAt: z.string(),
 });
 
 export const getBookingReviewResponseSchema = reviewSchema.nullable();
