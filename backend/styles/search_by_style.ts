@@ -222,6 +222,7 @@ export const searchByStyle = api<SearchByStyleParams, SearchByStyleResponse>(
     const hasMore = rows.length > limit;
     const resultsToReturn = hasMore ? rows.slice(0, limit) : rows;
 
+    const whereParamsCount = queryParams.length - (validated.minRating ? 3 : 2);
     const countQuery = `
       SELECT COUNT(DISTINCT s.id) as total
       FROM services s
@@ -231,7 +232,7 @@ export const searchByStyle = api<SearchByStyleParams, SearchByStyleResponse>(
       LEFT JOIN reviews r ON b.id = r.booking_id
       WHERE ${whereConditions.join(' AND ')}
     `;
-    const countResult = await db.rawQueryRow<{ total: string }>(countQuery, ...queryParams.slice(0, paramIndex - 2));
+    const countResult = await db.rawQueryRow<{ total: string }>(countQuery, ...queryParams.slice(0, whereParamsCount));
     const total = countResult ? parseInt(countResult.total) : 0;
 
     const results = resultsToReturn.map(row => {
@@ -248,6 +249,16 @@ export const searchByStyle = api<SearchByStyleParams, SearchByStyleResponse>(
         }
       }
 
+      const parsePostgresArray = (value: any): string[] => {
+        if (!value) return [];
+        if (Array.isArray(value)) return value;
+        if (typeof value === 'string') {
+          const cleanStr = value.replace(/^\{|\}$/g, '');
+          return cleanStr ? cleanStr.split(',').map((s: string) => s.trim()) : [];
+        }
+        return [];
+      };
+
       return {
         id: row.id,
         freelancerId: row.freelancer_id,
@@ -260,13 +271,13 @@ export const searchByStyle = api<SearchByStyleParams, SearchByStyleResponse>(
         description: row.description,
         pricePence: row.base_price_pence,
         durationMinutes: row.duration_minutes,
-        locationTypes: JSON.parse(row.location_types),
+        locationTypes: parsePostgresArray(row.location_types),
         averageRating: parseFloat(row.avg_rating),
         reviewCount: parseInt(row.review_count),
         distanceMiles,
         freelancerPostcode: row.freelancer_postcode,
         freelancerArea: row.freelancer_area,
-        freelancerCategories: JSON.parse(row.freelancer_categories),
+        freelancerCategories: parsePostgresArray(row.freelancer_categories),
         avgResponseTimeHours: row.avg_response_time_hours ? parseFloat(row.avg_response_time_hours) : null,
         completionRate: row.completion_rate ? parseFloat(row.completion_rate) : null,
       };
