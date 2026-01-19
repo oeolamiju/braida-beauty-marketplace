@@ -174,6 +174,9 @@ export default function LandingPage() {
               <Link to="/discover" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors">
                 Find a Stylist
               </Link>
+              <Link to="/about" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors">
+                About
+              </Link>
               <Link to="/auth/register/freelancer" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors">
                 Become a Pro
               </Link>
@@ -501,33 +504,42 @@ export default function LandingPage() {
 
       {/* Trust Badges */}
       <section className="py-16 px-4 bg-[#fafafa]">
-        <div className="container mx-auto max-w-5xl">
-          <div className="grid md:grid-cols-3 gap-8 text-center">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid md:grid-cols-4 gap-8 text-center">
             <div className="flex flex-col items-center gap-4">
               <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
                 <ShieldCheck className="h-8 w-8 text-orange-500" />
               </div>
               <h3 className="font-bold text-lg">Verified Pros</h3>
               <p className="text-sm text-gray-500 max-w-xs">
-                We vet every stylist and barber to ensure they meet our standards for skill and professionalism.
+                All stylists are verified and vetted for quality and professionalism.
               </p>
             </div>
             <div className="flex flex-col items-center gap-4">
               <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
                 <CreditCard className="h-8 w-8 text-orange-500" />
               </div>
-              <h3 className="font-bold text-lg">Secure Payments</h3>
+              <h3 className="font-bold text-lg">Smart Prices</h3>
               <p className="text-sm text-gray-500 max-w-xs">
-                Book with confidence. Your payment is held securely until your appointment is complete.
+                Competitive rates with secure payments and transparent pricing.
+              </p>
+            </div>
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
+                <MessageSquare className="h-8 w-8 text-orange-500" />
+              </div>
+              <h3 className="font-bold text-lg">Book 24/7</h3>
+              <p className="text-sm text-gray-500 max-w-xs">
+                Instant online booking anytime, anywhere. No phone calls needed.
               </p>
             </div>
             <div className="flex flex-col items-center gap-4">
               <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
                 <Star className="h-8 w-8 text-orange-500" />
               </div>
-              <h3 className="font-bold text-lg">Real Reviews</h3>
+              <h3 className="font-bold text-lg">Top Rated</h3>
               <p className="text-sm text-gray-500 max-w-xs">
-                Make informed choices with honest reviews and photos from our community.
+                Choose from thousands of reviewed and highly-rated professionals.
               </p>
             </div>
           </div>

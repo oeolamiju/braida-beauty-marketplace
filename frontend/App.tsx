@@ -90,6 +90,8 @@ import FAQManagement from "./pages/admin/FAQManagement";
 import SafetyResourcesManagement from "./pages/admin/SafetyResourcesManagement";
 import PlatformSettings from "./pages/admin/PlatformSettings";
 import AdminPortal from "./pages/admin/AdminPortal";
+import TreatmentGuidePage from "./pages/TreatmentGuidePage";
+import GlossaryPage from "./pages/GlossaryPage";
 
 export default function App() {
   return (
@@ -109,6 +111,8 @@ export default function App() {
           <Route path="/business-tools" element={<BusinessTools />} />
           <Route path="/success-stories" element={<SuccessStories />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/treatment-guide" element={<TreatmentGuidePage />} />
+          <Route path="/glossary" element={<GlossaryPage />} />
 
           <Route path="/auth/register" element={<RegisterPage />} />
           <Route path="/auth/register/client" element={<RegisterClientPage />} />

@@ -9,7 +9,7 @@ export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300 py-12 mt-auto">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8 mb-8">
           <div>
             <BraidaLogoLight size="sm" />
             <p className="mt-4 text-sm">
@@ -18,6 +18,27 @@ export default function Footer() {
             <div className="mt-4">
               <SocialMediaLinks />
             </div>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-white mb-4">Discover</h3>
+            <ul className="space-y-2 text-sm">
+              <li><Link to="/discover" className="hover:text-white transition-colors">Find Stylists</Link></li>
+              <li><Link to="/styles" className="hover:text-white transition-colors">Browse Styles</Link></li>
+              <li><Link to="/treatment-guide" className="hover:text-white transition-colors">Treatment Guide</Link></li>
+              <li><Link to="/glossary" className="hover:text-white transition-colors">Beauty Glossary</Link></li>
+              <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-white mb-4">For Professionals</h3>
+            <ul className="space-y-2 text-sm">
+              <li><Link to="/become-freelancer" className="hover:text-white transition-colors">Become a Pro</Link></li>
+              <li><Link to="/business-tools" className="hover:text-white transition-colors">Business Tools</Link></li>
+              <li><Link to="/success-stories" className="hover:text-white transition-colors">Success Stories</Link></li>
+              <li><Link to="/help#partner" className="hover:text-white transition-colors">Partner Help Centre</Link></li>
+            </ul>
           </div>
 
           <div>
@@ -31,20 +52,12 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="font-semibold text-white mb-4">For Professionals</h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/become-freelancer" className="hover:text-white transition-colors">Become a Pro</Link></li>
-              <li><Link to="/business-tools" className="hover:text-white transition-colors">Business Tools</Link></li>
-              <li><Link to="/success-stories" className="hover:text-white transition-colors">Success Stories</Link></li>
-            </ul>
-          </div>
-
-          <div>
             <h3 className="font-semibold text-white mb-4">Legal & Safety</h3>
             <ul className="space-y-2 text-sm">
               <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
               <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link to="/safety" className="hover:text-white transition-colors">Safety Center</Link></li>
+              <li><Link to="/safety/resources" className="hover:text-white transition-colors">Safety Resources</Link></li>
             </ul>
           </div>
         </div>
