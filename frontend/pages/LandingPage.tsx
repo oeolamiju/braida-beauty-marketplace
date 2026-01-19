@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { usePlatformSettings } from "@/hooks/usePlatformSettings";
 import SocialMediaLinks from "@/components/SocialMediaLinks";
+import AIStyleRecommendation from "@/components/AIStyleRecommendation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { 
   Search, MapPin, Star, ChevronLeft, ChevronRight, 
-  ShieldCheck, CreditCard, MessageSquare, Instagram, Twitter, Menu, X, Facebook, Linkedin
+  ShieldCheck, CreditCard, MessageSquare, Instagram, Twitter, Menu, X, Facebook, Linkedin, Sparkles
 } from "lucide-react";
 import { BraidaLogoLight } from "@/components/BraidaLogo";
 
@@ -243,7 +244,7 @@ export default function LandingPage() {
               </h1>
                 <p className="text-lg text-gray-700 max-w-md">
                   Find and book trusted Afro & Caribbean beauty
-                  professionals near you. Verified, secure, and made for you.
+                  professionals near you. <span className="font-semibold text-orange-600">AI-powered recommendations</span> help you discover styles that perfectly suit your unique features.
                 </p>
 
                 {/* Search Form */}
@@ -318,8 +319,15 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Browse by Category */}
+      {/* AI Style Recommendation Feature */}
       <section className="py-16 px-4 bg-white">
+        <div className="container mx-auto max-w-7xl">
+          <AIStyleRecommendation variant="hero" />
+        </div>
+      </section>
+
+      {/* Browse by Category */}
+      <section className="py-16 px-4 bg-[#fafafa]">
         <div className="container mx-auto max-w-7xl">
           <h2 className="text-2xl md:text-3xl font-bold mb-8">Browse by Category</h2>
           <div className="flex gap-6 md:gap-10 overflow-x-auto pb-4 scrollbar-hide">
@@ -346,7 +354,7 @@ export default function LandingPage() {
       </section>
 
       {/* Trending Styles */}
-      <section className="py-16 px-4 bg-[#fafafa]">
+      <section className="py-16 px-4 bg-white">
         <div className="container mx-auto max-w-7xl">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-bold">Trending Styles</h2>
@@ -429,7 +437,7 @@ export default function LandingPage() {
       </section>
 
       {/* Top Rated Pros */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-16 px-4 bg-[#fafafa]">
         <div className="container mx-auto max-w-7xl">
           <div className="flex items-center justify-between mb-2">
             <div>
@@ -503,9 +511,18 @@ export default function LandingPage() {
       </section>
 
       {/* Trust Badges */}
-      <section className="py-16 px-4 bg-[#fafafa]">
+      <section className="py-16 px-4 bg-white">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-4 gap-8 text-center">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
+                <Sparkles className="h-8 w-8 text-orange-500" />
+              </div>
+              <h3 className="font-bold text-lg">AI-Powered Match</h3>
+              <p className="text-sm text-gray-500 max-w-xs">
+                Smart AI analyzes your features to recommend styles that suit you perfectly.
+              </p>
+            </div>
             <div className="flex flex-col items-center gap-4">
               <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
                 <ShieldCheck className="h-8 w-8 text-orange-500" />
@@ -522,15 +539,6 @@ export default function LandingPage() {
               <h3 className="font-bold text-lg">Smart Prices</h3>
               <p className="text-sm text-gray-500 max-w-xs">
                 Competitive rates with secure payments and transparent pricing.
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-4">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
-                <MessageSquare className="h-8 w-8 text-orange-500" />
-              </div>
-              <h3 className="font-bold text-lg">Book 24/7</h3>
-              <p className="text-sm text-gray-500 max-w-xs">
-                Instant online booking anytime, anywhere. No phone calls needed.
               </p>
             </div>
             <div className="flex flex-col items-center gap-4">

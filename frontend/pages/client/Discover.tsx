@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Search, MapPin, Filter } from "lucide-react";
 import SearchFilters from "@/components/SearchFilters";
 import SearchResultCard from "@/components/SearchResultCard";
+import AIStyleRecommendation from "@/components/AIStyleRecommendation";
 import { useFilters } from "@/hooks/useFilters";
 import { useServiceSearch } from "@/hooks/useServiceSearch";
 
@@ -22,9 +23,12 @@ export default function ClientDiscover() {
     <div className="min-h-screen bg-gradient-to-br from-orange-50/30 via-background to-amber-50/20">
       <div className="bg-white border-b sticky top-0 z-10 shadow-sm">
         <div className="container mx-auto px-4 py-6 max-w-7xl">
-          <div className="mb-4">
-            <h1 className="text-2xl md:text-3xl font-bold mb-1">Find Your Perfect Stylist</h1>
-            <p className="text-muted-foreground">Discover verified beauty professionals near you</p>
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold mb-1">Find Your Perfect Stylist</h1>
+              <p className="text-muted-foreground">Discover verified beauty professionals near you</p>
+            </div>
+            <AIStyleRecommendation variant="compact" />
           </div>
 
           <div className="relative max-w-2xl">

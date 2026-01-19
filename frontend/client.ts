@@ -34,6 +34,7 @@ const BROWSER = typeof globalThis === "object" && ("window" in globalThis);
  */
 export class Client {
     public readonly admin: admin.ServiceClient
+    public readonly ai_recommendations: ai_recommendations.ServiceClient
     public readonly analytics: analytics.ServiceClient
     public readonly auth: auth.ServiceClient
     public readonly availability: availability.ServiceClient
@@ -75,6 +76,7 @@ export class Client {
         this.options = options ?? {}
         const base = new BaseClient(this.target, this.options)
         this.admin = new admin.ServiceClient(base)
+        this.ai_recommendations = new ai_recommendations.ServiceClient(base)
         this.analytics = new analytics.ServiceClient(base)
         this.auth = new auth.ServiceClient(base)
         this.availability = new availability.ServiceClient(base)
@@ -403,6 +405,29 @@ export namespace admin {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/admin/users/${encodeURIComponent(params.userId)}/status`, {method: "PUT", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_users_enhanced_updateUserStatus>
+        }
+    }
+}
+
+/**
+ * Import the endpoint handlers to derive the types for the client.
+ */
+import { analyze as api_ai_recommendations_analyze_analyze } from "~backend/ai_recommendations/analyze";
+
+export namespace ai_recommendations {
+
+    export class ServiceClient {
+        private baseClient: BaseClient
+
+        constructor(baseClient: BaseClient) {
+            this.baseClient = baseClient
+            this.analyze = this.analyze.bind(this)
+        }
+
+        public async analyze(params: RequestType<typeof api_ai_recommendations_analyze_analyze>): Promise<ResponseType<typeof api_ai_recommendations_analyze_analyze>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/ai-recommendations/analyze`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ai_recommendations_analyze_analyze>
         }
     }
 }

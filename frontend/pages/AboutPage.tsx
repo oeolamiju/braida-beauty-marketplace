@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Users, Award, Heart, Globe } from "lucide-react";
+import { ArrowLeft, Users, Award, Heart, Globe, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -29,6 +29,36 @@ export default function AboutPage() {
             </p>
           </section>
 
+          <Card className="p-6 bg-gradient-to-br from-orange-50 to-pink-50 border-orange-200">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-orange-500 rounded-full">
+                <Sparkles className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold mb-2">AI-Powered Style Recommendations</h3>
+                <p className="text-muted-foreground mb-4">
+                  Our innovative AI technology analyzes your unique facial features, face shape, and skin tone 
+                  to provide personalized hairstyle and makeup recommendations. Unlike generic style guides, 
+                  our AI considers your individual beauty to suggest styles that will truly complement you.
+                </p>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-start gap-2">
+                    <Sparkles className="h-4 w-4 text-orange-500 mt-1" />
+                    <p><strong>Smart Analysis:</strong> Upload your photo and receive instant analysis of your face shape, skin tone, and features</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Sparkles className="h-4 w-4 text-orange-500 mt-1" />
+                    <p><strong>Personalized Matches:</strong> Get curated hairstyle recommendations with match scores based on your unique attributes</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Sparkles className="h-4 w-4 text-orange-500 mt-1" />
+                    <p><strong>Makeup Guidance:</strong> Receive tailored makeup recommendations including shades and techniques for your skin tone</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+
           <section className="grid md:grid-cols-2 gap-6">
             <Card className="p-6">
               <div className="flex items-start gap-4">
@@ -39,7 +69,8 @@ export default function AboutPage() {
                   <h3 className="text-xl font-semibold mb-2">For Clients</h3>
                   <p className="text-muted-foreground">
                     Discover talented professionals, browse portfolios, read reviews, and book 
-                    services with confidence. Find exactly what you're looking for.
+                    services with confidence. Our AI-powered recommendations help you find styles 
+                    that perfectly suit your unique features.
                   </p>
                 </div>
               </div>
@@ -94,6 +125,13 @@ export default function AboutPage() {
           <section>
             <h2 className="text-3xl font-bold mb-4">Our Values</h2>
             <div className="space-y-4">
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Innovation</h3>
+                <p className="text-muted-foreground">
+                  We leverage cutting-edge AI technology to provide personalized style recommendations, 
+                  making beauty discovery easier and more accurate than ever before.
+                </p>
+              </div>
               <div>
                 <h3 className="text-xl font-semibold mb-2">Quality</h3>
                 <p className="text-muted-foreground">
