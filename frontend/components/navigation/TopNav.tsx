@@ -164,12 +164,36 @@ export default function TopNav({ role }: TopNavProps) {
               {role === 'admin' && (
                 <>
                   <Link 
-                    to="/admin/dashboard" 
+                    to="/admin/portal" 
                     className={`font-medium transition-colors ${
-                      isActive('/admin/dashboard') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
+                      isActive('/admin/portal') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
                     }`}
                   >
                     Home
+                  </Link>
+                  <Link 
+                    to="/admin/users" 
+                    className={`font-medium transition-colors ${
+                      isActive('/admin/users') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
+                    }`}
+                  >
+                    Users
+                  </Link>
+                  <Link 
+                    to="/admin/bookings" 
+                    className={`font-medium transition-colors ${
+                      isActive('/admin/bookings') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
+                    }`}
+                  >
+                    Bookings
+                  </Link>
+                  <Link 
+                    to="/admin/settings" 
+                    className={`font-medium transition-colors ${
+                      isActive('/admin/settings') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
+                    }`}
+                  >
+                    Settings
                   </Link>
                 </>
               )}
@@ -441,6 +465,14 @@ export default function TopNav({ role }: TopNavProps) {
               {role === 'admin' && (
                 <>
                   <Link 
+                    to="/admin/portal" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <LayoutDashboard className="h-5 w-5" />
+                    Portal
+                  </Link>
+                  <Link 
                     to="/admin/dashboard" 
                     className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
@@ -521,7 +553,7 @@ export default function TopNav({ role }: TopNavProps) {
                     Styles
                   </Link>
                   <Link 
-                    to="/admin/kpi" 
+                    to="/admin/kpis" 
                     className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -529,7 +561,7 @@ export default function TopNav({ role }: TopNavProps) {
                     KPI Dashboard
                   </Link>
                   <Link 
-                    to="/admin/city-analytics" 
+                    to="/admin/analytics/cities" 
                     className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -543,6 +575,14 @@ export default function TopNav({ role }: TopNavProps) {
                   >
                     <Ticket className="h-5 w-5" />
                     Coupons
+                  </Link>
+                  <Link 
+                    to="/admin/products" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <ShoppingBag className="h-5 w-5" />
+                    Products
                   </Link>
                   <Link 
                     to="/admin/settings" 

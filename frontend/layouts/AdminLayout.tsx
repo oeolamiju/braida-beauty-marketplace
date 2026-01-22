@@ -31,7 +31,7 @@ export default function AdminLayout() {
   }, [navigate]);
 
   const navItems = [
-    { to: "/admin/dashboard", label: "Dashboard", icon: "LayoutDashboard" as const },
+    { to: "/admin/portal", label: "Portal", icon: "LayoutDashboard" as const },
     { to: "/admin/users", label: "Users", icon: "Users" as const },
     { to: "/admin/bookings", label: "Bookings", icon: "Calendar" as const },
     { to: "/admin/settings", label: "Settings", icon: "Settings" as const },
