@@ -92,6 +92,9 @@ import PlatformSettings from "./pages/admin/PlatformSettings";
 import AdminPortal from "./pages/admin/AdminPortal";
 import TreatmentGuidePage from "./pages/TreatmentGuidePage";
 import GlossaryPage from "./pages/GlossaryPage";
+import Shop from "./pages/public/Shop";
+import ProductDetail from "./pages/public/ProductDetail";
+import AdminProducts from "./pages/admin/Products";
 
 export default function App() {
   return (
@@ -113,6 +116,8 @@ export default function App() {
           <Route path="/community" element={<Community />} />
           <Route path="/treatment-guide" element={<TreatmentGuidePage />} />
           <Route path="/glossary" element={<GlossaryPage />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/shop/:id" element={<ProductDetail />} />
 
           <Route path="/auth/register" element={<RegisterPage />} />
           <Route path="/auth/register/client" element={<RegisterClientPage />} />
@@ -205,6 +210,7 @@ export default function App() {
             <Route path="content/:id/edit" element={<ContentEditor />} />
             <Route path="faqs" element={<FAQManagement />} />
             <Route path="safety-resources" element={<SafetyResourcesManagement />} />
+            <Route path="products" element={<AdminProducts />} />
           </Route>
         </Routes>
       </BrowserRouter>

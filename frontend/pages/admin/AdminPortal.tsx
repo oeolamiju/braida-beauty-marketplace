@@ -15,6 +15,7 @@ import {
   BarChart3,
   MapPin,
   Lock,
+  ShoppingCart,
 } from "lucide-react";
 import backend from "@/lib/backend";
 
@@ -152,6 +153,16 @@ const ADMIN_MODULES: AdminModule[] = [
     permission: "settings",
     action: "edit",
     color: "bg-cyan-500",
+  },
+  {
+    id: "products",
+    name: "Products",
+    description: "Manage beauty products",
+    icon: <ShoppingCart className="h-6 w-6" />,
+    path: "/admin/products",
+    permission: "services",
+    action: "view",
+    color: "bg-pink-500",
   },
 ];
 

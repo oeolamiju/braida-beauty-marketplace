@@ -172,14 +172,17 @@ export default function LandingPage() {
               </Link>
             </div>
             <nav className="hidden md:flex items-center gap-6">
-              <Link to="/discover" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors">
-                Find a Stylist
-              </Link>
               <Link to="/about" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors">
                 About
               </Link>
+              <Link to="/discover" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors">
+                Find a Stylist
+              </Link>
               <Link to="/auth/register/freelancer" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors">
-                Become a Pro
+                Become a Freelancer
+              </Link>
+              <Link to="/shop" className="text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors">
+                Shop Beauty Products
               </Link>
             </nav>
             <div className="flex items-center gap-3">
@@ -211,6 +214,13 @@ export default function LandingPage() {
                   Sign Up
                 </Link>
                 <Link 
+                  to="/about" 
+                  className="block px-4 py-3 font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  About
+                </Link>
+                <Link 
                   to="/discover" 
                   className="block px-4 py-3 font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
@@ -222,7 +232,14 @@ export default function LandingPage() {
                   className="block px-4 py-3 font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Become a Pro
+                  Become a Freelancer
+                </Link>
+                <Link 
+                  to="/shop" 
+                  className="block px-4 py-3 font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Shop Beauty Products
                 </Link>
               </div>
             </div>

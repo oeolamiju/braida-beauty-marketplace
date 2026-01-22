@@ -52,6 +52,7 @@ export class Client {
     public readonly payments: payments.ServiceClient
     public readonly payouts: payouts.ServiceClient
     public readonly policies: policies.ServiceClient
+    public readonly products: products.ServiceClient
     public readonly profiles: profiles.ServiceClient
     public readonly referrals: referrals.ServiceClient
     public readonly reports: reports.ServiceClient
@@ -94,6 +95,7 @@ export class Client {
         this.payments = new payments.ServiceClient(base)
         this.payouts = new payouts.ServiceClient(base)
         this.policies = new policies.ServiceClient(base)
+        this.products = new products.ServiceClient(base)
         this.profiles = new profiles.ServiceClient(base)
         this.referrals = new referrals.ServiceClient(base)
         this.reports = new reports.ServiceClient(base)
@@ -1911,6 +1913,107 @@ export namespace policies {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/policies/reliability`, {method: "PUT", body: JSON.stringify(params)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_policies_update_reliability_config_updateReliabilityConfigEndpoint>
+        }
+    }
+}
+
+/**
+ * Import the endpoint handlers to derive the types for the client.
+ */
+import { create as api_products_create_create } from "~backend/products/create";
+import { deleteProduct as api_products_delete_deleteProduct } from "~backend/products/delete";
+import { deleteImage as api_products_delete_image_deleteImage } from "~backend/products/delete_image";
+import { get as api_products_get_get } from "~backend/products/get";
+import { list as api_products_list_list } from "~backend/products/list";
+import { update as api_products_update_update } from "~backend/products/update";
+import { uploadImage as api_products_upload_image_uploadImage } from "~backend/products/upload_image";
+
+export namespace products {
+
+    export class ServiceClient {
+        private baseClient: BaseClient
+
+        constructor(baseClient: BaseClient) {
+            this.baseClient = baseClient
+            this.create = this.create.bind(this)
+            this.deleteImage = this.deleteImage.bind(this)
+            this.deleteProduct = this.deleteProduct.bind(this)
+            this.get = this.get.bind(this)
+            this.list = this.list.bind(this)
+            this.update = this.update.bind(this)
+            this.uploadImage = this.uploadImage.bind(this)
+        }
+
+        public async create(params: RequestType<typeof api_products_create_create>): Promise<ResponseType<typeof api_products_create_create>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/products`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_products_create_create>
+        }
+
+        public async deleteImage(params: RequestType<typeof api_products_delete_image_deleteImage>): Promise<ResponseType<typeof api_products_delete_image_deleteImage>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                "image_url": params["image_url"],
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/products/${encodeURIComponent(params.id)}/images`, {query, method: "DELETE", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_products_delete_image_deleteImage>
+        }
+
+        public async deleteProduct(params: { id: string }): Promise<ResponseType<typeof api_products_delete_deleteProduct>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/products/${encodeURIComponent(params.id)}`, {method: "DELETE", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_products_delete_deleteProduct>
+        }
+
+        public async get(params: { id: string }): Promise<ResponseType<typeof api_products_get_get>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/products/${encodeURIComponent(params.id)}`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_products_get_get>
+        }
+
+        public async list(params: RequestType<typeof api_products_list_list>): Promise<ResponseType<typeof api_products_list_list>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                category:    params.category === undefined ? undefined : String(params.category),
+                limit:       params.limit === undefined ? undefined : String(params.limit),
+                offset:      params.offset === undefined ? undefined : String(params.offset),
+                search:      params.search,
+                "seller_id": params["seller_id"],
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/products`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_products_list_list>
+        }
+
+        public async update(params: RequestType<typeof api_products_update_update>): Promise<ResponseType<typeof api_products_update_update>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                category:         params.category,
+                description:      params.description,
+                "is_active":      params["is_active"],
+                name:             params.name,
+                price:            params.price,
+                "stock_quantity": params["stock_quantity"],
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/products/${encodeURIComponent(params.id)}`, {method: "PUT", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_products_update_update>
+        }
+
+        public async uploadImage(params: RequestType<typeof api_products_upload_image_uploadImage>): Promise<ResponseType<typeof api_products_upload_image_uploadImage>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                filename: params.filename,
+                image:    params.image,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/products/${encodeURIComponent(params.id)}/images`, {method: "POST", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_products_upload_image_uploadImage>
         }
     }
 }
