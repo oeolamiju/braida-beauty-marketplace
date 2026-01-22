@@ -11,7 +11,7 @@ export const get = api(
         p.id, p.seller_id, p.name, p.description, p.category, 
         p.price, p.stock_quantity, p.images, p.is_active, 
         p.created_at, p.updated_at,
-        u.full_name as seller_name
+        u.first_name || ' ' || u.last_name as seller_name
       FROM products p
       LEFT JOIN users u ON p.seller_id = u.id
       WHERE p.id = ${id}
