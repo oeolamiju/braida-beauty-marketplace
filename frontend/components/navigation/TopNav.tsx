@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, User, LogOut, Settings, X, Home, Bell, Heart, Calendar, MessageCircle, Briefcase, LayoutDashboard, Users, Search, Ticket } from "lucide-react";
+import { Menu, User, LogOut, Settings, X, Home, Bell, Heart, Calendar, MessageCircle, Briefcase, LayoutDashboard, Users, Search, Ticket, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
 import GlobalSearch from "@/components/GlobalSearch";
@@ -100,12 +100,20 @@ export default function TopNav({ role }: TopNavProps) {
                     Home
                   </Link>
                   <Link 
-                    to="/client/styles" 
+                    to="/client/freelancers" 
                     className={`font-medium transition-colors ${
-                      isActive('/client/styles') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
+                      isActive('/client/freelancers') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
                     }`}
                   >
-                    Styles
+                    Freelancers
+                  </Link>
+                  <Link 
+                    to="/client/shop" 
+                    className={`font-medium transition-colors ${
+                      isActive('/client/shop') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
+                    }`}
+                  >
+                    Shop
                   </Link>
                   <Link 
                     to="/client/bookings" 
@@ -128,12 +136,20 @@ export default function TopNav({ role }: TopNavProps) {
                     Home
                   </Link>
                   <Link 
-                    to="/freelancer/calendar" 
+                    to="/freelancer/freelancers" 
                     className={`font-medium transition-colors ${
-                      isActive('/freelancer/calendar') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
+                      isActive('/freelancer/freelancers') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
                     }`}
                   >
-                    Calendar
+                    Freelancers
+                  </Link>
+                  <Link 
+                    to="/freelancer/shop" 
+                    className={`font-medium transition-colors ${
+                      isActive('/freelancer/shop') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
+                    }`}
+                  >
+                    Shop
                   </Link>
                   <Link 
                     to="/freelancer/bookings" 
@@ -142,14 +158,6 @@ export default function TopNav({ role }: TopNavProps) {
                     }`}
                   >
                     Bookings
-                  </Link>
-                  <Link 
-                    to="/freelancer/services" 
-                    className={`font-medium transition-colors ${
-                      isActive('/freelancer/services') ? 'text-[#E91E63]' : 'text-gray-700 hover:text-[#E91E63]'
-                    }`}
-                  >
-                    Services
                   </Link>
                 </>
               )}
@@ -281,12 +289,20 @@ export default function TopNav({ role }: TopNavProps) {
                     Discover
                   </Link>
                   <Link 
-                    to="/client/styles" 
+                    to="/client/freelancers" 
                     className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <Briefcase className="h-5 w-5" />
-                    Styles
+                    <Users className="h-5 w-5" />
+                    Freelancers
+                  </Link>
+                  <Link 
+                    to="/client/shop" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <ShoppingBag className="h-5 w-5" />
+                    Shop
                   </Link>
                   <Link 
                     to="/client/bookings" 
@@ -339,6 +355,22 @@ export default function TopNav({ role }: TopNavProps) {
                   >
                     <LayoutDashboard className="h-5 w-5" />
                     Dashboard
+                  </Link>
+                  <Link 
+                    to="/freelancer/freelancers" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Users className="h-5 w-5" />
+                    Freelancers
+                  </Link>
+                  <Link 
+                    to="/freelancer/shop" 
+                    className="flex items-center gap-3 px-4 py-3 font-medium text-gray-700 hover:bg-pink-50 hover:text-[#E91E63] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <ShoppingBag className="h-5 w-5" />
+                    Shop
                   </Link>
                   <Link 
                     to="/freelancer/calendar" 

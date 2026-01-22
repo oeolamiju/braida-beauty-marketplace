@@ -154,6 +154,10 @@ export default function App() {
             <Route path="messages" element={<Messages />} />
             <Route path="messages/:conversationId" element={<Messages />} />
             <Route path="notifications" element={<NotificationSettings />} />
+            <Route path="shop" element={<Shop />} />
+            <Route path="shop/:id" element={<ProductDetail />} />
+            <Route path="freelancers" element={<PublicDiscover />} />
+            <Route path="freelancers/:userId" element={<FreelancerPublicProfile />} />
           </Route>
 
           <Route path="/notifications" element={<NotificationCenter />} />
@@ -177,6 +181,10 @@ export default function App() {
             <Route path="messages" element={<Messages />} />
             <Route path="messages/:conversationId" element={<Messages />} />
             <Route path="notifications" element={<NotificationSettings />} />
+            <Route path="shop" element={<Shop />} />
+            <Route path="shop/:id" element={<ProductDetail />} />
+            <Route path="freelancers" element={<PublicDiscover />} />
+            <Route path="freelancers/:userId" element={<FreelancerPublicProfile />} />
           </Route>
 
           <Route path="/admin" element={<AdminLayout />}>
