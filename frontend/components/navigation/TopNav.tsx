@@ -247,7 +247,7 @@ export default function TopNav({ role }: TopNavProps) {
                       <p className="text-xs text-muted-foreground capitalize">{user?.activeRole?.toLowerCase() || user?.role?.toLowerCase()}</p>
                     </div>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => navigate("/")}>
+                    <DropdownMenuItem onClick={() => navigate(role ? `/${role}` : "/")}>
                       <Home className="mr-2 h-4 w-4" />
                       <span>Home</span>
                     </DropdownMenuItem>
