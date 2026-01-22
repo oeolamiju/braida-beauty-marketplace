@@ -156,7 +156,7 @@ export default function App() {
             <Route path="notifications" element={<NotificationSettings />} />
             <Route path="shop" element={<Shop />} />
             <Route path="shop/:id" element={<ProductDetail />} />
-            <Route path="freelancers" element={<PublicDiscover />} />
+            <Route path="freelancers" element={<ClientDiscover />} />
             <Route path="freelancers/:userId" element={<FreelancerPublicProfile />} />
           </Route>
 
@@ -183,7 +183,7 @@ export default function App() {
             <Route path="notifications" element={<NotificationSettings />} />
             <Route path="shop" element={<Shop />} />
             <Route path="shop/:id" element={<ProductDetail />} />
-            <Route path="freelancers" element={<PublicDiscover />} />
+            <Route path="freelancers" element={<FreelancerDashboard />} />
             <Route path="freelancers/:userId" element={<FreelancerPublicProfile />} />
           </Route>
 
