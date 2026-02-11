@@ -36,11 +36,22 @@ export default function AIStyleRecommendation({ variant = "compact" }: AIStyleRe
 
     setIsAnalyzing(true);
     try {
-      const response = await backend.ai_recommendations.analyze({
-        imageUrl: imagePreview,
-        analysisType: "full",
+      const response = await backend.ai_recommendations.analyzeImage({
+        imageBase64: imagePreview.split(',')[1],
+        analysisTypes: ['face_shape', 'skin_tone', 'hair_type'],
       });
-      setResults(response);
+      
+      setResults({
+        analysis: {
+          faceShape: response.faceShape?.shape || 'oval',
+          skinTone: `Monk ${response.skinTone?.monkScale || 5}`,
+          estimatedHairTexture: response.hairAnalysis?.hairType,
+          confidence: response.faceShape?.confidence || 0.8,
+        },
+        hairstyleRecommendations: [],
+        makeupRecommendations: [],
+        generalTips: ['Based on your analysis, we recommend consulting with our verified stylists.'],
+      });
     } catch (error) {
       console.error("Analysis failed:", error);
     } finally {

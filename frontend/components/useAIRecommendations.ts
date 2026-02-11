@@ -80,7 +80,7 @@ export function useUserFeatures() {
     setLoading(true);
     setError(null);
     try {
-      const response = await backend.ai.getUserFeaturesEndpoint();
+      const response = await backend.ai_recommendations.getUserFeaturesEndpoint();
       if (response.features) {
         setFeatures(response.features as UserFeatures);
       }
@@ -103,7 +103,7 @@ export function useUserFeatures() {
     setLoading(true);
     setError(null);
     try {
-      await backend.ai.updateUserFeaturesEndpoint(updates);
+      await backend.ai_recommendations.updateUserFeaturesEndpoint(updates);
       await fetchFeatures();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update features');
@@ -158,7 +158,7 @@ export function useImageAnalysis() {
         imageBase64 = await fileToBase64(imageData);
       }
 
-      const response = await backend.ai.analyzeImage({
+      const response = await backend.ai_recommendations.analyzeImage({
         imageUrl,
         imageBase64,
         analysisTypes: ['face_shape', 'skin_tone', 'hair_type'],
@@ -227,7 +227,7 @@ export function useRecommendations() {
     setError(null);
 
     try {
-      const response = await backend.ai.getRecommendations({
+      const response = await backend.ai_recommendations.getRecommendations({
         category: options.category,
         occasion: options.occasion,
         budgetMin: options.budgetMin,
@@ -260,7 +260,7 @@ export function useRecommendations() {
     setError(null);
 
     try {
-      const response = await backend.ai.getRecommendationsPreview({
+      const response = await backend.ai_recommendations.getRecommendationsPreview({
         category: options.category,
         faceShape: options.faceShape,
         skinTone: options.skinTone,
@@ -269,7 +269,7 @@ export function useRecommendations() {
         occasion: options.occasion,
       });
 
-      const previewStyles = response.styles.map(s => ({
+      const previewStyles = response.styles.map((s: any) => ({
         style: {
           id: s.id,
           name: s.name,
@@ -332,7 +332,7 @@ export function useStyleCatalog() {
     setError(null);
 
     try {
-      const response = await backend.ai.getStyles({
+      const response = await backend.ai_recommendations.getStyles({
         category: options?.category,
         limit: options?.limit,
         offset: options?.offset,
@@ -349,7 +349,7 @@ export function useStyleCatalog() {
 
   const getStyleById = useCallback(async (styleId: string) => {
     try {
-      const response = await backend.ai.getStyleById({ styleId });
+      const response = await backend.ai_recommendations.getStyleById({ styleId });
       return response.style as StyleRecommendation['style'] | null;
     } catch (err) {
       console.error('Failed to fetch style:', err);
@@ -374,7 +374,7 @@ export function useStyleCatalog() {
 export function useInteractionTracking() {
   const trackView = useCallback(async (styleId: string, duration?: number) => {
     try {
-      await backend.ai.trackInteraction({
+      await backend.ai_recommendations.trackInteraction({
         styleId,
         interactionType: 'view',
         duration,
@@ -386,7 +386,7 @@ export function useInteractionTracking() {
 
   const trackClick = useCallback(async (styleId: string) => {
     try {
-      await backend.ai.trackInteraction({
+      await backend.ai_recommendations.trackInteraction({
         styleId,
         interactionType: 'click',
       });
@@ -397,7 +397,7 @@ export function useInteractionTracking() {
 
   const trackSave = useCallback(async (styleId: string) => {
     try {
-      await backend.ai.trackInteraction({
+      await backend.ai_recommendations.trackInteraction({
         styleId,
         interactionType: 'save',
       });
@@ -408,7 +408,7 @@ export function useInteractionTracking() {
 
   const trackBook = useCallback(async (styleId: string, rating?: number) => {
     try {
-      await backend.ai.trackInteraction({
+      await backend.ai_recommendations.trackInteraction({
         styleId,
         interactionType: 'book',
         rating,

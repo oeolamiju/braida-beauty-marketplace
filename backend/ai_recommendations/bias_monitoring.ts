@@ -3,7 +3,7 @@
 // Ensures AI recommendations are fair across all skin tones, hair types, etc.
 // =============================================================================
 
-import { db } from "../db/database";
+import db from "../db";
 import {
   FairnessAuditResult,
   BiasMetrics,

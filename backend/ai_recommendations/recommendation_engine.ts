@@ -4,7 +4,7 @@
 // and knowledge-based approaches
 // =============================================================================
 
-import { db } from "../db/database";
+import db from "../db";
 import {
   UserFeatures,
   StyleDefinition,
@@ -158,7 +158,11 @@ export class ContentBasedRecommender {
           '4B': row.hair_type_4b,
           '4C': row.hair_type_4c,
         } as Record<HairType, number>,
-        skinToneScores: row.monk_scale_scores || {},
+        skinToneScores: {
+          1: 0.5, 2: 0.5, 3: 0.5, 4: 0.5, 5: 0.5,
+          6: 0.5, 7: 0.5, 8: 0.5, 9: 0.5, 10: 0.5,
+          ...(row.monk_scale_scores || {})
+        } as Record<MonkScale, number>,
         occasionScores: {},
       },
     }));
@@ -179,8 +183,7 @@ export class ContentBasedRecommender {
     // Skin tone match
     let skinToneMatch = 0.5;
     if (userFeatures.skinTone?.monkScale) {
-      const monkKey = userFeatures.skinTone.monkScale.toString();
-      skinToneMatch = style.compatibility.skinToneScores[monkKey] || 0.5;
+      skinToneMatch = style.compatibility.skinToneScores[userFeatures.skinTone.monkScale] || 0.5;
     }
 
     // Hair type match

@@ -17,7 +17,7 @@ import {
   HAIR_TYPE_DESCRIPTIONS,
   FACE_SHAPE_DESCRIPTIONS,
   UNDERTONE_DESCRIPTIONS,
-} from '../../hooks/useAIRecommendations';
+} from './useAIRecommendations';
 
 // =============================================================================
 // MAIN COMPONENT

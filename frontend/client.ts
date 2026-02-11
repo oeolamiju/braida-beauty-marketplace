@@ -414,7 +414,19 @@ export namespace admin {
 /**
  * Import the endpoint handlers to derive the types for the client.
  */
-import { analyze as api_ai_recommendations_analyze_analyze } from "~backend/ai_recommendations/analyze";
+import {
+    analyzeImage as api_ai_recommendations_endpoints_analyzeImage,
+    getRecommendationAnalytics as api_ai_recommendations_endpoints_getRecommendationAnalytics,
+    getRecommendations as api_ai_recommendations_endpoints_getRecommendations,
+    getRecommendationsPreview as api_ai_recommendations_endpoints_getRecommendationsPreview,
+    getStyleById as api_ai_recommendations_endpoints_getStyleById,
+    getStyles as api_ai_recommendations_endpoints_getStyles,
+    getUserFeaturesEndpoint as api_ai_recommendations_endpoints_getUserFeaturesEndpoint,
+    runBiasAudit as api_ai_recommendations_endpoints_runBiasAudit,
+    trackInteraction as api_ai_recommendations_endpoints_trackInteraction,
+    updateUserFeaturesEndpoint as api_ai_recommendations_endpoints_updateUserFeaturesEndpoint,
+    updateUserPreferences as api_ai_recommendations_endpoints_updateUserPreferences
+} from "~backend/ai_recommendations/endpoints";
 
 export namespace ai_recommendations {
 
@@ -423,13 +435,153 @@ export namespace ai_recommendations {
 
         constructor(baseClient: BaseClient) {
             this.baseClient = baseClient
-            this.analyze = this.analyze.bind(this)
+            this.analyzeImage = this.analyzeImage.bind(this)
+            this.getRecommendationAnalytics = this.getRecommendationAnalytics.bind(this)
+            this.getRecommendations = this.getRecommendations.bind(this)
+            this.getRecommendationsPreview = this.getRecommendationsPreview.bind(this)
+            this.getStyleById = this.getStyleById.bind(this)
+            this.getStyles = this.getStyles.bind(this)
+            this.getUserFeaturesEndpoint = this.getUserFeaturesEndpoint.bind(this)
+            this.runBiasAudit = this.runBiasAudit.bind(this)
+            this.trackInteraction = this.trackInteraction.bind(this)
+            this.updateUserFeaturesEndpoint = this.updateUserFeaturesEndpoint.bind(this)
+            this.updateUserPreferences = this.updateUserPreferences.bind(this)
         }
 
-        public async analyze(params: RequestType<typeof api_ai_recommendations_analyze_analyze>): Promise<ResponseType<typeof api_ai_recommendations_analyze_analyze>> {
+        /**
+         * Analyze user's image for facial features, skin tone, and hair type
+         * POST /ai/analyze-image
+         */
+        public async analyzeImage(params: RequestType<typeof api_ai_recommendations_endpoints_analyzeImage>): Promise<ResponseType<typeof api_ai_recommendations_endpoints_analyzeImage>> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/ai-recommendations/analyze`, {method: "POST", body: JSON.stringify(params)})
-            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ai_recommendations_analyze_analyze>
+            const resp = await this.baseClient.callTypedAPI(`/ai/analyze-image`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ai_recommendations_endpoints_analyzeImage>
+        }
+
+        /**
+         * Get recommendation analytics (admin only)
+         * GET /ai/admin/analytics
+         */
+        public async getRecommendationAnalytics(params: RequestType<typeof api_ai_recommendations_endpoints_getRecommendationAnalytics>): Promise<ResponseType<typeof api_ai_recommendations_endpoints_getRecommendationAnalytics>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                endDate:   params.endDate,
+                startDate: params.startDate,
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/ai/admin/analytics`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ai_recommendations_endpoints_getRecommendationAnalytics>
+        }
+
+        /**
+         * Get personalized style and freelancer recommendations
+         * GET /ai/recommendations
+         */
+        public async getRecommendations(params: RequestType<typeof api_ai_recommendations_endpoints_getRecommendations>): Promise<ResponseType<typeof api_ai_recommendations_endpoints_getRecommendations>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                budgetMax:       params.budgetMax === undefined ? undefined : String(params.budgetMax),
+                budgetMin:       params.budgetMin === undefined ? undefined : String(params.budgetMin),
+                category:        String(params.category),
+                freelancerLimit: params.freelancerLimit === undefined ? undefined : String(params.freelancerLimit),
+                latitude:        params.latitude === undefined ? undefined : String(params.latitude),
+                longitude:       params.longitude === undefined ? undefined : String(params.longitude),
+                occasion:        params.occasion,
+                radius:          params.radius === undefined ? undefined : String(params.radius),
+                styleLimit:      params.styleLimit === undefined ? undefined : String(params.styleLimit),
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/ai/recommendations`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ai_recommendations_endpoints_getRecommendations>
+        }
+
+        /**
+         * Get style recommendations without authentication (public browsing)
+         * POST /ai/recommendations/preview
+         */
+        public async getRecommendationsPreview(params: RequestType<typeof api_ai_recommendations_endpoints_getRecommendationsPreview>): Promise<ResponseType<typeof api_ai_recommendations_endpoints_getRecommendationsPreview>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/ai/recommendations/preview`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ai_recommendations_endpoints_getRecommendationsPreview>
+        }
+
+        /**
+         * Get a single style by ID
+         * GET /ai/styles/:styleId
+         */
+        public async getStyleById(params: { styleId: string }): Promise<ResponseType<typeof api_ai_recommendations_endpoints_getStyleById>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/ai/styles/${encodeURIComponent(params.styleId)}`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ai_recommendations_endpoints_getStyleById>
+        }
+
+        /**
+         * Get all styles in a category
+         * GET /ai/styles
+         */
+        public async getStyles(params: RequestType<typeof api_ai_recommendations_endpoints_getStyles>): Promise<ResponseType<typeof api_ai_recommendations_endpoints_getStyles>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                category: params.category === undefined ? undefined : String(params.category),
+                limit:    params.limit === undefined ? undefined : String(params.limit),
+                offset:   params.offset === undefined ? undefined : String(params.offset),
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/ai/styles`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ai_recommendations_endpoints_getStyles>
+        }
+
+        /**
+         * Get user's analyzed features
+         * GET /ai/user-features
+         */
+        public async getUserFeaturesEndpoint(): Promise<ResponseType<typeof api_ai_recommendations_endpoints_getUserFeaturesEndpoint>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/ai/user-features`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ai_recommendations_endpoints_getUserFeaturesEndpoint>
+        }
+
+        /**
+         * Run bias audit on recommendation system (admin only)
+         * POST /ai/admin/bias-audit
+         */
+        public async runBiasAudit(): Promise<ResponseType<typeof api_ai_recommendations_endpoints_runBiasAudit>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/ai/admin/bias-audit`, {method: "POST", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ai_recommendations_endpoints_runBiasAudit>
+        }
+
+        /**
+         * Track user interaction with a style
+         * POST /ai/track-interaction
+         */
+        public async trackInteraction(params: RequestType<typeof api_ai_recommendations_endpoints_trackInteraction>): Promise<ResponseType<typeof api_ai_recommendations_endpoints_trackInteraction>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/ai/track-interaction`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ai_recommendations_endpoints_trackInteraction>
+        }
+
+        /**
+         * Manually update user features (without image analysis)
+         * PUT /ai/user-features
+         */
+        public async updateUserFeaturesEndpoint(params: RequestType<typeof api_ai_recommendations_endpoints_updateUserFeaturesEndpoint>): Promise<ResponseType<typeof api_ai_recommendations_endpoints_updateUserFeaturesEndpoint>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/ai/user-features`, {method: "PUT", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ai_recommendations_endpoints_updateUserFeaturesEndpoint>
+        }
+
+        /**
+         * Update user preferences
+         * PUT /ai/user-preferences
+         */
+        public async updateUserPreferences(params: RequestType<typeof api_ai_recommendations_endpoints_updateUserPreferences>): Promise<ResponseType<typeof api_ai_recommendations_endpoints_updateUserPreferences>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/ai/user-preferences`, {method: "PUT", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ai_recommendations_endpoints_updateUserPreferences>
         }
     }
 }

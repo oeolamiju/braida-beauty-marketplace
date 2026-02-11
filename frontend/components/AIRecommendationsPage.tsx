@@ -5,9 +5,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import AIStyleFinder from '../../components/ai/AIStyleFinder';
-import BeautyProfile from '../../components/ai/BeautyProfile';
-import { useUserFeatures, ServiceCategory } from '../../hooks/useAIRecommendations';
+import AIStyleFinder from './AIStyleFinder';
+import { useUserFeatures, ServiceCategory } from './useAIRecommendations';
 
 export default function AIRecommendationsPage() {
   const navigate = useNavigate();
@@ -85,13 +84,34 @@ export default function AIRecommendationsPage() {
 
         {activeTab === 'profile' && (
           <div className="max-w-4xl mx-auto px-4">
-            <BeautyProfile
-              editable={true}
-              showAnalyzeOption={true}
-              onProfileUpdate={() => {
-                // Refresh or show success message
-              }}
-            />
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <h2 className="text-2xl font-bold mb-4">My Beauty Profile</h2>
+              {hasAnalysis ? (
+                <div className="space-y-4">
+                  {features?.faceShape && (
+                    <div className="p-4 bg-gray-50 rounded-xl">
+                      <p className="text-sm text-gray-600">Face Shape</p>
+                      <p className="font-semibold capitalize">{features.faceShape.shape}</p>
+                    </div>
+                  )}
+                  {features?.skinTone && (
+                    <div className="p-4 bg-gray-50 rounded-xl">
+                      <p className="text-sm text-gray-600">Skin Tone</p>
+                      <p className="font-semibold">Monk Scale {features.skinTone.monkScale}</p>
+                      <p className="text-sm capitalize">{features.skinTone.undertone} undertone</p>
+                    </div>
+                  )}
+                  {features?.hairAnalysis && (
+                    <div className="p-4 bg-gray-50 rounded-xl">
+                      <p className="text-sm text-gray-600">Hair Type</p>
+                      <p className="font-semibold">{features.hairAnalysis.hairType}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-gray-600">No analysis yet. Use the Style Finder to analyze your features.</p>
+              )}
+            </div>
 
             {/* Profile benefits */}
             {hasAnalysis && (

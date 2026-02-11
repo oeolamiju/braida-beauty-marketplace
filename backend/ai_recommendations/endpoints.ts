@@ -5,7 +5,7 @@
 
 import { api, APIError } from "encore.dev/api";
 import { getAuthData } from "~encore/auth";
-import { db } from "../db/database";
+import db from "../db";
 import { featureExtractor } from "./feature_extraction";
 import { recommendationEngine } from "./recommendation_engine";
 import { biasAuditor } from "./bias_monitoring";
@@ -403,11 +403,18 @@ export const getStyles = api(
 
     const result = await query;
 
-    const countResult = await db.queryRow<{ count: number }>`
-      SELECT COUNT(*) as count FROM style_definitions 
-      WHERE is_active = true 
-      ${req.category ? db.sql`AND category = ${req.category}` : db.sql``}
-    `;
+    let countResult;
+    if (req.category) {
+      countResult = await db.queryRow<{ count: number }>`
+        SELECT COUNT(*) as count FROM style_definitions 
+        WHERE is_active = true AND category = ${req.category}
+      `;
+    } else {
+      countResult = await db.queryRow<{ count: number }>`
+        SELECT COUNT(*) as count FROM style_definitions 
+        WHERE is_active = true
+      `;
+    }
 
     return {
       styles: result.map(row => ({
