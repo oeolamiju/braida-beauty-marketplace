@@ -3,12 +3,14 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { SlidersHorizontal, X, Filter } from "lucide-react";
+import { SlidersHorizontal, X, Filter, MapPin } from "lucide-react";
 
 interface SearchFiltersProps {
   filters: FilterState;
   onChange: (filters: FilterState) => void;
   hideAvailability?: boolean;
+  variant?: "default" | "sidebar";
+  onClose?: () => void;
 }
 
 export interface FilterState {
@@ -102,7 +104,7 @@ const daysOfWeek = [
   { value: 6, label: 'Saturday' },
 ];
 
-export default function SearchFilters({ filters, onChange, hideAvailability }: SearchFiltersProps) {
+export default function SearchFilters({ filters, onChange, hideAvailability, variant = "default", onClose }: SearchFiltersProps) {
   const [showFilters, setShowFilters] = useState(false);
 
   const handleChange = (key: keyof FilterState, value: any) => {
@@ -163,6 +165,176 @@ export default function SearchFilters({ filters, onChange, hideAvailability }: S
     filters.experienceLevel,
     (filters.styleTags?.length > 0 ? true : null),
   ].filter(Boolean).length;
+
+  if (variant === "sidebar") {
+    return (
+      <div className="bg-[#2a2a2a] border border-[#3a3a3a] rounded-lg p-4 space-y-6 sticky top-24">
+        {/* Header */}
+        <div className="flex items-center justify-between pb-4 border-b border-[#3a3a3a]">
+          <h3 className="text-white font-bold flex items-center gap-2">
+            <SlidersHorizontal className="h-5 w-5" />
+            Filters
+          </h3>
+          {onClose && (
+            <Button variant="ghost" size="sm" onClick={onClose} className="text-gray-400 hover:text-white">
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+
+        {/* Location & Distance */}
+        <div>
+          <label className="text-sm font-semibold mb-3 block text-white flex items-center gap-2">
+            <MapPin className="h-4 w-4" />
+            LOCATION & DISTANCE
+          </label>
+          <div className="space-y-3">
+            <Input
+              type="text"
+              value={filters.location}
+              onChange={(e) => handleChange('location', e.target.value)}
+              placeholder="Brixton, London"
+              className="bg-[#3a3a3a] border-[#4a4a4a] text-white placeholder:text-gray-500"
+            />
+            <div className="text-sm">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-400">Search Radius</span>
+                <span className="text-orange-500 font-bold">{filters.radiusMiles} miles</span>
+              </div>
+              <input 
+                type="range" 
+                min="1" 
+                max="50" 
+                value={filters.radiusMiles}
+                onChange={(e) => handleChange('radiusMiles', Number(e.target.value))}
+                className="w-full accent-orange-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Category */}
+        <div className="border-t border-[#3a3a3a] pt-6">
+          <h3 className="text-sm font-semibold mb-3 text-white">CATEGORY</h3>
+          <div className="space-y-2">
+            {categories.map(cat => (
+              <label key={cat.value} className="flex items-center gap-3 cursor-pointer hover:bg-[#3a3a3a] p-2 rounded transition-colors">
+                <input
+                  type="checkbox"
+                  checked={filters.category === cat.value || (cat.value === '' && !filters.category)}
+                  onChange={(e) => handleChange('category', cat.value)}
+                  className="w-4 h-4 accent-orange-500 rounded"
+                />
+                <span className="text-sm text-gray-300">{cat.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Service Type */}
+        <div className="border-t border-[#3a3a3a] pt-6">
+          <h3 className="text-sm font-semibold mb-3 text-white">SERVICE TYPE</h3>
+          <div className="space-y-2">
+            <label className="flex items-center gap-3 cursor-pointer hover:bg-[#3a3a3a] p-2 rounded transition-colors">
+              <input
+                type="radio"
+                name="locationType"
+                checked={filters.locationType === 'freelancer_travels_to_client'}
+                onChange={() => handleChange('locationType', 'freelancer_travels_to_client')}
+                className="w-4 h-4 accent-orange-500"
+              />
+              <span className="text-sm text-gray-300">Mobile</span>
+              <span className="ml-auto text-xs text-gray-500">They travel</span>
+            </label>
+            <label className="flex items-center gap-3 cursor-pointer hover:bg-[#3a3a3a] p-2 rounded transition-colors">
+              <input
+                type="radio"
+                name="locationType"
+                checked={filters.locationType === 'client_travels_to_freelancer'}
+                onChange={() => handleChange('locationType', 'client_travels_to_freelancer')}
+                className="w-4 h-4 accent-orange-500"
+              />
+              <span className="text-sm text-gray-300">Salon</span>
+              <span className="ml-auto text-xs text-gray-500">You travel</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Price Range */}
+        <div className="border-t border-[#3a3a3a] pt-6">
+          <h3 className="text-sm font-semibold mb-3 text-white">PRICE RANGE</h3>
+          <div className="flex gap-2">
+            {['£', '££', '£££'].map((level) => {
+              const isSelected = 
+                (level === '£' && (!filters.minPrice || filters.minPrice <= 5000)) ||
+                (level === '££' && filters.minPrice && filters.minPrice > 5000 && filters.minPrice <= 10000) ||
+                (level === '£££' && filters.minPrice && filters.minPrice > 10000);
+              
+              return (
+                <button
+                  key={level}
+                  onClick={() => {
+                    if (level === '£') handleChange('minPrice', 0);
+                    if (level === '££') handleChange('minPrice', 5001);
+                    if (level === '£££') handleChange('minPrice', 10001);
+                  }}
+                  className={`flex-1 py-2 rounded text-sm font-medium transition-colors ${
+                    isSelected
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-[#3a3a3a] text-gray-400 hover:bg-[#4a4a4a]'
+                  }`}
+                >
+                  {level}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Rating */}
+        <div className="border-t border-[#3a3a3a] pt-6">
+          <h3 className="text-sm font-semibold mb-3 text-white">RATING</h3>
+          <label className="flex items-center gap-3 cursor-pointer hover:bg-[#3a3a3a] p-2 rounded transition-colors">
+            <input
+              type="checkbox"
+              checked={filters.minRating === 4}
+              onChange={(e) => handleChange('minRating', e.target.checked ? 4 : undefined)}
+              className="w-4 h-4 accent-orange-500 rounded"
+            />
+            <span className="text-sm text-gray-300 flex items-center gap-1">
+              <span>4.0</span>
+              <span className="text-orange-400">★</span>
+              <span>& up</span>
+            </span>
+          </label>
+        </div>
+
+        {/* Available Today */}
+        <div className="border-t border-[#3a3a3a] pt-6">
+          <label className="flex items-center gap-3 cursor-pointer hover:bg-[#3a3a3a] p-2 rounded transition-colors">
+            <input
+              type="checkbox"
+              checked={filters.availableThisWeekend}
+              onChange={(e) => handleChange('availableThisWeekend', e.target.checked)}
+              className="w-5 h-5 accent-orange-500 rounded"
+            />
+            <span className="text-sm text-white font-medium">Available Today</span>
+          </label>
+        </div>
+
+        {/* Reset Button */}
+        {activeFilterCount > 0 && (
+          <Button
+            variant="outline"
+            onClick={clearFilters}
+            className="w-full border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white"
+          >
+            Reset all
+          </Button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-3 md:space-y-4">

@@ -205,39 +205,39 @@ export default function SearchResultCard({ result, onClick, variant = "light", c
         {/* Content */}
         <div className="p-4">
           {/* Freelancer info */}
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-3">
             <div className="relative">
               {freelancerPhoto ? (
                 <img 
                   src={freelancerPhoto} 
                   alt={freelancerName} 
-                  className="w-8 h-8 rounded-full object-cover"
+                  className="w-10 h-10 rounded-full object-cover border-2 border-[#3a3a3a]"
                 />
               ) : (
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                  isDark ? "bg-[#3a3a3a] text-gray-300" : "bg-gray-200 text-gray-600"
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold border-2 ${
+                  isDark ? "bg-[#3a3a3a] text-gray-300 border-[#4a4a4a]" : "bg-gray-200 text-gray-600 border-gray-300"
                 }`}>
                   {freelancerName.charAt(0)}
                 </div>
               )}
               {freelancerVerified && (
-                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                  <ShieldCheck className="w-2.5 h-2.5 text-white" />
+                <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center border-2 border-[#2a2a2a]">
+                  <ShieldCheck className="w-3 h-3 text-white" />
                 </div>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className={`font-semibold truncate ${isDark ? "text-white" : "text-gray-900"}`}>
+              <p className={`font-bold text-base truncate ${isDark ? "text-white" : "text-gray-900"}`}>
                 {freelancerName}
               </p>
               <div className="flex items-center gap-1">
-                <Star className="h-3.5 w-3.5 fill-orange-400 text-orange-400" />
-                <span className={`text-sm font-medium ${isDark ? "text-white" : "text-gray-900"}`}>
+                <Star className="h-4 w-4 fill-orange-400 text-orange-400" />
+                <span className={`text-sm font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
                   {averageRating > 0 ? averageRating.toFixed(1) : "New"}
                 </span>
                 {reviewCount > 0 && (
-                  <span className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-                    ({reviewCount} reviews)
+                  <span className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+                    ({reviewCount})
                   </span>
                 )}
               </div>
