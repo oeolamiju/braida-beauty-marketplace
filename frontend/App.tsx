@@ -15,7 +15,6 @@ import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import ClientLayout from "./layouts/ClientLayout";
 import FreelancerLayout from "./layouts/FreelancerLayout";
 import AdminLayout from "./layouts/AdminLayout";
-import ClientDiscover from "./pages/client/Discover";
 import ClientBookings from "./pages/client/Bookings";
 import ClientProfile from "./pages/client/Profile";
 import FreelancerDashboard from "./pages/freelancer/Dashboard";
@@ -140,7 +139,7 @@ export default function App() {
 
           <Route path="/client" element={<ClientLayout />}>
             <Route index element={<Navigate to="/client/discover" replace />} />
-            <Route path="discover" element={<ClientDiscover />} />
+            <Route path="discover" element={<PublicDiscover />} />
             <Route path="bookings" element={<ClientBookings />} />
             <Route path="bookings/:id" element={<ClientBookingDetail />} />
             <Route path="profile" element={<ClientProfile />} />
