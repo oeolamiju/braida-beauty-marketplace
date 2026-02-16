@@ -494,15 +494,16 @@ export class FreelancerRecommender {
         COALESCE(fc.skin_tone_experience, '{}') as skin_tone_experience,
         COALESCE((SELECT AVG(r.rating) FROM reviews r WHERE r.freelancer_id = u.id), 0) as average_rating,
         COALESCE((SELECT COUNT(*) FROM bookings b WHERE b.stylist_id = u.id AND b.status = 'completed'), 0) as completed_bookings,
-        COALESCE((
-          SELECT array_agg(fp_port.image_url)
-          FROM (
-            SELECT image_url FROM freelancer_portfolio 
+        COALESCE(
+          ARRAY(
+            SELECT image_url 
+            FROM freelancer_portfolio 
             WHERE freelancer_id = u.id 
             ORDER BY display_order 
             LIMIT 5
-          ) fp_port
-        ), '{}') as portfolio_urls
+          ), 
+          '{}'
+        ) as portfolio_urls
       FROM users u
       JOIN freelancer_profiles fp ON u.id = fp.user_id
       LEFT JOIN freelancer_capabilities fc ON u.id = fc.freelancer_id
