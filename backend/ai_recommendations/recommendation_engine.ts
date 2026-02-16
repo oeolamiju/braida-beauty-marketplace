@@ -484,8 +484,6 @@ export class FreelancerRecommender {
       average_rating: number;
       completed_bookings: number;
       portfolio_urls: string[];
-      lat: number;
-      lng: number;
     }>`
       SELECT 
         u.id,
@@ -496,9 +494,15 @@ export class FreelancerRecommender {
         COALESCE(fc.skin_tone_experience, '{}') as skin_tone_experience,
         COALESCE((SELECT AVG(r.rating) FROM reviews r WHERE r.freelancer_id = u.id), 0) as average_rating,
         COALESCE((SELECT COUNT(*) FROM bookings b WHERE b.stylist_id = u.id AND b.status = 'completed'), 0) as completed_bookings,
-        COALESCE((SELECT array_agg(pi.image_url) FROM portfolio_items pi WHERE pi.user_id = u.id LIMIT 5), '{}') as portfolio_urls,
-        COALESCE(fp.service_lat, 0) as lat,
-        COALESCE(fp.service_lng, 0) as lng
+        COALESCE((
+          SELECT array_agg(fp_port.image_url)
+          FROM (
+            SELECT image_url FROM freelancer_portfolio 
+            WHERE freelancer_id = u.id 
+            ORDER BY display_order 
+            LIMIT 5
+          ) fp_port
+        ), '{}') as portfolio_urls
       FROM users u
       JOIN freelancer_profiles fp ON u.id = fp.user_id
       LEFT JOIN freelancer_capabilities fc ON u.id = fc.freelancer_id
@@ -514,8 +518,6 @@ export class FreelancerRecommender {
       averageRating: Number(row.average_rating) || 0,
       completedBookings: Number(row.completed_bookings) || 0,
       portfolioUrls: row.portfolio_urls || [],
-      lat: row.lat,
-      lng: row.lng,
     }));
   }
 
@@ -526,8 +528,6 @@ export class FreelancerRecommender {
       hairTypeExpertise: HairType[];
       skinToneExperience: MonkScale[];
       averageRating: number;
-      lat?: number;
-      lng?: number;
     },
     context?: RecommendationContext
   ): FreelancerRecommendation['matchFactors'] {
@@ -545,19 +545,7 @@ export class FreelancerRecommender {
 
     const styleMatch = 0.5;
     const ratingScore = freelancer.averageRating / 5;
-
-    let locationScore = 0.5;
-    if (context?.location && freelancer.lat && freelancer.lng) {
-      const distance = this.calculateDistance(
-        context.location.lat,
-        context.location.lng,
-        freelancer.lat,
-        freelancer.lng
-      );
-      locationScore = distance <= context.location.radius ? 
-        1 - (distance / context.location.radius) : 0.1;
-    }
-
+    const locationScore = 0.5;
     const priceMatch = 0.5;
 
     return {
