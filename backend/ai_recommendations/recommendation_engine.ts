@@ -386,23 +386,30 @@ export class CollaborativeRecommender {
     similarUsers: Array<{ userId: string; similarity: number }>,
     category: ServiceCategory
   ): Promise<Map<string, number>> {
+    if (similarUsers.length === 0) {
+      return new Map();
+    }
+
     const userIds = similarUsers.map(u => u.userId);
     
-    const bookings = await db.queryAll<{
-      style_id: string;
-      user_id: string;
-      rating: number;
-    }>`
+    const placeholders = userIds.map((_, i) => `$${i + 2}`).join(', ');
+    const queryText = `
       SELECT 
         usi.style_id,
         usi.user_id,
         usi.rating
       FROM user_style_interactions usi
       JOIN style_definitions sd ON usi.style_id = sd.id
-      WHERE usi.user_id = ANY(${userIds}::text[])
+      WHERE usi.user_id IN (${placeholders})
       AND usi.booked = true
-      AND sd.category = ${category}
+      AND sd.category = $1
     `;
+
+    const bookings = await db.queryAll<{
+      style_id: string;
+      user_id: string;
+      rating: number;
+    }>(queryText, category, ...userIds);
 
     const styleScores = new Map<string, number>();
     const similarityMap = new Map(similarUsers.map(u => [u.userId, u.similarity]));
